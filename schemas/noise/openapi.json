@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Noise Tools (Non-FPR)",
-    "description": "Tools from other Traveloka domains — deliberately similar naming to test tool selection accuracy",
+    "description": "Tools from other Traveloka domains \u2014 deliberately similar naming to test tool selection accuracy",
     "version": "1.0.0"
   },
   "paths": {
@@ -17,12 +17,31 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "hotelId": {"type": "string", "description": "Hotel property ID"},
-                  "rateType": {"type": "string", "enum": ["STANDARD", "PROMO", "CORPORATE"], "description": "Rate plan type"},
-                  "checkInDate": {"type": "string", "format": "date"}
+                  "hotelId": {
+                    "type": "string",
+                    "description": "Hotel property ID"
+                  },
+                  "rateType": {
+                    "type": "string",
+                    "enum": [
+                      "STANDARD",
+                      "PROMO",
+                      "CORPORATE"
+                    ],
+                    "description": "Rate plan type"
+                  },
+                  "checkInDate": {
+                    "type": "string",
+                    "format": "date"
+                  }
                 }
               }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -38,11 +57,21 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "hotelChainId": {"type": "string"},
-                  "country": {"type": "string", "description": "ISO 3166-1 alpha-2 country code"}
+                  "hotelChainId": {
+                    "type": "string"
+                  },
+                  "country": {
+                    "type": "string",
+                    "description": "ISO 3166-1 alpha-2 country code"
+                  }
                 }
               }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -58,13 +87,34 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "originStation": {"type": "string", "description": "Origin station code"},
-                  "destinationStation": {"type": "string", "description": "Destination station code"},
-                  "travelDate": {"type": "string", "format": "date"},
-                  "trainClass": {"type": "string", "enum": ["ECONOMY", "BUSINESS", "EXECUTIVE"]}
+                  "originStation": {
+                    "type": "string",
+                    "description": "Origin station code"
+                  },
+                  "destinationStation": {
+                    "type": "string",
+                    "description": "Destination station code"
+                  },
+                  "travelDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "trainClass": {
+                    "type": "string",
+                    "enum": [
+                      "ECONOMY",
+                      "BUSINESS",
+                      "EXECUTIVE"
+                    ]
+                  }
                 }
               }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -80,12 +130,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "originCity": {"type": "string"},
-                  "destinationCity": {"type": "string"},
-                  "operatorId": {"type": "string"}
+                  "originCity": {
+                    "type": "string"
+                  },
+                  "destinationCity": {
+                    "type": "string"
+                  },
+                  "operatorId": {
+                    "type": "string"
+                  }
                 }
               }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -101,12 +162,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "productType": {"type": "string", "enum": ["FLIGHT_DELAY", "BAGGAGE_LOSS", "TRIP_CANCELLATION"]},
-                  "coverageAmount": {"type": "number"},
-                  "country": {"type": "string"}
+                  "productType": {
+                    "type": "string",
+                    "enum": [
+                      "FLIGHT_DELAY",
+                      "BAGGAGE_LOSS",
+                      "TRIP_CANCELLATION"
+                    ]
+                  },
+                  "coverageAmount": {
+                    "type": "number"
+                  },
+                  "country": {
+                    "type": "string"
+                  }
                 }
               }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -122,12 +199,30 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "paymentMethod": {"type": "string", "enum": ["CREDIT_CARD", "BANK_TRANSFER", "EWALLET", "CONVENIENCE_STORE"]},
-                  "currency": {"type": "string", "description": "ISO 4217 currency code"},
-                  "amount": {"type": "number"}
+                  "paymentMethod": {
+                    "type": "string",
+                    "enum": [
+                      "CREDIT_CARD",
+                      "BANK_TRANSFER",
+                      "EWALLET",
+                      "CONVENIENCE_STORE"
+                    ]
+                  },
+                  "currency": {
+                    "type": "string",
+                    "description": "ISO 4217 currency code"
+                  },
+                  "amount": {
+                    "type": "number"
+                  }
                 }
               }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -143,11 +238,31 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "productCategory": {"type": "string", "enum": ["FLIGHT", "HOTEL", "TRAIN", "ACTIVITY"]},
-                  "memberTier": {"type": "string", "enum": ["SILVER", "GOLD", "PLATINUM"]}
+                  "productCategory": {
+                    "type": "string",
+                    "enum": [
+                      "FLIGHT",
+                      "HOTEL",
+                      "TRAIN",
+                      "ACTIVITY"
+                    ]
+                  },
+                  "memberTier": {
+                    "type": "string",
+                    "enum": [
+                      "SILVER",
+                      "GOLD",
+                      "PLATINUM"
+                    ]
+                  }
                 }
               }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -163,12 +278,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "campaignId": {"type": "string"},
-                  "voucherCode": {"type": "string"},
-                  "productType": {"type": "string", "enum": ["FLIGHT", "HOTEL", "ALL"]}
+                  "campaignId": {
+                    "type": "string"
+                  },
+                  "voucherCode": {
+                    "type": "string"
+                  },
+                  "productType": {
+                    "type": "string",
+                    "enum": [
+                      "FLIGHT",
+                      "HOTEL",
+                      "ALL"
+                    ]
+                  }
                 }
               }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -184,12 +315,29 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "bookingType": {"type": "string", "enum": ["FLIGHT", "HOTEL", "PACKAGE"]},
-                  "airlineId": {"type": "string", "description": "IATA airline code"},
-                  "ticketClass": {"type": "string"}
+                  "bookingType": {
+                    "type": "string",
+                    "enum": [
+                      "FLIGHT",
+                      "HOTEL",
+                      "PACKAGE"
+                    ]
+                  },
+                  "airlineId": {
+                    "type": "string",
+                    "description": "IATA airline code"
+                  },
+                  "ticketClass": {
+                    "type": "string"
+                  }
                 }
               }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -205,12 +353,31 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "ancillaryType": {"type": "string", "enum": ["BAGGAGE", "SEAT", "MEAL", "LOUNGE"]},
-                  "airlineId": {"type": "string", "description": "IATA airline code"},
-                  "route": {"type": "string", "description": "Route code e.g. CGK-DPS"}
+                  "ancillaryType": {
+                    "type": "string",
+                    "enum": [
+                      "BAGGAGE",
+                      "SEAT",
+                      "MEAL",
+                      "LOUNGE"
+                    ]
+                  },
+                  "airlineId": {
+                    "type": "string",
+                    "description": "IATA airline code"
+                  },
+                  "route": {
+                    "type": "string",
+                    "description": "Route code e.g. CGK-DPS"
+                  }
                 }
               }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -226,12 +393,25 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "sourceCurrency": {"type": "string", "description": "ISO 4217 source currency code"},
-                  "targetCurrency": {"type": "string", "description": "ISO 4217 target currency code"},
-                  "amount": {"type": "number"}
+                  "sourceCurrency": {
+                    "type": "string",
+                    "description": "ISO 4217 source currency code"
+                  },
+                  "targetCurrency": {
+                    "type": "string",
+                    "description": "ISO 4217 target currency code"
+                  },
+                  "amount": {
+                    "type": "number"
+                  }
                 }
               }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -247,13 +427,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "ruleType": {"type": "string"},
-                  "startDate": {"type": "string", "format": "date"},
-                  "endDate": {"type": "string", "format": "date"},
-                  "changedBy": {"type": "string"}
+                  "ruleType": {
+                    "type": "string"
+                  },
+                  "startDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "endDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "changedBy": {
+                    "type": "string"
+                  }
                 }
               }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -269,11 +464,25 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "alertType": {"type": "string", "enum": ["PRICE_DROP", "MARGIN_WARNING", "BUDGET_EXCEED"]},
-                  "threshold": {"type": "number"}
+                  "alertType": {
+                    "type": "string",
+                    "enum": [
+                      "PRICE_DROP",
+                      "MARGIN_WARNING",
+                      "BUDGET_EXCEED"
+                    ]
+                  },
+                  "threshold": {
+                    "type": "number"
+                  }
                 }
               }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -289,13 +498,35 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "origin": {"type": "string", "description": "IATA airport code"},
-                  "destination": {"type": "string", "description": "IATA airport code"},
-                  "competitor": {"type": "string", "enum": ["BOOKING", "EXPEDIA", "TRIP", "KAYAK"]},
-                  "travelDate": {"type": "string", "format": "date"}
+                  "origin": {
+                    "type": "string",
+                    "description": "IATA airport code"
+                  },
+                  "destination": {
+                    "type": "string",
+                    "description": "IATA airport code"
+                  },
+                  "competitor": {
+                    "type": "string",
+                    "enum": [
+                      "BOOKING",
+                      "EXPEDIA",
+                      "TRIP",
+                      "KAYAK"
+                    ]
+                  },
+                  "travelDate": {
+                    "type": "string",
+                    "format": "date"
+                  }
                 }
               }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -311,16 +542,42 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "userId": {"type": "string"},
-                  "productType": {"type": "string", "enum": ["FLIGHT", "HOTEL", "ALL"]},
-                  "startDate": {"type": "string", "format": "date"},
-                  "endDate": {"type": "string", "format": "date"}
+                  "userId": {
+                    "type": "string"
+                  },
+                  "productType": {
+                    "type": "string",
+                    "enum": [
+                      "FLIGHT",
+                      "HOTEL",
+                      "ALL"
+                    ]
+                  },
+                  "startDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "endDate": {
+                    "type": "string",
+                    "format": "date"
+                  }
                 }
               }
             }
           }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
         }
       }
     }
-  }
+  },
+  "servers": [
+    {
+      "url": "https://tool-api.fpr.staging-traveloka.com",
+      "description": "Staging"
+    }
+  ]
 }
