@@ -1,0 +1,326 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Noise Tools (Non-FPR)",
+    "description": "Tools from other Traveloka domains — deliberately similar naming to test tool selection accuracy",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/hotel/rate-rules": {
+      "post": {
+        "operationId": "load_hotel_rate_rules",
+        "summary": "Load Hotel Rate Rules",
+        "description": "Load pricing rate rules for hotel accommodations. Use for hotel room rate configuration, seasonal pricing adjustments, and rate plan management.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "hotelId": {"type": "string", "description": "Hotel property ID"},
+                  "rateType": {"type": "string", "enum": ["STANDARD", "PROMO", "CORPORATE"], "description": "Rate plan type"},
+                  "checkInDate": {"type": "string", "format": "date"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hotel/commission": {
+      "post": {
+        "operationId": "get_hotel_commission",
+        "summary": "Get Hotel Commission Rates",
+        "description": "Retrieve commission rates for hotel bookings. Use for hotel partner commission lookup, not flight commission.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "hotelChainId": {"type": "string"},
+                  "country": {"type": "string", "description": "ISO 3166-1 alpha-2 country code"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/train/fare-check": {
+      "post": {
+        "operationId": "check_train_fare",
+        "summary": "Check Train Fare",
+        "description": "Check train ticket fares between stations. Use for railway pricing, not flight fares.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "originStation": {"type": "string", "description": "Origin station code"},
+                  "destinationStation": {"type": "string", "description": "Destination station code"},
+                  "travelDate": {"type": "string", "format": "date"},
+                  "trainClass": {"type": "string", "enum": ["ECONOMY", "BUSINESS", "EXECUTIVE"]}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bus/route-pricing": {
+      "post": {
+        "operationId": "get_bus_route_pricing",
+        "summary": "Get Bus Route Pricing",
+        "description": "Get pricing for bus routes between cities. Use for intercity bus fare lookup.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "originCity": {"type": "string"},
+                  "destinationCity": {"type": "string"},
+                  "operatorId": {"type": "string"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/insurance/premium-rules": {
+      "post": {
+        "operationId": "load_insurance_premium_rules",
+        "summary": "Load Travel Insurance Premium Rules",
+        "description": "Load premium calculation rules for travel insurance products. Use for insurance pricing, not flight pricing.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productType": {"type": "string", "enum": ["FLIGHT_DELAY", "BAGGAGE_LOSS", "TRIP_CANCELLATION"]},
+                  "coverageAmount": {"type": "number"},
+                  "country": {"type": "string"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/payment/fee-config": {
+      "post": {
+        "operationId": "get_payment_fee_config",
+        "summary": "Get Payment Processing Fee Configuration",
+        "description": "Get payment method fee configuration (credit card surcharge, bank transfer fee, e-wallet fee). Use for payment processing fees, not flight transaction fees.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "paymentMethod": {"type": "string", "enum": ["CREDIT_CARD", "BANK_TRANSFER", "EWALLET", "CONVENIENCE_STORE"]},
+                  "currency": {"type": "string", "description": "ISO 4217 currency code"},
+                  "amount": {"type": "number"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loyalty/points-rules": {
+      "post": {
+        "operationId": "load_loyalty_points_rules",
+        "summary": "Load Loyalty Points Earning Rules",
+        "description": "Load rules for loyalty points earning and redemption. Use for Traveloka Points program, not airline frequent flyer miles.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productCategory": {"type": "string", "enum": ["FLIGHT", "HOTEL", "TRAIN", "ACTIVITY"]},
+                  "memberTier": {"type": "string", "enum": ["SILVER", "GOLD", "PLATINUM"]}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/promo/voucher-rules": {
+      "post": {
+        "operationId": "load_voucher_rules",
+        "summary": "Load Promo Voucher Rules",
+        "description": "Load promotional voucher and coupon rules. Use for marketing promotions and discount codes, not baseline pricing rules.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "campaignId": {"type": "string"},
+                  "voucherCode": {"type": "string"},
+                  "productType": {"type": "string", "enum": ["FLIGHT", "HOTEL", "ALL"]}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/refund/policy-rules": {
+      "post": {
+        "operationId": "load_refund_policy_rules",
+        "summary": "Load Refund Policy Rules",
+        "description": "Load refund and cancellation policy rules for bookings. Use for refund fee calculation and cancellation policies.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "bookingType": {"type": "string", "enum": ["FLIGHT", "HOTEL", "PACKAGE"]},
+                  "airlineId": {"type": "string", "description": "IATA airline code"},
+                  "ticketClass": {"type": "string"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ancillary/pricing": {
+      "post": {
+        "operationId": "get_ancillary_pricing",
+        "summary": "Get Ancillary Service Pricing",
+        "description": "Get pricing for ancillary services (extra baggage, seat selection, meals). Use for add-on service pricing, not base fare.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ancillaryType": {"type": "string", "enum": ["BAGGAGE", "SEAT", "MEAL", "LOUNGE"]},
+                  "airlineId": {"type": "string", "description": "IATA airline code"},
+                  "route": {"type": "string", "description": "Route code e.g. CGK-DPS"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/forex/exchange-rate": {
+      "post": {
+        "operationId": "get_forex_exchange_rate",
+        "summary": "Get Foreign Exchange Rate",
+        "description": "Get currency exchange rates for cross-currency pricing. Use for FX rate lookup, not budget balance.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sourceCurrency": {"type": "string", "description": "ISO 4217 source currency code"},
+                  "targetCurrency": {"type": "string", "description": "ISO 4217 target currency code"},
+                  "amount": {"type": "number"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/audit/pricing-changelog": {
+      "post": {
+        "operationId": "get_pricing_changelog",
+        "summary": "Get Pricing Rule Change Log",
+        "description": "Get audit trail of pricing rule changes. Use for compliance and audit, not for loading current rules.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ruleType": {"type": "string"},
+                  "startDate": {"type": "string", "format": "date"},
+                  "endDate": {"type": "string", "format": "date"},
+                  "changedBy": {"type": "string"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notification/alert-config": {
+      "post": {
+        "operationId": "get_alert_config",
+        "summary": "Get Pricing Alert Configuration",
+        "description": "Get alert configuration for pricing anomaly detection. Use for monitoring setup, not pricing rules.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "alertType": {"type": "string", "enum": ["PRICE_DROP", "MARGIN_WARNING", "BUDGET_EXCEED"]},
+                  "threshold": {"type": "number"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/competitor/fare-monitor": {
+      "post": {
+        "operationId": "get_competitor_fares",
+        "summary": "Get Competitor Fare Data",
+        "description": "Get competitor OTA fare data for price benchmarking. Use for competitive analysis, not internal pricing rules.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "origin": {"type": "string", "description": "IATA airport code"},
+                  "destination": {"type": "string", "description": "IATA airport code"},
+                  "competitor": {"type": "string", "enum": ["BOOKING", "EXPEDIA", "TRIP", "KAYAK"]},
+                  "travelDate": {"type": "string", "format": "date"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/user/booking-history": {
+      "post": {
+        "operationId": "get_user_booking_history",
+        "summary": "Get User Booking History",
+        "description": "Get a user's past booking records. Use for customer service lookup, not pricing operations.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {"type": "string"},
+                  "productType": {"type": "string", "enum": ["FLIGHT", "HOTEL", "ALL"]},
+                  "startDate": {"type": "string", "format": "date"},
+                  "endDate": {"type": "string", "format": "date"}
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
