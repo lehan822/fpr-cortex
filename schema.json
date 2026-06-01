@@ -1,0 +1,1793 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "FPR Tools API",
+    "description": "Flight Pricing & Revenue tools \u2014 pricing, supply, demand, and config domains.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://tool-api.fpr.staging-traveloka.com",
+      "description": "Staging"
+    }
+  ],
+  "paths": {
+    "/api/v2/flight-auto-pilot/load-rules": {
+      "post": {
+        "operationId": "load_autopilot_rules",
+        "summary": "Load Autopilot Pricing Rules",
+        "description": "Retrieve automated pricing rules (autopilot) that dynamically adjust flight prices. Filter by country pair and airline to see which autopilot rules are active. Use when someone asks about 'autopilot rules', 'automated pricing', or 'dynamic pricing config' for a specific market.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileGroup": {
+                    "type": "string",
+                    "description": "Profile group: TRAVELOKA, AFFILIATE, or CORPORATE. Defaults to TRAVELOKA if omitted.",
+                    "enum": [
+                      "TRAVELOKA",
+                      "AFFILIATE",
+                      "CORPORATE"
+                    ]
+                  },
+                  "originCountry": {
+                    "type": "string",
+                    "description": "Origin country code (ISO 2-letter), e.g. ID (Indonesia), TH (Thailand), VN (Vietnam), SG (Singapore)"
+                  },
+                  "destinationCountry": {
+                    "type": "string",
+                    "description": "Destination country code (ISO 2-letter)"
+                  },
+                  "airlineId": {
+                    "type": "string",
+                    "description": "IATA airline code, e.g. GA (Garuda), SQ (Singapore Airlines), QZ (AirAsia Indonesia), JT (Lion Air)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Autopilot rules matching the criteria"
+          }
+        }
+      }
+    },
+    "/api/v1/baseline-pricing-rule/load-rules": {
+      "post": {
+        "operationId": "load_baseline_pricing_rules",
+        "summary": "Load Baseline Pricing Rules",
+        "description": "Retrieve baseline markup/margin rules that define the base price adjustment for flights. These are the foundational pricing rules before any dynamic or promotional adjustments. Use when someone asks about 'baseline markup', 'base margin', 'default pricing rules', or 'how much markup do we add'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileGroup": {
+                    "type": "string",
+                    "enum": [
+                      "TRAVELOKA",
+                      "AFFILIATE",
+                      "CORPORATE"
+                    ],
+                    "description": "Profile group. Defaults to TRAVELOKA."
+                  },
+                  "originCountry": {
+                    "type": "string",
+                    "description": "Origin country code (ISO 2-letter)"
+                  },
+                  "destinationCountry": {
+                    "type": "string",
+                    "description": "Destination country code (ISO 2-letter)"
+                  },
+                  "airlineId": {
+                    "type": "string",
+                    "description": "IATA airline code, e.g. GA, SQ, QZ"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Baseline pricing rules"
+          }
+        }
+      }
+    },
+    "/api/v2/pricing/budget/balance": {
+      "post": {
+        "operationId": "get_budget_balance",
+        "summary": "Get Budget Balance",
+        "description": "Check the remaining and used budget balance for pricing operations. Returns how much budget is left and how much has been consumed. Use when someone asks 'how much budget is left', 'budget remaining for IDR', or 'pricing budget status'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "currency"
+                ],
+                "properties": {
+                  "currency": {
+                    "type": "string",
+                    "description": "Currency code: IDR (Indonesian Rupiah), THB (Thai Baht), VND (Vietnamese Dong), SGD (Singapore Dollar), MYR (Malaysian Ringgit)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Budget balance details"
+          }
+        }
+      }
+    },
+    "/api/v2/pricing/budget/activelist": {
+      "post": {
+        "operationId": "list_active_budgets",
+        "summary": "List Active Budgets",
+        "description": "List all currently active pricing budgets filtered by currency. Shows budget names, levels, and allocation details. Use when someone asks 'what budgets are active', 'show all budgets for IDR', or 'budget list'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "currency"
+                ],
+                "properties": {
+                  "currency": {
+                    "type": "string",
+                    "description": "Currency code: IDR, THB, VND, SGD, MYR"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of active budgets"
+          }
+        }
+      }
+    },
+    "/api/v2/pricing/budget/budget-level-list": {
+      "post": {
+        "operationId": "get_budget_levels",
+        "summary": "Get Budget Level Types",
+        "description": "List all budget level types available in the system (e.g. DAILY, WEEKLY, MONTHLY levels). Use when someone asks 'what budget levels exist' or 'budget level types'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Budget level types"
+          }
+        }
+      }
+    },
+    "/api/v2/pricing/budget/user/balance": {
+      "post": {
+        "operationId": "get_budget_user_balance",
+        "summary": "Get User-Level Budget Balance",
+        "description": "Check budget balance at the individual user level. Shows per-user budget consumption and remaining allocation. Use when someone asks about a specific user's budget or 'user budget balance'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "currency"
+                ],
+                "properties": {
+                  "currency": {
+                    "type": "string",
+                    "description": "Currency code: IDR, THB, VND, SGD, MYR"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User budget balance"
+          }
+        }
+      }
+    },
+    "/api/v1/bundling-pricing-rule/load-rules": {
+      "post": {
+        "operationId": "load_bundling_pricing_rules",
+        "summary": "Load Bundling Pricing Rules",
+        "description": "Retrieve bundling pricing rules that define how bundled products (flight + hotel, flight + insurance) are priced. Use when someone asks about 'bundle pricing', 'bundling rules', or 'package deal pricing config'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileGroup": {
+                    "type": "string",
+                    "enum": [
+                      "TRAVELOKA",
+                      "AFFILIATE",
+                      "CORPORATE"
+                    ]
+                  },
+                  "originCountry": {
+                    "type": "string",
+                    "description": "Origin country code"
+                  },
+                  "destinationCountry": {
+                    "type": "string",
+                    "description": "Destination country code"
+                  },
+                  "airlineId": {
+                    "type": "string",
+                    "description": "IATA airline code"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bundling pricing rules"
+          }
+        }
+      }
+    },
+    "/api/v2/flight-price-prediction/load-rules": {
+      "post": {
+        "operationId": "load_price_prediction_rules",
+        "summary": "Load Price Prediction Rules",
+        "description": "Retrieve anchor fare and price prediction rules used for dynamic pricing. These rules define how the system predicts fare trends and sets anchor prices. Use when someone asks about 'price prediction', 'anchor fare rules', 'dynamic pricing prediction', or 'fare forecast config'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileGroup": {
+                    "type": "string",
+                    "enum": [
+                      "TRAVELOKA",
+                      "AFFILIATE",
+                      "CORPORATE"
+                    ]
+                  },
+                  "originCountry": {
+                    "type": "string"
+                  },
+                  "destinationCountry": {
+                    "type": "string"
+                  },
+                  "airlineId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Price prediction rules"
+          }
+        }
+      }
+    },
+    "/api/v2/price-cut-modifier-rule/load-rules": {
+      "post": {
+        "operationId": "load_price_cut_modifier_rules",
+        "summary": "Load Price Cut / Promo Modifier Rules",
+        "description": "Retrieve price cut and promotional modifier rules. These define temporary price reductions, flash sales, and promotional adjustments. Use when someone asks about 'price cut rules', 'promo modifiers', 'discount config', or 'flash sale pricing'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileGroup": {
+                    "type": "string",
+                    "enum": [
+                      "TRAVELOKA",
+                      "AFFILIATE",
+                      "CORPORATE"
+                    ]
+                  },
+                  "originCountry": {
+                    "type": "string"
+                  },
+                  "destinationCountry": {
+                    "type": "string"
+                  },
+                  "airlineId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Price cut modifier rules"
+          }
+        }
+      }
+    },
+    "/api/v1/trx-fee/load-rules": {
+      "post": {
+        "operationId": "load_trx_fee_rules",
+        "summary": "Load Transaction Fee Rules",
+        "description": "Retrieve transaction/service fee rules. These define additional fees charged on top of the base fare (e.g. booking fee, service charge). Use when someone asks about 'transaction fees', 'service fees', 'booking charges', or 'trx fee config'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileGroup": {
+                    "type": "string",
+                    "enum": [
+                      "TRAVELOKA",
+                      "AFFILIATE",
+                      "CORPORATE"
+                    ]
+                  },
+                  "originCountry": {
+                    "type": "string"
+                  },
+                  "destinationCountry": {
+                    "type": "string"
+                  },
+                  "airlineId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transaction fee rules"
+          }
+        }
+      }
+    },
+    "/api/v1/commission-incentive-rule-data/load-rules": {
+      "post": {
+        "operationId": "load_commission_incentive_rules",
+        "summary": "Load Commission Incentive Rules",
+        "description": "Retrieve commission rate rules for airline partners. Defines how much commission Traveloka receives per ticket from each airline. Use when someone asks about 'commission rates', 'airline commission', 'incentive rules for SQ', or 'partner commission config'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileGroup": {
+                    "type": "string",
+                    "enum": [
+                      "TRAVELOKA",
+                      "AFFILIATE",
+                      "CORPORATE"
+                    ]
+                  },
+                  "airlineId": {
+                    "type": "string",
+                    "description": "IATA airline code to filter commission rules, e.g. GA, SQ, QZ"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Commission incentive rules"
+          }
+        }
+      }
+    },
+    "/api/v1/commission-incentive/load-profiles": {
+      "post": {
+        "operationId": "load_commission_incentive_profiles",
+        "summary": "Load Commission Incentive Profiles",
+        "description": "List all available commission incentive profile names. Profiles group commission rules together. Use when someone asks 'what commission profiles exist' or needs to know profile names before querying specific rules.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Commission profile list"
+          }
+        }
+      }
+    },
+    "/api/v1/tiered-incentive-rule-data/load-rules": {
+      "post": {
+        "operationId": "load_tiered_incentive_rules",
+        "summary": "Load Tiered Incentive Rules",
+        "description": "Retrieve volume-based tiered incentive rules. These define bonus commission tiers based on booking volume (e.g. sell 100+ tickets = extra 2% commission). Use when someone asks about 'tiered incentives', 'volume bonuses', 'tier-based commission', or 'incentive tiers for a brand'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileGroup": {
+                    "type": "string",
+                    "enum": [
+                      "TRAVELOKA",
+                      "AFFILIATE",
+                      "CORPORATE"
+                    ]
+                  },
+                  "brandId": {
+                    "type": "string",
+                    "description": "Brand ID: TRAVELOKA, TIKET, etc."
+                  },
+                  "airlineId": {
+                    "type": "string",
+                    "description": "IATA airline code"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tiered incentive rules"
+          }
+        }
+      }
+    },
+    "/api/v1/tiered-incentive-progress/check-booking-pnr": {
+      "post": {
+        "operationId": "check_tiered_incentive_progress",
+        "summary": "Check Tiered Incentive Progress for a Booking",
+        "description": "Check the tiered incentive progress for a specific booking by its PNR code. Shows which incentive tier the booking falls into and how much bonus was earned. Use when someone asks 'check incentive for PNR ABC123', 'tiered progress for a booking', or 'did this booking qualify for bonus commission'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "pnr"
+                ],
+                "properties": {
+                  "pnr": {
+                    "type": "string",
+                    "description": "Booking PNR code (e.g. ABC123)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Incentive progress details"
+          }
+        }
+      }
+    },
+    "/api/v1/issuance-fee-rule-data/load-rules": {
+      "post": {
+        "operationId": "load_issuance_fee_rules",
+        "summary": "Load Ticket Issuance Fee Rules",
+        "description": "Retrieve ticket issuance fee rules. These define fees charged for issuing airline tickets through different providers. Use when someone asks about 'issuance fees', 'ticketing fees', 'ticket issuance charges', or 'issuance fee config'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileGroup": {
+                    "type": "string",
+                    "enum": [
+                      "TRAVELOKA",
+                      "AFFILIATE",
+                      "CORPORATE"
+                    ]
+                  },
+                  "originCountry": {
+                    "type": "string"
+                  },
+                  "destinationCountry": {
+                    "type": "string"
+                  },
+                  "airlineId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Issuance fee rules"
+          }
+        }
+      }
+    },
+    "/api/v1/pricing-profile/load-profileNames": {
+      "post": {
+        "operationId": "load_pricing_profiles",
+        "summary": "Load Pricing Profile Names",
+        "description": "List all available pricing profile names. Pricing profiles group pricing rules by business context (e.g. default, promo, enterprise). Use when someone asks 'what pricing profiles exist' or needs profile names for further queries.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of pricing profile names"
+          }
+        }
+      }
+    },
+    "/tool/load_fare_adjuster_by_base_fare": {
+      "post": {
+        "operationId": "load_fare_adjuster_by_base_fare",
+        "summary": "Load fare adjuster by base fare",
+        "description": "Load fare adjuster by base fare",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "flightProviderId": {
+                    "type": "string",
+                    "description": "Flight provider ID"
+                  }
+                },
+                "required": [
+                  "flightProviderId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/load_fare_adjuster_by_airport_tax": {
+      "post": {
+        "operationId": "load_fare_adjuster_by_airport_tax",
+        "summary": "Load fare adjuster by airport tax",
+        "description": "Load fare adjuster by airport tax",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "flightProviderId": {
+                    "type": "string",
+                    "description": "Flight provider ID"
+                  }
+                },
+                "required": [
+                  "flightProviderId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/read_pricing_provider": {
+      "post": {
+        "operationId": "read_pricing_provider",
+        "summary": "Read pricing provider",
+        "description": "Read pricing provider",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/check_fare": {
+      "post": {
+        "operationId": "check_fare",
+        "summary": "Check fare",
+        "description": "Check fare",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "origin": {
+                    "type": "string",
+                    "description": "Origin"
+                  },
+                  "destination": {
+                    "type": "string",
+                    "description": "Destination"
+                  },
+                  "departureDate": {
+                    "type": "string",
+                    "description": "Departure date"
+                  },
+                  "airline": {
+                    "type": "string",
+                    "description": "Airline"
+                  },
+                  "provider": {
+                    "type": "string",
+                    "description": "Provider"
+                  }
+                },
+                "required": [
+                  "origin",
+                  "destination"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_fare_check_result": {
+      "post": {
+        "operationId": "get_fare_check_result",
+        "summary": "Get fare check result",
+        "description": "Get fare check result",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fareCheckingId": {
+                    "type": "string",
+                    "description": "Fare checking ID"
+                  }
+                },
+                "required": [
+                  "fareCheckingId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_special_fare_config": {
+      "post": {
+        "operationId": "get_special_fare_config",
+        "summary": "Get special fare config",
+        "description": "Get special fare config",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "configId": {
+                    "type": "string",
+                    "description": "Config ID"
+                  }
+                },
+                "required": [
+                  "configId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/search_regular_fare": {
+      "post": {
+        "operationId": "search_regular_fare",
+        "summary": "Search regular fare",
+        "description": "Search regular fare",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "origin": {
+                    "type": "string",
+                    "description": "Origin"
+                  },
+                  "destination": {
+                    "type": "string",
+                    "description": "Destination"
+                  },
+                  "departureDate": {
+                    "type": "string",
+                    "description": "Departure date"
+                  },
+                  "airline": {
+                    "type": "string",
+                    "description": "Airline"
+                  },
+                  "provider": {
+                    "type": "string",
+                    "description": "Provider"
+                  }
+                },
+                "required": [
+                  "origin",
+                  "destination",
+                  "departureDate"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_airline_routes": {
+      "post": {
+        "operationId": "get_airline_routes",
+        "summary": "Get airline routes",
+        "description": "Get airline routes",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "airlineId": {
+                    "type": "string",
+                    "description": "Airline ID"
+                  },
+                  "originCountry": {
+                    "type": "string",
+                    "description": "Origin country"
+                  },
+                  "destinationCountry": {
+                    "type": "string",
+                    "description": "Destination country"
+                  },
+                  "originAirport": {
+                    "type": "string",
+                    "description": "Origin airport"
+                  },
+                  "destinationAirport": {
+                    "type": "string",
+                    "description": "Destination airport"
+                  },
+                  "inventoryType": {
+                    "type": "string",
+                    "description": "Inventory type"
+                  },
+                  "defaultProvider": {
+                    "type": "string",
+                    "description": "Default provider"
+                  },
+                  "defaultFulfillment": {
+                    "type": "string",
+                    "description": "Default fulfillment"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_airline_route_history": {
+      "post": {
+        "operationId": "get_airline_route_history",
+        "summary": "Get airline route history",
+        "description": "Get airline route history",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "airlineId": {
+                    "type": "string",
+                    "description": "Airline ID"
+                  },
+                  "originCountry": {
+                    "type": "string",
+                    "description": "Origin country"
+                  },
+                  "destinationCountry": {
+                    "type": "string",
+                    "description": "Destination country"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_airline_route_history_filtered": {
+      "post": {
+        "operationId": "get_airline_route_history_filtered",
+        "summary": "Get airline route history filtered",
+        "description": "Get airline route history filtered",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "airlineId": {
+                    "type": "string",
+                    "description": "Airline ID"
+                  },
+                  "originCountry": {
+                    "type": "string",
+                    "description": "Origin country"
+                  },
+                  "destinationCountry": {
+                    "type": "string",
+                    "description": "Destination country"
+                  },
+                  "month": {
+                    "type": "string",
+                    "description": "Month"
+                  },
+                  "year": {
+                    "type": "string",
+                    "description": "Year"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_provider_sourcing": {
+      "post": {
+        "operationId": "get_provider_sourcing",
+        "summary": "Get provider sourcing",
+        "description": "Get provider sourcing",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "airlineId": {
+                    "type": "string",
+                    "description": "Airline ID"
+                  },
+                  "inventoryType": {
+                    "type": "string",
+                    "description": "Inventory type"
+                  },
+                  "agentId": {
+                    "type": "string",
+                    "description": "Agent ID"
+                  },
+                  "locale": {
+                    "type": "string",
+                    "description": "Locale"
+                  },
+                  "originCountry": {
+                    "type": "string",
+                    "description": "Origin country"
+                  },
+                  "destinationCountry": {
+                    "type": "string",
+                    "description": "Destination country"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_provider_source_histories": {
+      "post": {
+        "operationId": "get_provider_source_histories",
+        "summary": "Get provider source histories",
+        "description": "Get provider source histories",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "airlineId": {
+                    "type": "string",
+                    "description": "Airline ID"
+                  },
+                  "inventoryType": {
+                    "type": "string",
+                    "description": "Inventory type"
+                  },
+                  "agentId": {
+                    "type": "string",
+                    "description": "Agent ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_provider_source_latest_version": {
+      "post": {
+        "operationId": "get_provider_source_latest_version",
+        "summary": "Get provider source latest version",
+        "description": "Get provider source latest version",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_arbitration_modes": {
+      "post": {
+        "operationId": "get_arbitration_modes",
+        "summary": "Get arbitration modes",
+        "description": "Get arbitration modes",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_inventory_types": {
+      "post": {
+        "operationId": "get_inventory_types",
+        "summary": "Get inventory types",
+        "description": "Get inventory types",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_inventory_detail": {
+      "post": {
+        "operationId": "get_inventory_detail",
+        "summary": "Get inventory detail",
+        "description": "Get inventory detail",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "inventoryIdentifier": {
+                    "type": "string",
+                    "description": "Inventory identifier"
+                  }
+                },
+                "required": [
+                  "inventoryIdentifier"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_decompressed_object": {
+      "post": {
+        "operationId": "get_decompressed_object",
+        "summary": "Get decompressed object",
+        "description": "Get decompressed object",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "compressedObject": {
+                    "type": "string",
+                    "description": "Compressed object"
+                  }
+                },
+                "required": [
+                  "compressedObject"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/v2/flag/get-feature-flags-by-application": {
+      "post": {
+        "operationId": "get_feature_flags",
+        "summary": "Get Feature Flags",
+        "description": "Retrieve feature flags for a specific application. Shows which features are enabled/disabled and their current state. Use when someone asks about 'feature flags', 'is X feature enabled', 'flag status for fprtckt', or 'what flags are on'. Keywords: feature flags, flag status, feature enablement.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "applicationName"
+                ],
+                "properties": {
+                  "applicationName": {
+                    "type": "string",
+                    "description": "Application name, e.g. fprtckt, fprcoin, fprlari, fprbud, fprtxf"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Feature flags for application retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/flag/get-applications": {
+      "post": {
+        "operationId": "get_flag_applications",
+        "summary": "List Flag Applications",
+        "description": "List all applications that have feature flags configured. Use when someone asks 'which apps have flags', 'flag applications', or needs to know what application names to use. Keywords: flag applications, application list, configured apps.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of flag applications retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/flag/get-flag-configuration": {
+      "post": {
+        "operationId": "get_flag_configuration",
+        "summary": "Get Flag Configuration Detail",
+        "description": "Get detailed configuration for a specific feature flag. Shows the flag's rules, conditions, rollout percentage, and targeting criteria. Use when someone asks 'what does flag X do', 'flag configuration', or 'how is this flag set up'. Keywords: flag configuration, rollout settings, flag rules.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "featureFlag"
+                ],
+                "properties": {
+                  "featureFlag": {
+                    "type": "string",
+                    "description": "Feature flag name/identifier"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Flag configuration retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/v1/condition-group/load": {
+      "post": {
+        "operationId": "load_condition_groups",
+        "summary": "Load Condition Groups",
+        "description": "Load reusable filter condition groups. Condition groups define sets of criteria (routes, airlines, dates) that can be shared across pricing rules. Use when someone asks about 'condition groups', 'filter conditions', 'reusable conditions', or 'what conditions are defined'. Keywords: condition groups, filter criteria, reusable filters.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Condition groups loaded successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/activity-log/getLogs": {
+      "post": {
+        "operationId": "get_activity_log",
+        "summary": "Get Activity/Audit Log",
+        "description": "Retrieve activity and audit logs showing who changed what configuration and when. Essential for tracking config changes and debugging. Use when someone asks 'who changed this', 'audit log', 'activity log', 'recent changes', or 'what was modified'. Keywords: audit log, activity log, configuration changes, change tracking.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "entityType"
+                ],
+                "properties": {
+                  "entityType": {
+                    "type": "string",
+                    "description": "Entity type to query logs for, e.g. PRICING_RULE, AUTOPILOT, BUDGET, COMMISSION"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Activity logs retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/airline-ids": {
+      "post": {
+        "operationId": "get_airline_ids",
+        "summary": "List All Airline IDs",
+        "description": "List all supported airline IDs in the system. Returns IATA codes and airline names. Use when someone asks 'what airlines are supported', 'list airlines', 'airline codes', or needs to look up an airline code. Keywords: airline codes, IATA codes, supported airlines.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Airline IDs retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/countries": {
+      "post": {
+        "operationId": "get_countries",
+        "summary": "List All Countries",
+        "description": "List all supported countries in the system. Returns country codes and names. Use when someone asks 'what countries are supported', 'list countries', 'country codes', or needs to verify a country code. Keywords: country codes, supported countries, country list.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Countries list retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/currency-value/convert": {
+      "post": {
+        "operationId": "convert_currency",
+        "summary": "Convert Currency",
+        "description": "Convert an amount between currencies using FPR's internal exchange rates. Use when someone asks to 'convert IDR to USD', 'what is 1000 THB in IDR', 'currency conversion', or needs to compare amounts across markets. Keywords: currency conversion, exchange rate, amount conversion.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "fromCurrency",
+                  "toCurrency",
+                  "amount"
+                ],
+                "properties": {
+                  "fromCurrency": {
+                    "type": "string",
+                    "description": "Source currency code, e.g. IDR, THB, VND, USD"
+                  },
+                  "toCurrency": {
+                    "type": "string",
+                    "description": "Target currency code"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "description": "Amount to convert"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Currency conversion completed successfully"
+          }
+        }
+      }
+    },
+    "/api/v1/profiling/search-profile": {
+      "post": {
+        "operationId": "search_user_profile",
+        "summary": "Search User Profile",
+        "description": "Search user profiles and segmentation data. Returns user segment assignments and profile attributes. Use when someone asks about 'user segment', 'user profile', 'what segment is this user in', or 'customer profiling'. Keywords: user segmentation, profile lookup, customer segment.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User profile and segmentation data retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/v1/profiling/get-config": {
+      "post": {
+        "operationId": "load_profiling_config",
+        "summary": "Load Profiling Configuration",
+        "description": "Load user profiling configuration for a specific country. Shows how users are segmented and what criteria are used. Use when someone asks about 'profiling setup', 'segmentation config', or 'how are users categorized'. Keywords: segmentation rules, profile criteria, country configuration.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "profileGroup"
+                ],
+                "properties": {
+                  "profileGroup": {
+                    "type": "string",
+                    "description": "Country-based profile group code, e.g. ID (Indonesia), TH (Thailand), VN (Vietnam)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profiling configuration loaded successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/booking-details/get-flight-info": {
+      "post": {
+        "operationId": "get_flight_info",
+        "summary": "Get Booking Flight Info",
+        "description": "Retrieve flight booking details by booking ID. Returns flight segments, pricing breakdown, passenger info, and booking status. Use when someone asks about 'booking details', 'booking ID 12345', 'what's in this booking', or 'flight info for booking'. Keywords: booking lookup, flight segments, booking status.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "bookingId"
+                ],
+                "properties": {
+                  "bookingId": {
+                    "type": "integer",
+                    "description": "Booking ID (numeric)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Flight booking information retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/booking-details/get-flight-info-json": {
+      "post": {
+        "operationId": "get_flight_info_json",
+        "summary": "Get Booking Flight Info (JSON)",
+        "description": "Retrieve flight booking details as raw JSON format. Same data as get_flight_info but in machine-readable JSON structure. Use when you need structured booking data for analysis or comparison. Keywords: booking JSON, structured data, machine-readable.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "bookingId"
+                ],
+                "properties": {
+                  "bookingId": {
+                    "type": "integer",
+                    "description": "Booking ID (numeric)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Flight booking information in JSON format retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/booking-log/get-object-content": {
+      "post": {
+        "operationId": "get_booking_log",
+        "summary": "Get Booking Log",
+        "description": "Retrieve booking log content from S3 storage. Shows detailed booking event logs for debugging and audit purposes. Use when someone asks about 'booking log', 'booking events', 'what happened during booking', or needs to trace a booking issue. Keywords: booking events, S3 logs, booking audit trail.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "description": "Date for log lookup, e.g. 2024-01-15"
+                  },
+                  "path": {
+                    "type": "string",
+                    "description": "S3 path to specific log object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Booking log content retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/winner/get": {
+      "post": {
+        "operationId": "get_winner_details",
+        "summary": "Get Winner Details",
+        "description": "Retrieve winner details by winner code. Winners are the selected fare/provider combination for a booking. Use when someone asks about 'winner code', 'which provider won', or 'winning fare details'. Keywords: winner code, provider selection, fare winner.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "winnerCode"
+                ],
+                "properties": {
+                  "winnerCode": {
+                    "type": "string",
+                    "description": "Winner code identifier"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Winner details retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/winner/search-by-spec": {
+      "post": {
+        "operationId": "search_winner",
+        "summary": "Search Winners",
+        "description": "Search winners by specification and conditions. Find which fares/providers won for specific routes or criteria. Use when someone asks 'who wins on this route', 'winner search', or 'fare winner analysis'. Keywords: winner search, provider analysis, route winners.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Winner search results retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/simplecrud/simple-crud-query": {
+      "post": {
+        "operationId": "simple_crud_query",
+        "summary": "MongoDB CRUD Query",
+        "description": "Execute direct MongoDB queries on demand-side collections. Supports GET, UPSERT, and DELETE operations on any demand_booking collection. Use when someone needs to 'query mongo', 'check mongo collection', or run a 'direct database query'. WARNING: UPSERT/DELETE operations modify data. Keywords: MongoDB, direct query, database operation.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "collection": {
+                    "type": "string",
+                    "description": "MongoDB collection name"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "description": "CRUD operation: GET, UPSERT, DELETE"
+                  },
+                  "query": {
+                    "type": "string",
+                    "description": "MongoDB query as JSON string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "MongoDB query executed successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/demand/search-cache/get": {
+      "post": {
+        "operationId": "search_cache_content",
+        "summary": "Search Fare Cache by Route",
+        "description": "Look up cached fare data for a specific route. Shows what fares are currently cached for a given origin-destination pair. Use when someone asks about 'fare cache', 'cached prices for JKT-SIN', 'what fares are cached', or 'demand cache by route'. Keywords: fare cache, route cache, cached fares.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "origin",
+                  "destination"
+                ],
+                "properties": {
+                  "origin": {
+                    "type": "string",
+                    "description": "Origin airport code, e.g. CGK, BKK, SGN"
+                  },
+                  "destination": {
+                    "type": "string",
+                    "description": "Destination airport code"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cached fare data retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/demand/search-cache/get-by-id": {
+      "post": {
+        "operationId": "search_cache_by_id",
+        "summary": "Search Cache by Search ID",
+        "description": "Look up demand cache by a specific search ID. Retrieves the cached search results for a particular search session. Use when someone has a 'search ID' and wants to see what results were cached. Keywords: search ID cache, session cache, search results.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "searchId"
+                ],
+                "properties": {
+                  "searchId": {
+                    "type": "string",
+                    "description": "Search ID from a demand search session"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cache data by search ID retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/flight/mongo-operation-manager/collection-name": {
+      "post": {
+        "operationId": "list_mongo_collections",
+        "summary": "List MongoDB Collections",
+        "description": "List all available MongoDB collection names in the demand database. Use when someone asks 'what mongo collections exist', 'list collections', or needs to know which collections can be queried. Keywords: MongoDB collections, collection list, available collections.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "MongoDB collection names listed successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/flight-promo-label/get-promo-label-info": {
+      "post": {
+        "operationId": "search_promo_labels",
+        "summary": "Search Promo Labels",
+        "description": "Search promo label information and configuration. Promo labels are displayed on search results to highlight deals or promotions. Use when someone asks about 'promo labels', 'promotional tags', 'deal labels', or 'what promos are shown on search'. Keywords: promo labels, promotional tags, deal labels.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Promo label information retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/flight-promo-label/get-promo-label-supporting-data": {
+      "post": {
+        "operationId": "get_promo_label_data",
+        "summary": "Get Promo Label Supporting Data",
+        "description": "Get supporting data and options for promo labels. Returns available promo label types, configurations, and setup options. Use when someone asks about 'promo label options', 'label configuration', or needs to set up new promo labels. Keywords: label configuration, promo options, label setup.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Promo label supporting data retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/v1/search-simulation/traveloka-initial": {
+      "post": {
+        "operationId": "simulate_search",
+        "summary": "Simulate Flight Search",
+        "description": "Run a simulated flight search and return results. Mimics a real user search to test pricing, availability, and display. Use when someone asks to 'simulate a search', 'test search results', 'what would a user see for JKT-SIN', or 'run a search simulation'. Keywords: search simulation, test search, search results.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "origin": {
+                    "type": "string",
+                    "description": "Origin airport code"
+                  },
+                  "destination": {
+                    "type": "string",
+                    "description": "Destination airport code"
+                  },
+                  "departureDate": {
+                    "type": "string",
+                    "description": "Departure date YYYY-MM-DD"
+                  },
+                  "paxCount": {
+                    "type": "integer",
+                    "description": "Number of passengers"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Flight search simulation completed successfully"
+          }
+        }
+      }
+    }
+  }
+}
