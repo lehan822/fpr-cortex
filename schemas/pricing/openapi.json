@@ -1,0 +1,373 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "FPR Pricing Tools API",
+    "description": "Flight Pricing & Revenue pricing domain tools. Covers autopilot rules, budget management, baseline/bundling/prediction pricing rules, commission & incentive configuration, and fare checking.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://tool-api.fpr.staging-traveloka.com",
+      "description": "Staging"
+    }
+  ],
+  "paths": {
+    "/api/v2/flight-auto-pilot/load-rules": {
+      "post": {
+        "operationId": "load_autopilot_rules",
+        "summary": "Load Autopilot Pricing Rules",
+        "description": "Retrieve automated pricing rules (autopilot) that dynamically adjust flight prices. Filter by country pair and airline to see which autopilot rules are active. Use when someone asks about 'autopilot rules', 'automated pricing', or 'dynamic pricing config' for a specific market.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileGroup": {
+                    "type": "string",
+                    "description": "Profile group: TRAVELOKA, AFFILIATE, or CORPORATE. Defaults to TRAVELOKA if omitted.",
+                    "enum": ["TRAVELOKA", "AFFILIATE", "CORPORATE"]
+                  },
+                  "originCountry": {
+                    "type": "string",
+                    "description": "Origin country code (ISO 2-letter), e.g. ID (Indonesia), TH (Thailand), VN (Vietnam), SG (Singapore)"
+                  },
+                  "destinationCountry": {
+                    "type": "string",
+                    "description": "Destination country code (ISO 2-letter)"
+                  },
+                  "airlineId": {
+                    "type": "string",
+                    "description": "IATA airline code, e.g. GA (Garuda), SQ (Singapore Airlines), QZ (AirAsia Indonesia), JT (Lion Air)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Autopilot rules matching the criteria" } }
+      }
+    },
+    "/api/v1/baseline-pricing-rule/load-rules": {
+      "post": {
+        "operationId": "load_baseline_pricing_rules",
+        "summary": "Load Baseline Pricing Rules",
+        "description": "Retrieve baseline markup/margin rules that define the base price adjustment for flights. These are the foundational pricing rules before any dynamic or promotional adjustments. Use when someone asks about 'baseline markup', 'base margin', 'default pricing rules', or 'how much markup do we add'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileGroup": {
+                    "type": "string",
+                    "enum": ["TRAVELOKA", "AFFILIATE", "CORPORATE"],
+                    "description": "Profile group. Defaults to TRAVELOKA."
+                  },
+                  "originCountry": { "type": "string", "description": "Origin country code (ISO 2-letter)" },
+                  "destinationCountry": { "type": "string", "description": "Destination country code (ISO 2-letter)" },
+                  "airlineId": { "type": "string", "description": "IATA airline code, e.g. GA, SQ, QZ" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Baseline pricing rules" } }
+      }
+    },
+    "/api/v2/pricing/budget/balance": {
+      "post": {
+        "operationId": "get_budget_balance",
+        "summary": "Get Budget Balance",
+        "description": "Check the remaining and used budget balance for pricing operations. Returns how much budget is left and how much has been consumed. Use when someone asks 'how much budget is left', 'budget remaining for IDR', or 'pricing budget status'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["currency"],
+                "properties": {
+                  "currency": {
+                    "type": "string",
+                    "description": "Currency code: IDR (Indonesian Rupiah), THB (Thai Baht), VND (Vietnamese Dong), SGD (Singapore Dollar), MYR (Malaysian Ringgit)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Budget balance details" } }
+      }
+    },
+    "/api/v2/pricing/budget/activelist": {
+      "post": {
+        "operationId": "list_active_budgets",
+        "summary": "List Active Budgets",
+        "description": "List all currently active pricing budgets filtered by currency. Shows budget names, levels, and allocation details. Use when someone asks 'what budgets are active', 'show all budgets for IDR', or 'budget list'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["currency"],
+                "properties": {
+                  "currency": { "type": "string", "description": "Currency code: IDR, THB, VND, SGD, MYR" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "List of active budgets" } }
+      }
+    },
+    "/api/v2/pricing/budget/budget-level-list": {
+      "post": {
+        "operationId": "get_budget_levels",
+        "summary": "Get Budget Level Types",
+        "description": "List all budget level types available in the system (e.g. DAILY, WEEKLY, MONTHLY levels). Use when someone asks 'what budget levels exist' or 'budget level types'.",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object" } } }
+        },
+        "responses": { "200": { "description": "Budget level types" } }
+      }
+    },
+    "/api/v2/pricing/budget/user/balance": {
+      "post": {
+        "operationId": "get_budget_user_balance",
+        "summary": "Get User-Level Budget Balance",
+        "description": "Check budget balance at the individual user level. Shows per-user budget consumption and remaining allocation. Use when someone asks about a specific user's budget or 'user budget balance'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["currency"],
+                "properties": {
+                  "currency": { "type": "string", "description": "Currency code: IDR, THB, VND, SGD, MYR" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "User budget balance" } }
+      }
+    },
+    "/api/v1/bundling-pricing-rule/load-rules": {
+      "post": {
+        "operationId": "load_bundling_pricing_rules",
+        "summary": "Load Bundling Pricing Rules",
+        "description": "Retrieve bundling pricing rules that define how bundled products (flight + hotel, flight + insurance) are priced. Use when someone asks about 'bundle pricing', 'bundling rules', or 'package deal pricing config'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileGroup": { "type": "string", "enum": ["TRAVELOKA", "AFFILIATE", "CORPORATE"] },
+                  "originCountry": { "type": "string", "description": "Origin country code" },
+                  "destinationCountry": { "type": "string", "description": "Destination country code" },
+                  "airlineId": { "type": "string", "description": "IATA airline code" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Bundling pricing rules" } }
+      }
+    },
+    "/api/v2/flight-price-prediction/load-rules": {
+      "post": {
+        "operationId": "load_price_prediction_rules",
+        "summary": "Load Price Prediction Rules",
+        "description": "Retrieve anchor fare and price prediction rules used for dynamic pricing. These rules define how the system predicts fare trends and sets anchor prices. Use when someone asks about 'price prediction', 'anchor fare rules', 'dynamic pricing prediction', or 'fare forecast config'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileGroup": { "type": "string", "enum": ["TRAVELOKA", "AFFILIATE", "CORPORATE"] },
+                  "originCountry": { "type": "string" },
+                  "destinationCountry": { "type": "string" },
+                  "airlineId": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Price prediction rules" } }
+      }
+    },
+    "/api/v2/price-cut-modifier-rule/load-rules": {
+      "post": {
+        "operationId": "load_price_cut_modifier_rules",
+        "summary": "Load Price Cut / Promo Modifier Rules",
+        "description": "Retrieve price cut and promotional modifier rules. These define temporary price reductions, flash sales, and promotional adjustments. Use when someone asks about 'price cut rules', 'promo modifiers', 'discount config', or 'flash sale pricing'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileGroup": { "type": "string", "enum": ["TRAVELOKA", "AFFILIATE", "CORPORATE"] },
+                  "originCountry": { "type": "string" },
+                  "destinationCountry": { "type": "string" },
+                  "airlineId": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Price cut modifier rules" } }
+      }
+    },
+    "/api/v1/trx-fee/load-rules": {
+      "post": {
+        "operationId": "load_trx_fee_rules",
+        "summary": "Load Transaction Fee Rules",
+        "description": "Retrieve transaction/service fee rules. These define additional fees charged on top of the base fare (e.g. booking fee, service charge). Use when someone asks about 'transaction fees', 'service fees', 'booking charges', or 'trx fee config'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileGroup": { "type": "string", "enum": ["TRAVELOKA", "AFFILIATE", "CORPORATE"] },
+                  "originCountry": { "type": "string" },
+                  "destinationCountry": { "type": "string" },
+                  "airlineId": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Transaction fee rules" } }
+      }
+    },
+    "/api/v1/commission-incentive-rule-data/load-rules": {
+      "post": {
+        "operationId": "load_commission_incentive_rules",
+        "summary": "Load Commission Incentive Rules",
+        "description": "Retrieve commission rate rules for airline partners. Defines how much commission Traveloka receives per ticket from each airline. Use when someone asks about 'commission rates', 'airline commission', 'incentive rules for SQ', or 'partner commission config'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileGroup": { "type": "string", "enum": ["TRAVELOKA", "AFFILIATE", "CORPORATE"] },
+                  "airlineId": { "type": "string", "description": "IATA airline code to filter commission rules, e.g. GA, SQ, QZ" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Commission incentive rules" } }
+      }
+    },
+    "/api/v1/commission-incentive/load-profiles": {
+      "post": {
+        "operationId": "load_commission_incentive_profiles",
+        "summary": "Load Commission Incentive Profiles",
+        "description": "List all available commission incentive profile names. Profiles group commission rules together. Use when someone asks 'what commission profiles exist' or needs to know profile names before querying specific rules.",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object" } } }
+        },
+        "responses": { "200": { "description": "Commission profile list" } }
+      }
+    },
+    "/api/v1/tiered-incentive-rule-data/load-rules": {
+      "post": {
+        "operationId": "load_tiered_incentive_rules",
+        "summary": "Load Tiered Incentive Rules",
+        "description": "Retrieve volume-based tiered incentive rules. These define bonus commission tiers based on booking volume (e.g. sell 100+ tickets = extra 2% commission). Use when someone asks about 'tiered incentives', 'volume bonuses', 'tier-based commission', or 'incentive tiers for a brand'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileGroup": { "type": "string", "enum": ["TRAVELOKA", "AFFILIATE", "CORPORATE"] },
+                  "brandId": { "type": "string", "description": "Brand ID: TRAVELOKA, TIKET, etc." },
+                  "airlineId": { "type": "string", "description": "IATA airline code" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Tiered incentive rules" } }
+      }
+    },
+    "/api/v1/tiered-incentive-progress/check-booking-pnr": {
+      "post": {
+        "operationId": "check_tiered_incentive_progress",
+        "summary": "Check Tiered Incentive Progress for a Booking",
+        "description": "Check the tiered incentive progress for a specific booking by its PNR code. Shows which incentive tier the booking falls into and how much bonus was earned. Use when someone asks 'check incentive for PNR ABC123', 'tiered progress for a booking', or 'did this booking qualify for bonus commission'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["pnr"],
+                "properties": {
+                  "pnr": { "type": "string", "description": "Booking PNR code (e.g. ABC123)" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Incentive progress details" } }
+      }
+    },
+    "/api/v1/issuance-fee-rule-data/load-rules": {
+      "post": {
+        "operationId": "load_issuance_fee_rules",
+        "summary": "Load Ticket Issuance Fee Rules",
+        "description": "Retrieve ticket issuance fee rules. These define fees charged for issuing airline tickets through different providers. Use when someone asks about 'issuance fees', 'ticketing fees', 'ticket issuance charges', or 'issuance fee config'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileGroup": { "type": "string", "enum": ["TRAVELOKA", "AFFILIATE", "CORPORATE"] },
+                  "originCountry": { "type": "string" },
+                  "destinationCountry": { "type": "string" },
+                  "airlineId": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Issuance fee rules" } }
+      }
+    },
+    "/api/v1/pricing-profile/load-profileNames": {
+      "post": {
+        "operationId": "load_pricing_profiles",
+        "summary": "Load Pricing Profile Names",
+        "description": "List all available pricing profile names. Pricing profiles group pricing rules by business context (e.g. default, promo, enterprise). Use when someone asks 'what pricing profiles exist' or needs profile names for further queries.",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object" } } }
+        },
+        "responses": { "200": { "description": "List of pricing profile names" } }
+      }
+    }
+  }
+}

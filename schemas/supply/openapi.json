@@ -1,0 +1,610 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "fprtool-supply-minimal",
+    "version": "1.0.0",
+    "description": "Supply tools"
+  },
+  "servers": [
+    {
+      "url": "https://tool-api.fpr.staging-traveloka.com"
+    }
+  ],
+  "paths": {
+    "/tool/load_fare_adjuster_by_base_fare": {
+      "post": {
+        "operationId": "load_fare_adjuster_by_base_fare",
+        "summary": "Load fare adjuster by base fare",
+        "description": "Load fare adjuster by base fare",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "flightProviderId": {
+                    "type": "string",
+                    "description": "Flight provider ID"
+                  }
+                },
+                "required": [
+                  "flightProviderId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/load_fare_adjuster_by_airport_tax": {
+      "post": {
+        "operationId": "load_fare_adjuster_by_airport_tax",
+        "summary": "Load fare adjuster by airport tax",
+        "description": "Load fare adjuster by airport tax",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "flightProviderId": {
+                    "type": "string",
+                    "description": "Flight provider ID"
+                  }
+                },
+                "required": [
+                  "flightProviderId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/read_pricing_provider": {
+      "post": {
+        "operationId": "read_pricing_provider",
+        "summary": "Read pricing provider",
+        "description": "Read pricing provider",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/check_fare": {
+      "post": {
+        "operationId": "check_fare",
+        "summary": "Check fare",
+        "description": "Check fare",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "origin": {
+                    "type": "string",
+                    "description": "Origin"
+                  },
+                  "destination": {
+                    "type": "string",
+                    "description": "Destination"
+                  },
+                  "departureDate": {
+                    "type": "string",
+                    "description": "Departure date"
+                  },
+                  "airline": {
+                    "type": "string",
+                    "description": "Airline"
+                  },
+                  "provider": {
+                    "type": "string",
+                    "description": "Provider"
+                  }
+                },
+                "required": [
+                  "origin",
+                  "destination"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_fare_check_result": {
+      "post": {
+        "operationId": "get_fare_check_result",
+        "summary": "Get fare check result",
+        "description": "Get fare check result",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fareCheckingId": {
+                    "type": "string",
+                    "description": "Fare checking ID"
+                  }
+                },
+                "required": [
+                  "fareCheckingId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_special_fare_config": {
+      "post": {
+        "operationId": "get_special_fare_config",
+        "summary": "Get special fare config",
+        "description": "Get special fare config",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "configId": {
+                    "type": "string",
+                    "description": "Config ID"
+                  }
+                },
+                "required": [
+                  "configId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/search_regular_fare": {
+      "post": {
+        "operationId": "search_regular_fare",
+        "summary": "Search regular fare",
+        "description": "Search regular fare",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "origin": {
+                    "type": "string",
+                    "description": "Origin"
+                  },
+                  "destination": {
+                    "type": "string",
+                    "description": "Destination"
+                  },
+                  "departureDate": {
+                    "type": "string",
+                    "description": "Departure date"
+                  },
+                  "airline": {
+                    "type": "string",
+                    "description": "Airline"
+                  },
+                  "provider": {
+                    "type": "string",
+                    "description": "Provider"
+                  }
+                },
+                "required": [
+                  "origin",
+                  "destination",
+                  "departureDate"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_airline_routes": {
+      "post": {
+        "operationId": "get_airline_routes",
+        "summary": "Get airline routes",
+        "description": "Get airline routes",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "airlineId": {
+                    "type": "string",
+                    "description": "Airline ID"
+                  },
+                  "originCountry": {
+                    "type": "string",
+                    "description": "Origin country"
+                  },
+                  "destinationCountry": {
+                    "type": "string",
+                    "description": "Destination country"
+                  },
+                  "originAirport": {
+                    "type": "string",
+                    "description": "Origin airport"
+                  },
+                  "destinationAirport": {
+                    "type": "string",
+                    "description": "Destination airport"
+                  },
+                  "inventoryType": {
+                    "type": "string",
+                    "description": "Inventory type"
+                  },
+                  "defaultProvider": {
+                    "type": "string",
+                    "description": "Default provider"
+                  },
+                  "defaultFulfillment": {
+                    "type": "string",
+                    "description": "Default fulfillment"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_airline_route_history": {
+      "post": {
+        "operationId": "get_airline_route_history",
+        "summary": "Get airline route history",
+        "description": "Get airline route history",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "airlineId": {
+                    "type": "string",
+                    "description": "Airline ID"
+                  },
+                  "originCountry": {
+                    "type": "string",
+                    "description": "Origin country"
+                  },
+                  "destinationCountry": {
+                    "type": "string",
+                    "description": "Destination country"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_airline_route_history_filtered": {
+      "post": {
+        "operationId": "get_airline_route_history_filtered",
+        "summary": "Get airline route history filtered",
+        "description": "Get airline route history filtered",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "airlineId": {
+                    "type": "string",
+                    "description": "Airline ID"
+                  },
+                  "originCountry": {
+                    "type": "string",
+                    "description": "Origin country"
+                  },
+                  "destinationCountry": {
+                    "type": "string",
+                    "description": "Destination country"
+                  },
+                  "month": {
+                    "type": "string",
+                    "description": "Month"
+                  },
+                  "year": {
+                    "type": "string",
+                    "description": "Year"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_provider_sourcing": {
+      "post": {
+        "operationId": "get_provider_sourcing",
+        "summary": "Get provider sourcing",
+        "description": "Get provider sourcing",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "airlineId": {
+                    "type": "string",
+                    "description": "Airline ID"
+                  },
+                  "inventoryType": {
+                    "type": "string",
+                    "description": "Inventory type"
+                  },
+                  "agentId": {
+                    "type": "string",
+                    "description": "Agent ID"
+                  },
+                  "locale": {
+                    "type": "string",
+                    "description": "Locale"
+                  },
+                  "originCountry": {
+                    "type": "string",
+                    "description": "Origin country"
+                  },
+                  "destinationCountry": {
+                    "type": "string",
+                    "description": "Destination country"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_provider_source_histories": {
+      "post": {
+        "operationId": "get_provider_source_histories",
+        "summary": "Get provider source histories",
+        "description": "Get provider source histories",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "airlineId": {
+                    "type": "string",
+                    "description": "Airline ID"
+                  },
+                  "inventoryType": {
+                    "type": "string",
+                    "description": "Inventory type"
+                  },
+                  "agentId": {
+                    "type": "string",
+                    "description": "Agent ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_provider_source_latest_version": {
+      "post": {
+        "operationId": "get_provider_source_latest_version",
+        "summary": "Get provider source latest version",
+        "description": "Get provider source latest version",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_arbitration_modes": {
+      "post": {
+        "operationId": "get_arbitration_modes",
+        "summary": "Get arbitration modes",
+        "description": "Get arbitration modes",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_inventory_types": {
+      "post": {
+        "operationId": "get_inventory_types",
+        "summary": "Get inventory types",
+        "description": "Get inventory types",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_inventory_detail": {
+      "post": {
+        "operationId": "get_inventory_detail",
+        "summary": "Get inventory detail",
+        "description": "Get inventory detail",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "inventoryIdentifier": {
+                    "type": "string",
+                    "description": "Inventory identifier"
+                  }
+                },
+                "required": [
+                  "inventoryIdentifier"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tool/get_decompressed_object": {
+      "post": {
+        "operationId": "get_decompressed_object",
+        "summary": "Get decompressed object",
+        "description": "Get decompressed object",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "compressedObject": {
+                    "type": "string",
+                    "description": "Compressed object"
+                  }
+                },
+                "required": [
+                  "compressedObject"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  }
+}
