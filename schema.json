@@ -54,7 +54,10 @@
           "200": {
             "description": "Autopilot rules matching the criteria"
           }
-        }
+        },
+        "tags": [
+          "pricing"
+        ]
       }
     },
     "/api/v1/baseline-pricing-rule/load-rules": {
@@ -99,7 +102,10 @@
           "200": {
             "description": "Baseline pricing rules"
           }
-        }
+        },
+        "tags": [
+          "pricing"
+        ]
       }
     },
     "/api/v2/pricing/budget/balance": {
@@ -130,7 +136,10 @@
           "200": {
             "description": "Budget balance details"
           }
-        }
+        },
+        "tags": [
+          "pricing"
+        ]
       }
     },
     "/api/v2/pricing/budget/activelist": {
@@ -161,7 +170,10 @@
           "200": {
             "description": "List of active budgets"
           }
-        }
+        },
+        "tags": [
+          "pricing"
+        ]
       }
     },
     "/api/v2/pricing/budget/budget-level-list": {
@@ -183,7 +195,10 @@
           "200": {
             "description": "Budget level types"
           }
-        }
+        },
+        "tags": [
+          "pricing"
+        ]
       }
     },
     "/api/v2/pricing/budget/user/balance": {
@@ -214,7 +229,10 @@
           "200": {
             "description": "User budget balance"
           }
-        }
+        },
+        "tags": [
+          "pricing"
+        ]
       }
     },
     "/api/v1/bundling-pricing-rule/load-rules": {
@@ -258,7 +276,10 @@
           "200": {
             "description": "Bundling pricing rules"
           }
-        }
+        },
+        "tags": [
+          "pricing"
+        ]
       }
     },
     "/api/v2/flight-price-prediction/load-rules": {
@@ -299,7 +320,10 @@
           "200": {
             "description": "Price prediction rules"
           }
-        }
+        },
+        "tags": [
+          "pricing"
+        ]
       }
     },
     "/api/v2/price-cut-modifier-rule/load-rules": {
@@ -340,7 +364,10 @@
           "200": {
             "description": "Price cut modifier rules"
           }
-        }
+        },
+        "tags": [
+          "pricing"
+        ]
       }
     },
     "/api/v1/trx-fee/load-rules": {
@@ -381,7 +408,10 @@
           "200": {
             "description": "Transaction fee rules"
           }
-        }
+        },
+        "tags": [
+          "pricing"
+        ]
       }
     },
     "/api/v1/commission-incentive-rule-data/load-rules": {
@@ -417,7 +447,10 @@
           "200": {
             "description": "Commission incentive rules"
           }
-        }
+        },
+        "tags": [
+          "pricing"
+        ]
       }
     },
     "/api/v1/commission-incentive/load-profiles": {
@@ -439,7 +472,10 @@
           "200": {
             "description": "Commission profile list"
           }
-        }
+        },
+        "tags": [
+          "pricing"
+        ]
       }
     },
     "/api/v1/tiered-incentive-rule-data/load-rules": {
@@ -479,7 +515,10 @@
           "200": {
             "description": "Tiered incentive rules"
           }
-        }
+        },
+        "tags": [
+          "pricing"
+        ]
       }
     },
     "/api/v1/tiered-incentive-progress/check-booking-pnr": {
@@ -510,7 +549,10 @@
           "200": {
             "description": "Incentive progress details"
           }
-        }
+        },
+        "tags": [
+          "pricing"
+        ]
       }
     },
     "/api/v1/issuance-fee-rule-data/load-rules": {
@@ -551,7 +593,10 @@
           "200": {
             "description": "Issuance fee rules"
           }
-        }
+        },
+        "tags": [
+          "pricing"
+        ]
       }
     },
     "/api/v1/pricing-profile/load-profileNames": {
@@ -573,7 +618,10 @@
           "200": {
             "description": "List of pricing profile names"
           }
-        }
+        },
+        "tags": [
+          "pricing"
+        ]
       }
     },
     "/tool/load_fare_adjuster_by_base_fare": {
@@ -604,7 +652,10 @@
           "200": {
             "description": "Success"
           }
-        }
+        },
+        "tags": [
+          "supply"
+        ]
       }
     },
     "/tool/load_fare_adjuster_by_airport_tax": {
@@ -635,7 +686,10 @@
           "200": {
             "description": "Success"
           }
-        }
+        },
+        "tags": [
+          "supply"
+        ]
       }
     },
     "/tool/read_pricing_provider": {
@@ -658,7 +712,10 @@
           "200": {
             "description": "Success"
           }
-        }
+        },
+        "tags": [
+          "supply"
+        ]
       }
     },
     "/tool/check_fare": {
@@ -706,7 +763,10 @@
           "200": {
             "description": "Success"
           }
-        }
+        },
+        "tags": [
+          "supply"
+        ]
       }
     },
     "/tool/get_fare_check_result": {
@@ -737,7 +797,10 @@
           "200": {
             "description": "Success"
           }
-        }
+        },
+        "tags": [
+          "supply"
+        ]
       }
     },
     "/tool/get_special_fare_config": {
@@ -768,7 +831,10 @@
           "200": {
             "description": "Success"
           }
-        }
+        },
+        "tags": [
+          "supply"
+        ]
       }
     },
     "/tool/search_regular_fare": {
@@ -817,7 +883,10 @@
           "200": {
             "description": "Success"
           }
-        }
+        },
+        "tags": [
+          "supply"
+        ]
       }
     },
     "/tool/get_airline_routes": {
@@ -873,7 +942,10 @@
           "200": {
             "description": "Success"
           }
-        }
+        },
+        "tags": [
+          "supply"
+        ]
       }
     },
     "/tool/get_airline_route_history": {
@@ -909,7 +981,10 @@
           "200": {
             "description": "Success"
           }
-        }
+        },
+        "tags": [
+          "supply"
+        ]
       }
     },
     "/tool/get_airline_route_history_filtered": {
@@ -953,7 +1028,10 @@
           "200": {
             "description": "Success"
           }
-        }
+        },
+        "tags": [
+          "supply"
+        ]
       }
     },
     "/tool/get_provider_sourcing": {
@@ -1001,7 +1079,10 @@
           "200": {
             "description": "Success"
           }
-        }
+        },
+        "tags": [
+          "supply"
+        ]
       }
     },
     "/tool/get_provider_source_histories": {
@@ -1037,7 +1118,10 @@
           "200": {
             "description": "Success"
           }
-        }
+        },
+        "tags": [
+          "supply"
+        ]
       }
     },
     "/tool/get_provider_source_latest_version": {
@@ -1060,7 +1144,10 @@
           "200": {
             "description": "Success"
           }
-        }
+        },
+        "tags": [
+          "supply"
+        ]
       }
     },
     "/tool/get_arbitration_modes": {
@@ -1083,7 +1170,10 @@
           "200": {
             "description": "Success"
           }
-        }
+        },
+        "tags": [
+          "supply"
+        ]
       }
     },
     "/tool/get_inventory_types": {
@@ -1106,7 +1196,10 @@
           "200": {
             "description": "Success"
           }
-        }
+        },
+        "tags": [
+          "supply"
+        ]
       }
     },
     "/tool/get_inventory_detail": {
@@ -1137,7 +1230,10 @@
           "200": {
             "description": "Success"
           }
-        }
+        },
+        "tags": [
+          "supply"
+        ]
       }
     },
     "/tool/get_decompressed_object": {
@@ -1168,7 +1264,10 @@
           "200": {
             "description": "Success"
           }
-        }
+        },
+        "tags": [
+          "supply"
+        ]
       }
     },
     "/api/v2/flag/get-feature-flags-by-application": {
@@ -1198,7 +1297,10 @@
           "200": {
             "description": "Feature flags for application retrieved successfully"
           }
-        }
+        },
+        "tags": [
+          "config"
+        ]
       }
     },
     "/api/v2/flag/get-applications": {
@@ -1220,7 +1322,10 @@
           "200": {
             "description": "List of flag applications retrieved successfully"
           }
-        }
+        },
+        "tags": [
+          "config"
+        ]
       }
     },
     "/api/v2/flag/get-flag-configuration": {
@@ -1250,7 +1355,10 @@
           "200": {
             "description": "Flag configuration retrieved successfully"
           }
-        }
+        },
+        "tags": [
+          "config"
+        ]
       }
     },
     "/api/v1/condition-group/load": {
@@ -1272,7 +1380,10 @@
           "200": {
             "description": "Condition groups loaded successfully"
           }
-        }
+        },
+        "tags": [
+          "config"
+        ]
       }
     },
     "/api/v2/activity-log/getLogs": {
@@ -1302,7 +1413,10 @@
           "200": {
             "description": "Activity logs retrieved successfully"
           }
-        }
+        },
+        "tags": [
+          "config"
+        ]
       }
     },
     "/api/airline-ids": {
@@ -1324,7 +1438,10 @@
           "200": {
             "description": "Airline IDs retrieved successfully"
           }
-        }
+        },
+        "tags": [
+          "config"
+        ]
       }
     },
     "/api/countries": {
@@ -1346,7 +1463,10 @@
           "200": {
             "description": "Countries list retrieved successfully"
           }
-        }
+        },
+        "tags": [
+          "config"
+        ]
       }
     },
     "/api/v2/currency-value/convert": {
@@ -1386,7 +1506,10 @@
           "200": {
             "description": "Currency conversion completed successfully"
           }
-        }
+        },
+        "tags": [
+          "config"
+        ]
       }
     },
     "/api/v1/profiling/search-profile": {
@@ -1408,7 +1531,10 @@
           "200": {
             "description": "User profile and segmentation data retrieved successfully"
           }
-        }
+        },
+        "tags": [
+          "demand"
+        ]
       }
     },
     "/api/v1/profiling/get-config": {
@@ -1438,7 +1564,10 @@
           "200": {
             "description": "Profiling configuration loaded successfully"
           }
-        }
+        },
+        "tags": [
+          "demand"
+        ]
       }
     },
     "/api/v2/booking-details/get-flight-info": {
@@ -1468,7 +1597,10 @@
           "200": {
             "description": "Flight booking information retrieved successfully"
           }
-        }
+        },
+        "tags": [
+          "demand"
+        ]
       }
     },
     "/api/v2/booking-details/get-flight-info-json": {
@@ -1498,7 +1630,10 @@
           "200": {
             "description": "Flight booking information in JSON format retrieved successfully"
           }
-        }
+        },
+        "tags": [
+          "demand"
+        ]
       }
     },
     "/api/v2/booking-log/get-object-content": {
@@ -1529,7 +1664,10 @@
           "200": {
             "description": "Booking log content retrieved successfully"
           }
-        }
+        },
+        "tags": [
+          "demand"
+        ]
       }
     },
     "/api/v2/winner/get": {
@@ -1559,7 +1697,10 @@
           "200": {
             "description": "Winner details retrieved successfully"
           }
-        }
+        },
+        "tags": [
+          "demand"
+        ]
       }
     },
     "/api/v2/winner/search-by-spec": {
@@ -1581,7 +1722,10 @@
           "200": {
             "description": "Winner search results retrieved successfully"
           }
-        }
+        },
+        "tags": [
+          "demand"
+        ]
       }
     },
     "/api/v2/simplecrud/simple-crud-query": {
@@ -1616,7 +1760,10 @@
           "200": {
             "description": "MongoDB query executed successfully"
           }
-        }
+        },
+        "tags": [
+          "demand"
+        ]
       }
     },
     "/api/v2/demand/search-cache/get": {
@@ -1651,7 +1798,10 @@
           "200": {
             "description": "Cached fare data retrieved successfully"
           }
-        }
+        },
+        "tags": [
+          "demand"
+        ]
       }
     },
     "/api/v2/demand/search-cache/get-by-id": {
@@ -1681,7 +1831,10 @@
           "200": {
             "description": "Cache data by search ID retrieved successfully"
           }
-        }
+        },
+        "tags": [
+          "demand"
+        ]
       }
     },
     "/api/v2/flight/mongo-operation-manager/collection-name": {
@@ -1703,7 +1856,10 @@
           "200": {
             "description": "MongoDB collection names listed successfully"
           }
-        }
+        },
+        "tags": [
+          "demand"
+        ]
       }
     },
     "/api/v2/flight-promo-label/get-promo-label-info": {
@@ -1725,7 +1881,10 @@
           "200": {
             "description": "Promo label information retrieved successfully"
           }
-        }
+        },
+        "tags": [
+          "demand"
+        ]
       }
     },
     "/api/v2/flight-promo-label/get-promo-label-supporting-data": {
@@ -1747,7 +1906,10 @@
           "200": {
             "description": "Promo label supporting data retrieved successfully"
           }
-        }
+        },
+        "tags": [
+          "demand"
+        ]
       }
     },
     "/api/v1/search-simulation/traveloka-initial": {
@@ -1786,8 +1948,29 @@
           "200": {
             "description": "Flight search simulation completed successfully"
           }
-        }
+        },
+        "tags": [
+          "demand"
+        ]
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "pricing",
+      "description": "Flight pricing rules \u2014 markup, budget, commission, incentive, and fee management"
+    },
+    {
+      "name": "supply",
+      "description": "Fare sourcing \u2014 fare adjusters, providers, routes, inventory, and fare checking"
+    },
+    {
+      "name": "demand",
+      "description": "Demand analysis \u2014 search simulation, fare cache, booking details, user profiling, promo labels"
+    },
+    {
+      "name": "config",
+      "description": "System configuration \u2014 feature flags, condition groups, reference data, currency conversion, audit logs"
+    }
+  ]
 }
