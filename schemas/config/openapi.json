@@ -1,0 +1,234 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "FPR Config Tools API",
+    "description": "Flight Pricing & Revenue cross-team configuration tools. Covers feature flags, audit/activity logs, condition groups, currency conversion, and reference data (countries, airlines).",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://tool-api.fpr.staging-traveloka.com",
+      "description": "FPR Staging API Server"
+    }
+  ],
+  "paths": {
+    "/api/v2/flag/get-feature-flags-by-application": {
+      "post": {
+        "operationId": "get_feature_flags",
+        "summary": "Get Feature Flags",
+        "description": "Retrieve feature flags for a specific application. Shows which features are enabled/disabled and their current state. Use when someone asks about 'feature flags', 'is X feature enabled', 'flag status for fprtckt', or 'what flags are on'. Keywords: feature flags, flag status, feature enablement.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "applicationName"
+                ],
+                "properties": {
+                  "applicationName": {
+                    "type": "string",
+                    "description": "Application name, e.g. fprtckt, fprcoin, fprlari, fprbud, fprtxf"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Feature flags for application retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/flag/get-applications": {
+      "post": {
+        "operationId": "get_flag_applications",
+        "summary": "List Flag Applications",
+        "description": "List all applications that have feature flags configured. Use when someone asks 'which apps have flags', 'flag applications', or needs to know what application names to use. Keywords: flag applications, application list, configured apps.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of flag applications retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/flag/get-flag-configuration": {
+      "post": {
+        "operationId": "get_flag_configuration",
+        "summary": "Get Flag Configuration Detail",
+        "description": "Get detailed configuration for a specific feature flag. Shows the flag's rules, conditions, rollout percentage, and targeting criteria. Use when someone asks 'what does flag X do', 'flag configuration', or 'how is this flag set up'. Keywords: flag configuration, rollout settings, flag rules.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "featureFlag"
+                ],
+                "properties": {
+                  "featureFlag": {
+                    "type": "string",
+                    "description": "Feature flag name/identifier"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Flag configuration retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/v1/condition-group/load": {
+      "post": {
+        "operationId": "load_condition_groups",
+        "summary": "Load Condition Groups",
+        "description": "Load reusable filter condition groups. Condition groups define sets of criteria (routes, airlines, dates) that can be shared across pricing rules. Use when someone asks about 'condition groups', 'filter conditions', 'reusable conditions', or 'what conditions are defined'. Keywords: condition groups, filter criteria, reusable filters.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Condition groups loaded successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/activity-log/getLogs": {
+      "post": {
+        "operationId": "get_activity_log",
+        "summary": "Get Activity/Audit Log",
+        "description": "Retrieve activity and audit logs showing who changed what configuration and when. Essential for tracking config changes and debugging. Use when someone asks 'who changed this', 'audit log', 'activity log', 'recent changes', or 'what was modified'. Keywords: audit log, activity log, configuration changes, change tracking.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "entityType"
+                ],
+                "properties": {
+                  "entityType": {
+                    "type": "string",
+                    "description": "Entity type to query logs for, e.g. PRICING_RULE, AUTOPILOT, BUDGET, COMMISSION"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Activity logs retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/airline-ids": {
+      "post": {
+        "operationId": "get_airline_ids",
+        "summary": "List All Airline IDs",
+        "description": "List all supported airline IDs in the system. Returns IATA codes and airline names. Use when someone asks 'what airlines are supported', 'list airlines', 'airline codes', or needs to look up an airline code. Keywords: airline codes, IATA codes, supported airlines.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Airline IDs retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/countries": {
+      "post": {
+        "operationId": "get_countries",
+        "summary": "List All Countries",
+        "description": "List all supported countries in the system. Returns country codes and names. Use when someone asks 'what countries are supported', 'list countries', 'country codes', or needs to verify a country code. Keywords: country codes, supported countries, country list.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Countries list retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/currency-value/convert": {
+      "post": {
+        "operationId": "convert_currency",
+        "summary": "Convert Currency",
+        "description": "Convert an amount between currencies using FPR's internal exchange rates. Use when someone asks to 'convert IDR to USD', 'what is 1000 THB in IDR', 'currency conversion', or needs to compare amounts across markets. Keywords: currency conversion, exchange rate, amount conversion.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "fromCurrency",
+                  "toCurrency",
+                  "amount"
+                ],
+                "properties": {
+                  "fromCurrency": {
+                    "type": "string",
+                    "description": "Source currency code, e.g. IDR, THB, VND, USD"
+                  },
+                  "toCurrency": {
+                    "type": "string",
+                    "description": "Target currency code"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "description": "Amount to convert"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Currency conversion completed successfully"
+          }
+        }
+      }
+    }
+  }
+}
