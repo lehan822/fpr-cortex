@@ -1,63 +1,95 @@
 #!/usr/bin/env node
 /**
- * Schema Generator
- * 
- * Reads: schemas/fprtool-full.json + config/exposed-ops.yaml
- * Outputs: schemas/{domain}/{domain}.yaml (OpenAPI 3.1 per domain)
- * 
- * TODO: Implement full generation logic
- * - Parse fprtool-full.json (55 paths, 4 tags/domains)
- * - Filter by exposed-ops.yaml whitelist
- * - Split into per-domain specs with proper operationIds
- * - Output as YAML
+ * schema-gen.js — Split fprtool-full.json into per-domain OpenAPI 3.1 specs
+ * filtered by config/exposed-ops.yaml whitelist (exact operationId match).
+ *
+ * Usage: node scripts/schema-gen.js [--output-dir schemas/]
  */
 
 const fs = require('fs');
 const path = require('path');
+const yaml = require('yaml');
 
-// Load inputs
-const fullSchema = JSON.parse(fs.readFileSync('schemas/fprtool-full.json', 'utf8'));
-const yaml = fs.readFileSync('config/exposed-ops.yaml', 'utf8');
+const ROOT = path.resolve(__dirname, '..');
+const FULL_SPEC_PATH = path.join(ROOT, 'schemas', 'fprtool-full.json');
+const WHITELIST_PATH = path.join(ROOT, 'config', 'exposed-ops.yaml');
+const OUTPUT_DIR = process.argv.includes('--output-dir')
+  ? path.resolve(process.argv[process.argv.indexOf('--output-dir') + 1])
+  : path.join(ROOT, 'schemas');
 
-// Parse whitelist (simple YAML parser for flat structure)
-const exposedOps = {};
-let currentDomain = null;
-for (const line of yaml.split('\n')) {
-  if (line.match(/^(\w+):$/)) {
-    currentDomain = line.replace(':', '').trim();
-    exposedOps[currentDomain] = [];
-  } else if (line.match(/^\s+-\s+\w+/) && currentDomain) {
-    exposedOps[currentDomain].push(line.replace(/^\s+-\s+/, '').trim());
+const fullSpec = JSON.parse(fs.readFileSync(FULL_SPEC_PATH, 'utf8'));
+const whitelist = yaml.parse(fs.readFileSync(WHITELIST_PATH, 'utf8'));
+
+// Build Set per domain for O(1) lookup
+const whitelistSets = {};
+for (const [domain, ops] of Object.entries(whitelist)) {
+  whitelistSets[domain] = new Set(ops);
+}
+
+// Split by domain tag + whitelist filter
+const domainSpecs = {};
+
+for (const [pathStr, methods] of Object.entries(fullSpec.paths || {})) {
+  for (const [method, operation] of Object.entries(methods)) {
+    if (!operation.tags || operation.tags.length === 0) continue;
+
+    const domain = operation.tags[0];
+    const operationId = operation.operationId || '';
+
+    if (!whitelistSets[domain] || !whitelistSets[domain].has(operationId)) continue;
+
+    if (!domainSpecs[domain]) {
+      domainSpecs[domain] = {
+        openapi: '3.1.0',
+        info: {
+          title: `FPR ${domain.charAt(0).toUpperCase() + domain.slice(1)} API`,
+          version: fullSpec.info?.version || '1.0.0',
+          description: `Auto-generated from fprtool-full.json — ${domain} domain only.`
+        },
+        servers: fullSpec.servers || [],
+        paths: {},
+        components: { schemas: {} }
+      };
+    }
+
+    if (!domainSpecs[domain].paths[pathStr]) {
+      domainSpecs[domain].paths[pathStr] = {};
+    }
+    domainSpecs[domain].paths[pathStr][method] = operation;
+    collectRefs(operation, domainSpecs[domain].components.schemas);
   }
 }
 
-console.log('Exposed operations per domain:');
-for (const [domain, ops] of Object.entries(exposedOps)) {
-  console.log(`  ${domain}: ${ops.length} operations`);
+function collectRefs(obj, targetSchemas) {
+  if (!obj || typeof obj !== 'object') return;
+  if (obj.$ref && typeof obj.$ref === 'string') {
+    const refPath = obj.$ref.replace('#/components/schemas/', '');
+    if (fullSpec.components?.schemas?.[refPath] && !targetSchemas[refPath]) {
+      targetSchemas[refPath] = fullSpec.components.schemas[refPath];
+      collectRefs(targetSchemas[refPath], targetSchemas);
+    }
+  }
+  for (const value of Object.values(obj)) {
+    if (typeof value === 'object') collectRefs(value, targetSchemas);
+  }
 }
 
-// TODO: Generate per-domain OpenAPI specs
-// For now, just create placeholder files
-for (const domain of Object.keys(exposedOps)) {
-  const outDir = path.join('schemas', domain);
-  fs.mkdirSync(outDir, { recursive: true });
-  
-  const spec = {
-    openapi: '3.1.0',
-    info: {
-      title: `FPR ${domain.charAt(0).toUpperCase() + domain.slice(1)} API`,
-      version: '1.0.0',
-      description: `Flight Pricing & Revenue - ${domain} domain operations`
-    },
-    paths: {},
-    // TODO: populate from fullSchema filtered by domain tag + whitelist
-  };
-  
-  fs.writeFileSync(
-    path.join(outDir, `${domain}.json`),
-    JSON.stringify(spec, null, 2)
+// Write output
+let totalOps = 0;
+for (const [domain, spec] of Object.entries(domainSpecs)) {
+  if (Object.keys(spec.components.schemas).length === 0) delete spec.components;
+
+  const domainDir = path.join(OUTPUT_DIR, domain);
+  fs.mkdirSync(domainDir, { recursive: true });
+
+  const outputPath = path.join(domainDir, `${domain}.json`);
+  fs.writeFileSync(outputPath, JSON.stringify(spec, null, 2));
+
+  const opCount = Object.values(spec.paths).reduce(
+    (sum, methods) => sum + Object.keys(methods).length, 0
   );
+  totalOps += opCount;
+  console.log(`✓ ${domain}: ${opCount} operations → ${path.relative(ROOT, outputPath)}`);
 }
 
-console.log('\nGenerated placeholder specs in schemas/*/');
-console.log('TODO: Implement full path splitting and YAML output');
+console.log(`\nTotal: ${totalOps} operations across ${Object.keys(domainSpecs).length} domains`);

@@ -1,0 +1,5 @@
+node_modules/
+schemas/pricing/
+schemas/supply/
+schemas/demand/
+schemas/config/

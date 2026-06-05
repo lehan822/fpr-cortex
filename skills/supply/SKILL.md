@@ -1,25 +1,66 @@
 ---
 name: fpr-supply
-description: Query supply-side configuration
-version: "0.1.0"
-domain: flight-supply
+description: "fpr-cli supply domain: fare adjusters, provider configuration, airline routes, search metadata, provider sourcing, fare checking, inventory types. Use for supply-side debugging and provider management."
+version: "2.0.0"
+domain: supply
+prerequisites:
+  - fpr-shared
 ---
 
-# FPR Supply Skill
+# FPR Supply
 
-Supply configuration tools.
+> ⚠️ **Read [fpr-shared](../shared/SKILL.md) first** — it covers authentication, Gateway URL, and parameter standards.
 
 ## Operations
 
-- `load_fare_adjuster_by_base_fare` — Load fare adjuster by base fare
-- `load_fare_adjuster_by_airport_tax` — Load fare adjuster by airport tax
-- `read_pricing_provider` — Read pricing provider
-- `check_fare` — Check fare
-- `get_fare_check_result` — Get fare check result
-- `get_special_fare_config` — Get special fare config
-- `search_regular_fare` — Search regular fare
-- `get_airline_routes` — Get airline routes
-- `get_airline_route_history` — Get airline route history
-- `get_provider_sourcing` — Get provider sourcing
-- `get_arbitration_modes` — Get arbitration modes
-- `get_inventory_types` — Get inventory types
+| Operation | Description | Key Parameters |
+|-----------|-------------|----------------|
+| `load_fare_adjuster_by_base_fare` | Fare adjuster rules (base fare) | airlineId, origin, destination |
+| `load_fare_adjuster_by_airport_tax` | Fare adjuster rules (airport tax) | airlineId, origin, destination |
+| `read_pricing_provider` | Provider configuration & routing | providerId |
+| `check_fare` | Trigger fare check (async) | airlineId, origin, destination, departureDate |
+| `get_fare_check_result` | Poll fare check result | fareCheckId |
+| `get_special_fare_config` | Special/negotiated fare config | airlineId |
+| `search_regular_fare` | Search regular fare data | airlineId, origin, destination |
+| `get_airline_routes` | Active routes for airline | airlineId |
+| `get_airline_route_history` | Route activation/deactivation history | airlineId, origin, destination |
+| `get_provider_sourcing` | Provider sourcing configuration | airlineId, origin, destination |
+| `get_arbitration_modes` | Arbitration mode settings | airlineId |
+| `get_inventory_types` | Inventory type definitions | — |
+| `get_inventory_detail` | Detailed inventory breakdown | airlineId, flightNumber |
+
+## Routing Guide
+
+| User Intent | → Operation |
+|-------------|-------------|
+| "fare adjuster", "adjustment rules" | `load_fare_adjuster_by_base_fare` or `_airport_tax` |
+| "provider config", "provider routing" | `read_pricing_provider` |
+| "fare check", "check fare availability" | `check_fare` → `get_fare_check_result` |
+| "special fare", "negotiated fare" | `get_special_fare_config` |
+| "regular fare", "published fare" | `search_regular_fare` |
+| "airline routes", "active routes" | `get_airline_routes` |
+| "route history", "when did route start" | `get_airline_route_history` |
+| "provider sourcing", "where does fare come from" | `get_provider_sourcing` |
+| "arbitration", "fare arbitration" | `get_arbitration_modes` |
+| "inventory type", "booking class" | `get_inventory_types` or `get_inventory_detail` |
+
+## Fare Check Workflow
+
+Fare check is a 2-step async operation:
+1. Call `check_fare` → returns `fareCheckId`
+2. Poll `get_fare_check_result` with `fareCheckId` (may need 2-3 retries, 5s interval)
+
+## Parameter Normalization
+
+| Parameter | Accepts | Normalized To |
+|-----------|---------|--------------|
+| airlineId | "Garuda", "garuda" | `"GA"` |
+| origin/destination | "Jakarta", "CGK", "cgk" | `"CGK"` (IATA 3-letter) |
+| departureDate | "tomorrow", "next Monday" | `"YYYY-MM-DD"` |
+| providerId | numeric string | `"123"` |
+
+## Disambiguation
+
+- "budget", "commission", "markup" → **fpr-pricing** (not supply)
+- "booking detail", "PNR lookup" → **fpr-demand** (not supply)
+- "feature flag" → **fpr-config** (not supply)
