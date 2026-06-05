@@ -1,68 +1,70 @@
 ---
 name: fpr-shared
-version: 2.0.0
-description: "Flight Pricing & Revenue shared layer: AgentCore Gateway auth (M2M + user token passthrough), environment config, common parameter standards. Read this FIRST before using any fpr-* skill."
+version: 2.1.0
+description: "Flight Pricing & Revenue shared layer: AgentCore Gateway auth, environment config, common parameter standards. Read this FIRST before using any fpr-* skill."
 ---
 
 # fpr-shared — Auth, Gateway, Common Standards
 
 **Read this FIRST before using any domain skill (fpr-pricing, fpr-supply, etc.)**
 
-## Authentication (Dual Token)
+## Authentication
 
-Two tokens are used per request:
+### For Users (You Handle This)
 
-| Token | Location | Purpose |
-|-------|----------|---------|
-| M2M access_token | `Authorization` header | Proves agent is registered (Gateway validates) |
-| User id_token | `body.context.authServiceToken` | Identifies which user initiated the request |
-
-### M2M Token (Agent Identity)
-
-```
-POST https://m2m-auth.ath.traveloka.com/oauth/token
-Content-Type: application/x-www-form-urlencoded
-
-grant_type=client_credentials&client_id=<ID>&client_secret=<SECRET>&audience=<AUDIENCE>
-```
-
-- Credentials stored at `~/.fpr/credentials.json`
-- Auto-refresh when `expires_at` < now
-- Each agent has its own client_id (auditable)
-
-### User Token (User Identity)
-
-- Obtained via Cognito PKCE flow (first-time browser login)
-- Stored alongside M2M credentials
-- Passed in request body — Gateway does NOT strip body fields
-
-### Setup
+User authenticates via **browser login** — like lark-cli's `config init`:
 
 ```bash
-# First time: register M2M credentials
-fpr-cortex auth setup --client-id <ID> --client-secret <SECRET>
-
-# First time: user login (opens browser)
 fpr-cortex auth login
 ```
 
+This opens the browser → user logs in via Traveloka SSO → token saved locally.
+
+- Token stored at `~/.fpr/auth.json`
+- Auto-refreshed on expiry (PKCE refresh flow)
+- **No M2M credentials needed from users** — M2M is pre-configured on the Gateway side
+
+If `~/.fpr/auth.json` doesn't exist or token is expired, prompt:
+
+> 🔐 需要登录。运行 `fpr-cortex auth login` 或我帮你打开登录页面？
+
+**Never ask users for client_id, client_secret, or M2M credentials.** Those are Gateway infrastructure, not user concerns.
+
+### How It Works (Background)
+
+```
+User token (from browser login)
+    ↓
+Agent puts in body.context.authServiceToken
+    ↓
+AgentCore Gateway adds M2M header automatically
+    ↓
+fprtool-backend validates user token → returns data
+```
+
+| Token | Who manages | Where |
+|-------|------------|-------|
+| User id_token | User (browser login) | `body.context.authServiceToken` |
+| M2M access_token | Gateway (pre-configured) | `Authorization` header (auto-injected) |
+
 ## Gateway Configuration
 
-| Environment | Gateway Endpoint | M2M Issuer |
-|-------------|-----------------|------------|
-| staging | `https://agentcore-gw.staging-traveloka.com` | `https://m2m-auth.ath.staging-traveloka.com` |
-| production | `https://agentcore-gw.traveloka.com` | `https://m2m-auth.ath.traveloka.com` |
+| Environment | Gateway Endpoint |
+|-------------|-----------------|
+| staging | `https://agentcore-gw.staging-traveloka.com` |
+| production | `https://agentcore-gw.traveloka.com` |
+
+Default: staging. Switch via `--env production` or `export FPR_ENV=production`.
 
 ### Request Format
 
 ```json
 POST {gateway_endpoint}/{domain}/{operation}
-Authorization: Bearer {m2m_access_token}
 Content-Type: application/json
 
 {
   "context": {
-    "authServiceToken": "{user_id_token}"
+    "authServiceToken": "{user_id_token_from_local_auth}"
   },
   "params": {
     "country": "TH",
@@ -85,30 +87,24 @@ Content-Type: application/json
 
 | HTTP Code | Meaning | Agent Action |
 |-----------|---------|-------------|
-| 401 | M2M token expired/invalid | Clear cache → re-auth |
-| 403 | Scope insufficient | Report to user: "需要额外权限" |
-| 404 | Operation not found | Check operation name spelling |
-| 429 | Rate limited | Retry with backoff |
+| 401 | User token expired | Prompt: `fpr-cortex auth login` to re-authenticate |
+| 403 | Insufficient permissions | Tell user: "需要额外权限，请联系 FPR team" |
+| 404 | Operation not found | Check operation name in domain skill |
+| 429 | Rate limited | Retry with backoff (5s, 10s, 20s) |
 | 500 | Backend error | Report error, suggest retry |
-
-## Environment Switching
-
-Default: staging. Switch via:
-- Flag: `--env production`
-- Env var: `export FPR_ENV=production`
 
 ## Version Check
 
-**Current installed version: 2.0.0**
+**Current installed version: 2.1.0**
 
-When the fpr-shared skill is first loaded in a session, check for updates:
+When fpr-shared is first loaded in a session, check for updates:
 
 ```bash
 curl -sf https://raw.githubusercontent.com/lehan822/fpr-cortex/main/VERSION
 ```
 
-If remote version > `2.0.0`, inform user:
+If remote version > `2.1.0`, inform user after completing their request:
 
 > ℹ️ FPR Skills 有新版本 (vX.Y.Z)。运行 `npx skills update -g` 更新。
 
-Only check once per session. Do not block the user's request — mention it after completing their task.
+Only check once per session. Do not block the user's current request.
