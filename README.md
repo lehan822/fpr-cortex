@@ -1,79 +1,103 @@
 # fpr-cortex
 
-> The brain layer of Flight Pricing & Revenue — Skills, Schemas, and config for AI-native pricing operations.
+> Flight Pricing & Revenue — AI Skills for pricing operations via AgentCore Gateway.
+
+## Quick Start
+
+```bash
+# Install all FPR skills (no GitHub account needed)
+npx skills add lehan822/fpr-cortex -g -y
+
+# Install specific domain only
+npx skills add lehan822/fpr-cortex -s fpr-pricing -g -y
+
+# Update to latest
+npx skills update -g
+```
+
+After install, your AI agent (Claude Code, Copilot CLI, etc.) automatically gains FPR knowledge.
+
+**Try it:**
+> "查一下 GA Indonesia 的 commission rate"
+> "CGK-DPS 明天的 fare cache"
+> "budget balance IDR"
+
+## Skills
+
+| Skill | Domain | Description |
+|-------|--------|-------------|
+| `fpr-shared` | Platform | Auth, Gateway URL, parameter standards (loaded first) |
+| `fpr-pricing` | Pricing | Markup rules, budgets, commissions, incentives |
+| `fpr-supply` | Supply | Fare adjusters, providers, routes, fare check |
+| `fpr-demand` | Demand | Bookings, search simulation, fare cache, promo labels |
+| `fpr-config` | Config | Feature flags, condition groups, audit logs, FX |
+
+## How It Works
+
+```
+User → AI Agent → reads Skill → calls AgentCore Gateway → fprtool-backend
+                                       ↓
+                              M2M auth (agent identity)
+                              + user token (who asked)
+```
+
+**On-demand loading (zero overhead):**
+1. Agent starts → reads only skill names + descriptions (~50 tokens each)
+2. User asks pricing question → Agent loads full `fpr-pricing` SKILL.md
+3. Needs auth details → loads `fpr-shared`
+4. Needs deep docs → reads `references/budget-operations.md`
 
 ## Architecture
 
 ```
 fpr-cortex/
-├── skills/                    # Domain knowledge (AI agent instructions)
-│   ├── shared/SKILL.md        # Platform layer: auth, gateway, standards
-│   ├── pricing/SKILL.md       # Pricing domain routing + hints
-│   ├── supply/SKILL.md        # Supply domain routing + hints  
-│   ├── demand/SKILL.md        # Demand domain routing + hints
-│   └── config/SKILL.md        # Config domain routing + hints
-├── schemas/                   # API definitions (auto-generated)
-│   ├── fprtool-full.json      # Source: complete OpenAPI spec (55 paths)
-│   ├── pricing/pricing.json   # Generated: pricing-only spec
-│   ├── supply/supply.json     # Generated: supply-only spec
-│   ├── demand/demand.json     # Generated: demand-only spec
-│   └── config/config.json     # Generated: config-only spec
+├── skills/                    # AI agent instructions (the "brain")
+│   ├── shared/SKILL.md        # Platform: auth + gateway + standards
+│   ├── pricing/SKILL.md       # Pricing domain routing
+│   ├── supply/SKILL.md        # Supply domain routing
+│   ├── demand/SKILL.md        # Demand domain routing
+│   └── config/SKILL.md        # Config domain routing
+├── schemas/                   # API definitions
+│   └── fprtool-full.json      # Source OpenAPI spec (55 operations)
 ├── config/
-│   └── exposed-ops.yaml       # Whitelist: which operations to expose
+│   └── exposed-ops.yaml       # API exposure whitelist (PR-gated)
 ├── scripts/
-│   └── schema-gen.js          # Splits full schema by domain + whitelist
+│   └── schema-gen.js          # Per-domain schema generator
+├── VERSION                    # For auto-update detection
 └── .github/workflows/
-    └── generate-schemas.yaml  # CI: auto-generate on merge
+    └── generate-schemas.yaml  # CI: auto-generate on merge → S3
 ```
 
-## How It Works
+## Updates
+
+Skills auto-check for updates. When a new version is available, your agent will suggest:
 
 ```
-┌─────────────────┐     ┌──────────────┐     ┌─────────────────┐     ┌──────────────┐
-│  Developer      │     │  AgentCore   │     │  Agent          │     │  fprtool     │
-│  installs       │────▶│  Gateway     │────▶│  Registry       │     │  backend     │
-│  Skills locally │     │  (Schema+Auth)│     │  (Discovery)    │     │              │
-└─────────────────┘     └──────┬───────┘     └──────────────────┘     └──────────────┘
-                               │                                             ▲
-                               └─────────────────────────────────────────────┘
-                                              Route & Execute
+ℹ️ FPR Skills 有新版本 (v2.1.0)。运行 `npx skills update -g` 更新。
 ```
 
-**Data Flow:**
-1. Agent reads domain Skill → knows which operation + params
-2. Agent reads fpr-shared → gets M2M token + user token + Gateway URL
-3. Agent calls Gateway: `Authorization: M2M` + `body.context.authServiceToken: user`
-4. Gateway routes to fprtool-backend
-5. Backend validates user token → returns data
+Or manually: `npx skills update -g`
 
-## Dual Token Auth
+## For Contributors
 
-| Token | Where | Who validates | Purpose |
-|-------|-------|--------------|---------|
-| M2M access_token | `Authorization` header | AgentCore Gateway | Agent is registered |
-| User id_token | `body.context.authServiceToken` | fprtool-backend | Who initiated the request |
+### Adding a new operation
 
-## For Domain Owners
+1. Add operation to `config/exposed-ops.yaml`
+2. Update the domain's `skills/{domain}/SKILL.md`
+3. (Optional) Add deep doc to `skills/{domain}/references/`
+4. Submit PR → review → merge
+5. CI generates new schema → pushes to S3 → Gateway reloads
+6. Users run `npx skills update -g` to get new skill content
 
-Add or update your domain's Skill:
-
-1. Edit `skills/{your-domain}/SKILL.md`
-2. Add new operations to `config/exposed-ops.yaml`
-3. Submit PR → review → merge
-4. GitHub Actions auto-generates new schema → pushes to S3 → Gateway reloads
-
-## For Developers (Using Skills)
+### Generating schemas locally
 
 ```bash
-# Install skills locally
-npx fpr-cortex install
-
-# Or manually symlink
-ln -s /path/to/fpr-cortex/skills/* ~/.agents/skills/
+npm install
+node scripts/schema-gen.js
 ```
 
 ## References
 
-- [Architecture Design (Lark)](https://traveloka.sg.larksuite.com/docx/KcSSd0QgNoyoR8xO9E8l5r9NgTd)
-- [Framework Recommendation (Lark)](https://traveloka.sg.larksuite.com/docx/GkgkdZ1Zuor4vQx7z8llkNiUgYe)
+- [Architecture Design](https://traveloka.sg.larksuite.com/docx/KcSSd0QgNoyoR8xO9E8l5r9NgTd)
+- [Framework Recommendation](https://traveloka.sg.larksuite.com/docx/GkgkdZ1Zuor4vQx7z8llkNiUgYe)
 - [ATH M2M RFC](https://traveloka.sg.larksuite.com/wiki/JXgdw2PkgiQCdvk9JbklVvqxgrc)

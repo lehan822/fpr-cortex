@@ -96,3 +96,19 @@ Content-Type: application/json
 Default: staging. Switch via:
 - Flag: `--env production`
 - Env var: `export FPR_ENV=production`
+
+## Version Check
+
+**Current installed version: 2.0.0**
+
+When the fpr-shared skill is first loaded in a session, check for updates:
+
+```bash
+curl -sf https://raw.githubusercontent.com/lehan822/fpr-cortex/main/VERSION
+```
+
+If remote version > `2.0.0`, inform user:
+
+> ℹ️ FPR Skills 有新版本 (vX.Y.Z)。运行 `npx skills update -g` 更新。
+
+Only check once per session. Do not block the user's request — mention it after completing their task.
