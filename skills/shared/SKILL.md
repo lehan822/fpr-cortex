@@ -8,44 +8,50 @@ description: "Flight Pricing & Revenue shared layer: AgentCore Gateway auth, env
 
 **Read this FIRST before using any domain skill (fpr-pricing, fpr-supply, etc.)**
 
-## Authentication
+## Authentication (Dual Token Architecture)
 
-### For Users (You Handle This)
+Every request uses **two tokens** — one from the user, one from the agent:
 
-User authenticates via **browser login** — like lark-cli's `config init`:
+| Token | 谁负责 | 获取方式 | 放在哪 |
+|-------|--------|---------|--------|
+| User id_token | **用户** | 浏览器 SSO 登录 | `body.context.authServiceToken` |
+| M2M access_token | **Agent/Gateway** | Client Credentials Grant (预配置) | `Authorization` header |
+
+### User Token（用户负责）
+
+用户通过浏览器登录获取身份 token：
 
 ```bash
-fpr-cortex auth login
+fpr-cortex auth login    # 打开浏览器 → Traveloka SSO → token 保存本地
 ```
 
-This opens the browser → user logs in via Traveloka SSO → token saved locally.
-
-- Token stored at `~/.fpr/auth.json`
-- Auto-refreshed on expiry (PKCE refresh flow)
-- **No M2M credentials needed from users** — M2M is pre-configured on the Gateway side
-
-If `~/.fpr/auth.json` doesn't exist or token is expired, prompt:
+- Token 存储：`~/.fpr/auth.json`
+- 自动刷新（PKCE refresh flow）
+- 如果未登录或 token 过期，提示用户：
 
 > 🔐 需要登录。运行 `fpr-cortex auth login` 或我帮你打开登录页面？
 
-**Never ask users for client_id, client_secret, or M2M credentials.** Those are Gateway infrastructure, not user concerns.
+### M2M Token（Agent 负责，用户不碰）
 
-### How It Works (Background)
+Agent 通过 Client Credentials Grant 自动获取 M2M token，证明自己是注册过的合法 agent。
+
+- 由 AgentCore Gateway 基础设施预配置
+- Agent 自动获取和刷新，对用户完全透明
+- **永远不要向用户询问 client_id 或 client_secret**
+
+### 请求流程
 
 ```
-User token (from browser login)
-    ↓
-Agent puts in body.context.authServiceToken
-    ↓
-AgentCore Gateway adds M2M header automatically
-    ↓
-fprtool-backend validates user token → returns data
+用户浏览器登录 → user token 存本地
+                    ↓
+Agent 组装请求:  body.context.authServiceToken = user_token
+                    ↓
+Agent 添加 M2M: Authorization: Bearer {m2m_token}  ← 自动，用户无感
+                    ↓
+AgentCore Gateway 验证 M2M → 放行
+                    ↓
+fprtool-backend 验证 user token → 返回该用户有权限的数据
 ```
-
-| Token | Who manages | Where |
-|-------|------------|-------|
-| User id_token | User (browser login) | `body.context.authServiceToken` |
-| M2M access_token | Gateway (pre-configured) | `Authorization` header (auto-injected) |
 
 ## Gateway Configuration
 
