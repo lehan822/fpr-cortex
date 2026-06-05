@@ -1,91 +1,79 @@
 # fpr-cortex
 
-> The brain layer of Flight Pricing & Revenue
-
-Machine-readable schemas, domain skills, and intelligent CLI — everything AI agents need to operate FPR.
+> The brain layer of Flight Pricing & Revenue — Skills, Schemas, and config for AI-native pricing operations.
 
 ## Architecture
 
 ```
-                    ┌─────────────────────────────────┐
-                    │          fpr-cortex              │
-                    ├──────────┬──────────┬────────────┤
-                    │ schemas/ │ skills/  │ cli/       │
-                    │ OpenAPI  │ Domain   │ Normalize  │
-                    │ tool     │ routing  │ + Format   │
-                    │ defs     │ hints    │ + Validate │
-                    └────┬─────┴────┬─────┴─────┬──────┘
-                         │          │           │
-              ┌──────────▼──┐ ┌────▼────┐ ┌────▼────┐
-              │  AgentCore  │ │ Agent   │ │ Human / │
-              │  Gateway    │ │ Context │ │ On-call │
-              └─────────────┘ └─────────┘ └─────────┘
+fpr-cortex/
+├── skills/                    # Domain knowledge (AI agent instructions)
+│   ├── shared/SKILL.md        # Platform layer: auth, gateway, standards
+│   ├── pricing/SKILL.md       # Pricing domain routing + hints
+│   ├── supply/SKILL.md        # Supply domain routing + hints  
+│   ├── demand/SKILL.md        # Demand domain routing + hints
+│   └── config/SKILL.md        # Config domain routing + hints
+├── schemas/                   # API definitions (auto-generated)
+│   ├── fprtool-full.json      # Source: complete OpenAPI spec (55 paths)
+│   ├── pricing/pricing.json   # Generated: pricing-only spec
+│   ├── supply/supply.json     # Generated: supply-only spec
+│   ├── demand/demand.json     # Generated: demand-only spec
+│   └── config/config.json     # Generated: config-only spec
+├── config/
+│   └── exposed-ops.yaml       # Whitelist: which operations to expose
+├── scripts/
+│   └── schema-gen.js          # Splits full schema by domain + whitelist
+└── .github/workflows/
+    └── generate-schemas.yaml  # CI: auto-generate on merge
 ```
 
-## Components
+## How It Works
 
-### `schemas/` — Tool Definitions (OpenAPI 3.0)
+```
+┌─────────────────┐     ┌──────────────┐     ┌─────────────────┐     ┌──────────────┐
+│  Developer      │     │  AgentCore   │     │  Agent          │     │  fprtool     │
+│  installs       │────▶│  Gateway     │────▶│  Registry       │     │  backend     │
+│  Skills locally │     │  (Schema+Auth)│     │  (Discovery)    │     │              │
+└─────────────────┘     └──────┬───────┘     └──────────────────┘     └──────────────┘
+                               │                                             ▲
+                               └─────────────────────────────────────────────┘
+                                              Route & Execute
+```
 
-Machine-readable tool definitions deployable to any AI platform.
+**Data Flow:**
+1. Agent reads domain Skill → knows which operation + params
+2. Agent reads fpr-shared → gets M2M token + user token + Gateway URL
+3. Agent calls Gateway: `Authorization: M2M` + `body.context.authServiceToken: user`
+4. Gateway routes to fprtool-backend
+5. Backend validates user token → returns data
 
-| Domain | Tools | Schema Quality | Status |
-|--------|-------|---------------|--------|
-| [pricing](schemas/pricing/) | 16 | ✅ Rich — "Use when" triggers, business context, examples | Production |
-| [supply](schemas/supply/) | 17 | 🟡 Minimal — function name only | Draft |
-| demand | ~12 | ⬜ Planned | — |
-| config | ~8 | ⬜ Planned | — |
+## Dual Token Auth
 
-**Deploy to AWS AgentCore Gateway:**
+| Token | Where | Who validates | Purpose |
+|-------|-------|--------------|---------|
+| M2M access_token | `Authorization` header | AgentCore Gateway | Agent is registered |
+| User id_token | `body.context.authServiceToken` | fprtool-backend | Who initiated the request |
+
+## For Domain Owners
+
+Add or update your domain's Skill:
+
+1. Edit `skills/{your-domain}/SKILL.md`
+2. Add new operations to `config/exposed-ops.yaml`
+3. Submit PR → review → merge
+4. GitHub Actions auto-generates new schema → pushes to S3 → Gateway reloads
+
+## For Developers (Using Skills)
+
 ```bash
-aws bedrock-agentcore-control create-gateway-target \
-  --gateway-identifier <gw-id> \
-  --name fprtool-pricing \
-  --cli-input-json file://deploy/pricing-target.json
+# Install skills locally
+npx fpr-cortex install
+
+# Or manually symlink
+ln -s /path/to/fpr-cortex/skills/* ~/.agents/skills/
 ```
 
-### `skills/` — Domain Knowledge
+## References
 
-Structured knowledge that helps AI agents route requests and normalize parameters.
-
-- **Routing guide** — "flash sale" → `load_price_cut_modifier_rules`
-- **Parameter normalization** — "Indonesia" → "ID", "Garuda" → "GA"
-- **Airline code reference** — GA, JT, QZ, SQ, TG...
-
-### `cli/` — Intelligent CLI
-
-The smart middle layer with normalization, validation, and formatting.
-
-```bash
-fpr pricing budget --currency IDR
-fpr pricing baseline --country Indonesia --airline Garuda
-fpr supply search-fare --from CGK --to DPS --date 2026-06-15
-```
-
-## Schema Design Principles
-
-1. **"Use when" routing** — Every description includes trigger phrases for LLM tool selection
-2. **Business context** — Explain what it does in domain terms, not API terms
-3. **Example values** — Real airline codes, currency codes, country codes
-4. **Disambiguation** — Similar tools have descriptions that clarify which to use
-
-```diff
-- "Load baseline pricing rules"
-+ "Retrieve baseline markup/margin rules that define the base price 
-+  adjustment for flights. Use when someone asks about 'baseline markup',
-+  'base margin', or 'how much markup do we add'."
-```
-
-## A/B Test Results
-
-Tool selection accuracy comparison (same Gateway, same prompts):
-
-| Metric | Rich Schema (pricing) | Minimal Schema (supply) |
-|--------|----------------------|------------------------|
-| "Use when" hints | ✅ 100% | ❌ 0% |
-| Selection confidence | 🟢 HIGH | 🔴 LOW |
-| Ambiguity cases | 0/5 | 3/5 |
-| Predicted accuracy | **90-95%** | **50-60%** |
-
-## License
-
-Internal use — Traveloka Flight Pricing & Revenue team.
+- [Architecture Design (Lark)](https://traveloka.sg.larksuite.com/docx/KcSSd0QgNoyoR8xO9E8l5r9NgTd)
+- [Framework Recommendation (Lark)](https://traveloka.sg.larksuite.com/docx/GkgkdZ1Zuor4vQx7z8llkNiUgYe)
+- [ATH M2M RFC](https://traveloka.sg.larksuite.com/wiki/JXgdw2PkgiQCdvk9JbklVvqxgrc)

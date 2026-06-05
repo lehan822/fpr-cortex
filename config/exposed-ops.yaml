@@ -1,0 +1,57 @@
+# API Exposure Whitelist
+# Only operations listed here will be included in the generated OpenAPI specs.
+# Changes require PR review (meeting conclusion: API exposure needs human review).
+
+pricing:
+  - autopilot
+  - budget_balance
+  - active_budgets
+  - baseline
+  - bundling
+  - prediction
+  - price_cut
+  - trx_fee
+  - pricing_profiles
+  - commission
+  - commission_profiles
+  - tiered_incentive
+  - tiered_progress
+  - issuance_fee
+  - budget_levels
+  - budget_user_balance
+
+supply:
+  - fare_adjuster_base
+  - fare_adjuster_tax
+  - provider_config
+  - search_metadata
+  - inventory_detail
+  - fare_check
+  - fare_check_result
+  - special_fare
+  - regular_fare
+  - airline_routes
+  - route_history
+  - provider_sourcing
+  - arbitration_modes
+  - inventory_types
+
+demand:
+  - user_profile
+  - profiling_config
+  - flight_info
+  - booking_log
+  - fare_cache
+  - search_cache
+  - promo_labels
+  - search_simulation
+
+config:
+  - feature_flags
+  - flag_apps
+  - flag_config
+  - condition_groups
+  - activity_log
+  - audit_log
+  - currency_conversion
+  - country_list

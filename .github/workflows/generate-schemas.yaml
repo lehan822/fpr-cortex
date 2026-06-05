@@ -1,0 +1,43 @@
+name: Generate OpenAPI Schemas
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'schemas/fprtool-full.json'
+      - 'config/exposed-ops.yaml'
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate per-domain OpenAPI specs
+        run: node scripts/schema-gen.js
+
+      - name: Upload to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ap-southeast-1
+        run: |
+          for domain in pricing supply demand config; do
+            if [ -f "schemas/${domain}/${domain}.yaml" ]; then
+              aws s3 cp "schemas/${domain}/${domain}.yaml" \
+                "s3://${S3_BUCKET}/schemas/${domain}.yaml"
+            fi
+          done
+
+      - name: Commit generated specs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add schemas/
+          git diff --staged --quiet || git commit -m "chore: regenerate OpenAPI specs"
+          git push
