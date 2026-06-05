@@ -148,8 +148,10 @@ curl -s -X POST "$TOKEN_URL" \
 
 | Environment | Gateway Endpoint |
 |-------------|-----------------|
-| staging | `https://agentcore-gw.staging-traveloka.com` |
-| production | `https://agentcore-gw.traveloka.com` |
+| staging | `https://fpr-lehan-jwt-gw-z6tsij9aib.gateway.bedrock-agentcore.ap-southeast-1.amazonaws.com` |
+| production | TBD (pending deployment) |
+
+> Note: Gateway path format is `{gateway_endpoint}/{tool_name}` where tool_name matches the AgentCore Gateway target name.
 
 ### Request Format
 
