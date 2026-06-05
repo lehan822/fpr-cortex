@@ -19,7 +19,7 @@ jobs:
           node-version: '20'
 
       - name: Generate per-domain OpenAPI specs
-        run: node scripts/schema-gen.js
+        run: node infra/scripts/schema-gen.js
 
       - name: Upload to S3
         env:

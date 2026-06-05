@@ -10,12 +10,12 @@ const fs = require('fs');
 const path = require('path');
 const yaml = require('yaml');
 
-const ROOT = path.resolve(__dirname, '..');
-const FULL_SPEC_PATH = path.join(ROOT, 'schemas', 'fprtool-full.json');
-const WHITELIST_PATH = path.join(ROOT, 'config', 'exposed-ops.yaml');
+const ROOT = path.resolve(__dirname, '..', '..');
+const FULL_SPEC_PATH = path.join(ROOT, 'infra', 'schemas', 'fprtool-full.json');
+const WHITELIST_PATH = path.join(ROOT, 'infra', 'config', 'exposed-ops.yaml');
 const OUTPUT_DIR = process.argv.includes('--output-dir')
   ? path.resolve(process.argv[process.argv.indexOf('--output-dir') + 1])
-  : path.join(ROOT, 'schemas');
+  : path.join(ROOT, 'infra', 'schemas');
 
 const fullSpec = JSON.parse(fs.readFileSync(FULL_SPEC_PATH, 'utf8'));
 const whitelist = yaml.parse(fs.readFileSync(WHITELIST_PATH, 'utf8'));

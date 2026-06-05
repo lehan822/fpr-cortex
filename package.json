@@ -1,10 +1,10 @@
 {
   "name": "fpr-cortex",
-  "version": "2.3.0",
-  "description": "FPR AI Skills — knowledge layer for flight pricing operations",
+  "version": "2.4.0",
+  "description": "FPR AI Skills + Schema Pipeline",
   "private": true,
   "scripts": {
-    "generate": "node scripts/schema-gen.js"
+    "generate": "node infra/scripts/schema-gen.js"
   },
   "devDependencies": {
     "yaml": "^2.4.0"

@@ -1,5 +1,5 @@
 node_modules/
-schemas/pricing/
-schemas/supply/
-schemas/demand/
-schemas/config/
+infra/schemas/pricing/
+infra/schemas/supply/
+infra/schemas/demand/
+infra/schemas/config/
