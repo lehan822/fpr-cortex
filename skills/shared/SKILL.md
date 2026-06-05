@@ -1,6 +1,6 @@
 ---
 name: fpr-shared
-version: 2.3.0
+version: 2.4.0
 description: "Flight Pricing & Revenue shared layer: AgentCore Gateway auth, environment config, common parameter standards. Read this FIRST before using any fpr-* skill."
 ---
 
@@ -109,12 +109,19 @@ setTimeout(()=>{console.error('⏰ Timeout');process.exit(1);},120000);
 
 #### 读取 Token
 
-登录完成后，从 `~/.fpr/auth.json` 读取 `id_token` 字段用于请求：
+登录完成后，从 `~/.fpr/auth.json` 读取两个 token：
 
 ```bash
-cat ~/.fpr/auth.json | node -e "process.stdin.on('data',d=>{const a=JSON.parse(d);
+# 检查是否过期
+node -e "const a=JSON.parse(require('fs').readFileSync(process.env.HOME+'/.fpr/auth.json'));
   if(a.expires_at<Date.now()){console.log('EXPIRED');process.exit(1);}
-  console.log(a.id_token);})"
+  console.log('OK');"
+
+# access_token (Gateway auth header)
+node -e "console.log(JSON.parse(require('fs').readFileSync(process.env.HOME+'/.fpr/auth.json')).access_token)"
+
+# id_token (user identity in body)
+node -e "console.log(JSON.parse(require('fs').readFileSync(process.env.HOME+'/.fpr/auth.json')).id_token)"
 ```
 
 #### Token 刷新
@@ -153,22 +160,71 @@ curl -s -X POST "$TOKEN_URL" \
 
 > Note: Gateway path format is `{gateway_endpoint}/{tool_name}` where tool_name matches the AgentCore Gateway target name.
 
-### Request Format
+### Request Format (MCP JSON-RPC)
 
+Gateway uses MCP protocol. All requests go to the `/mcp` endpoint:
+
+```bash
+curl -s -X POST "{gateway_endpoint}/mcp" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer {access_token_from_auth_json}" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": "1",
+    "params": {
+      "name": "<operation_name>",
+      "arguments": {
+        "context": {
+          "authServiceToken": "<id_token_from_auth_json>"
+        },
+        "<param1>": "<value1>",
+        "<param2>": "<value2>"
+      }
+    }
+  }'
+```
+
+**Example — query GA commission rules (staging):**
+
+```bash
+curl -s -X POST "https://fpr-lehan-jwt-gw-z6tsij9aib.gateway.bedrock-agentcore.ap-southeast-1.amazonaws.com/mcp" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $(cat ~/.fpr/auth.json | node -e \"process.stdin.on('data',d=>console.log(JSON.parse(d).access_token))\")" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": "1",
+    "params": {
+      "name": "load_commission_incentive_rules",
+      "arguments": {
+        "context": {
+          "authServiceToken": "'$(cat ~/.fpr/auth.json | node -e "process.stdin.on('data',d=>console.log(JSON.parse(d).id_token))")'"
+        },
+        "airlineId": "GA"
+      }
+    }
+  }'
+```
+
+**Response format:**
 ```json
-POST {gateway_endpoint}/{domain}/{operation}
-Content-Type: application/json
-
 {
-  "context": {
-    "authServiceToken": "{user_id_token}"
-  },
-  "params": {
-    "country": "TH",
-    "currency": "THB"
+  "jsonrpc": "2.0",
+  "id": "1",
+  "result": {
+    "content": [{ "type": "text", "text": "..." }]
   }
 }
 ```
+
+**Key points:**
+- `Authorization` header → `access_token` (Cognito, for Gateway auth)
+- `arguments.context.authServiceToken` → `id_token` (for fprtool-backend user identity)
+- `name` = operation name from domain skill (e.g. `load_commission_incentive_rules`)
+- All operations use `method: "tools/call"`
 
 ## Common Parameter Standards
 
@@ -192,7 +248,7 @@ Content-Type: application/json
 
 ## Version Check
 
-**Current installed version: 2.3.0**
+**Current installed version: 2.4.0**
 
 When fpr-shared is first loaded in a session, check for updates:
 
@@ -200,6 +256,6 @@ When fpr-shared is first loaded in a session, check for updates:
 curl -sf https://raw.githubusercontent.com/lehan822/fpr-cortex/main/VERSION
 ```
 
-If remote version > `2.3.0`, inform user after completing their request:
+If remote version > `2.4.0`, inform user after completing their request:
 
 > ℹ️ FPR Skills 有新版本 (vX.Y.Z)。运行 `npx skills update -g` 更新。
