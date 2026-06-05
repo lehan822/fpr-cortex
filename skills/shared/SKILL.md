@@ -117,6 +117,33 @@ cat ~/.fpr/auth.json | node -e "process.stdin.on('data',d=>{const a=JSON.parse(d
   console.log(a.id_token);})"
 ```
 
+#### Token 刷新
+
+当 `expires_at` < 当前时间但 `refresh_token` 存在时，**先尝试刷新，不要重新登录：**
+
+```bash
+# 读取环境配置
+ENV=$(cat ~/.fpr/auth.json | node -e "process.stdin.on('data',d=>console.log(JSON.parse(d).env||'stg'))")
+REFRESH_TOKEN=$(cat ~/.fpr/auth.json | node -e "process.stdin.on('data',d=>console.log(JSON.parse(d).refresh_token))")
+
+# stg: TOKEN_URL=https://internal-id.ath.staging-traveloka.com/oauth2/token CLIENT_ID=38taf824vlbfba3lta3eitcuhi
+# prod: TOKEN_URL=https://internal-id.ath.traveloka.com/oauth2/token CLIENT_ID=i01t804ups4dme8p1kfoat8jb
+
+curl -s -X POST "$TOKEN_URL" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=refresh_token&client_id=$CLIENT_ID&refresh_token=$REFRESH_TOKEN"
+```
+
+成功返回新 tokens → 更新 `~/.fpr/auth.json`（同结构）。
+如果 refresh 失败（400/401）→ refresh_token 也过期了 → 重新执行 PKCE 登录流程。
+
+#### 检查顺序
+
+1. `~/.fpr/auth.json` 不存在 → PKCE 登录
+2. `expires_at` > now → 直接用 `id_token`
+3. `expires_at` < now + `refresh_token` 存在 → 尝试 refresh
+4. refresh 失败 → PKCE 登录
+
 ## Gateway Configuration
 
 | Environment | Gateway Endpoint |
