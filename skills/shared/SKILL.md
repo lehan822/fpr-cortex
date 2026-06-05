@@ -1,6 +1,6 @@
 ---
 name: fpr-shared
-version: 2.4.0
+version: 2.5.0
 description: "Flight Pricing & Revenue shared layer: AgentCore Gateway auth, environment config, common parameter standards. Read this FIRST before using any fpr-* skill."
 ---
 
@@ -158,11 +158,46 @@ curl -s -X POST "$TOKEN_URL" \
 | staging | `https://fpr-lehan-jwt-gw-z6tsij9aib.gateway.bedrock-agentcore.ap-southeast-1.amazonaws.com` |
 | production | TBD (pending deployment) |
 
-> Note: Gateway path format is `{gateway_endpoint}/{tool_name}` where tool_name matches the AgentCore Gateway target name.
+### Tool Discovery (tools/list with pagination)
+
+Gateway paginates tools at **30 per page**. Always handle `nextCursor`:
+
+```bash
+# Page 1
+curl -s -X POST "{gateway_endpoint}/mcp" \
+  -H "Authorization: Bearer {access_token}" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+
+# If response has nextCursor, fetch next page:
+curl -s -X POST "{gateway_endpoint}/mcp" \
+  -H "Authorization: Bearer {access_token}" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{"cursor":"<nextCursor>"}}'
+```
+
+Total tools: **55** across 2 pages. Always paginate until `nextCursor` is absent.
+
+### Tool Naming Convention
+
+⚠️ **Gateway prefixes tool names with target name:** `fprtool-backend___<operationId>`
+
+When calling `tools/call`, use the **full prefixed name**:
+- ✅ `fprtool-backend___load_commission_incentive_rules`
+- ❌ `load_commission_incentive_rules` (will fail with "tool not found")
 
 ### Request Format (MCP JSON-RPC)
 
-Gateway uses MCP protocol. All requests go to the `/mcp` endpoint:
+Gateway uses MCP protocol. All requests go to the `/mcp` endpoint.
+
+⚠️ **Traveloka Request Envelope:** All tool parameters MUST be wrapped inside `data`. The Gateway only forwards fields declared in the schema. The four required envelope fields are:
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `data` | ✅ | Contains all tool-specific parameters |
+| `context` | ✅ | Must include `authServiceToken` (id_token) |
+| `clientInterface` | ✅ | Always `"DESKTOP"` |
+| `fields` | ✅ | Always `[]` |
 
 ```bash
 curl -s -X POST "{gateway_endpoint}/mcp" \
@@ -174,13 +209,17 @@ curl -s -X POST "{gateway_endpoint}/mcp" \
     "method": "tools/call",
     "id": "1",
     "params": {
-      "name": "<operation_name>",
+      "name": "fprtool-backend___<operationId>",
       "arguments": {
+        "data": {
+          "<param1>": "<value1>",
+          "<param2>": "<value2>"
+        },
         "context": {
           "authServiceToken": "<id_token_from_auth_json>"
         },
-        "<param1>": "<value1>",
-        "<param2>": "<value2>"
+        "clientInterface": "DESKTOP",
+        "fields": []
       }
     }
   }'
@@ -198,12 +237,16 @@ curl -s -X POST "https://fpr-lehan-jwt-gw-z6tsij9aib.gateway.bedrock-agentcore.a
     "method": "tools/call",
     "id": "1",
     "params": {
-      "name": "load_commission_incentive_rules",
+      "name": "fprtool-backend___load_commission_incentive_rules",
       "arguments": {
+        "data": {
+          "airline": "GA"
+        },
         "context": {
           "authServiceToken": "'$(cat ~/.fpr/auth.json | node -e "process.stdin.on('data',d=>console.log(JSON.parse(d).id_token))")'"
         },
-        "airlineId": "GA"
+        "clientInterface": "DESKTOP",
+        "fields": []
       }
     }
   }'
@@ -223,7 +266,8 @@ curl -s -X POST "https://fpr-lehan-jwt-gw-z6tsij9aib.gateway.bedrock-agentcore.a
 **Key points:**
 - `Authorization` header → `access_token` (Cognito, for Gateway auth)
 - `arguments.context.authServiceToken` → `id_token` (for fprtool-backend user identity)
-- `name` = operation name from domain skill (e.g. `load_commission_incentive_rules`)
+- `arguments.data` → all tool-specific params go inside `data` wrapper
+- `name` = `fprtool-backend___<operationId>` (with target prefix)
 - All operations use `method: "tools/call"`
 
 ## Common Parameter Standards
@@ -248,7 +292,7 @@ curl -s -X POST "https://fpr-lehan-jwt-gw-z6tsij9aib.gateway.bedrock-agentcore.a
 
 ## Version Check
 
-**Current installed version: 2.4.0**
+**Current installed version: 2.5.0**
 
 When fpr-shared is first loaded in a session, check for updates:
 
@@ -256,6 +300,6 @@ When fpr-shared is first loaded in a session, check for updates:
 curl -sf https://raw.githubusercontent.com/lehan822/fpr-cortex/main/VERSION
 ```
 
-If remote version > `2.4.0`, inform user after completing their request:
+If remote version > `2.5.0`, inform user after completing their request:
 
 > ℹ️ FPR Skills 有新版本 (vX.Y.Z)。运行 `npx skills update -g` 更新。

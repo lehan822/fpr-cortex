@@ -7,8 +7,8 @@
   },
   "servers": [
     {
-      "url": "https://tool-api.fpr.staging-traveloka.com",
-      "description": "Staging"
+      "url": "https://tz0pqimy4l.execute-api.ap-southeast-1.amazonaws.com/stg",
+      "description": "Staging (via API Gateway)"
     }
   ],
   "paths": {
@@ -24,26 +24,59 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "profileGroup": {
-                    "type": "string",
-                    "description": "Profile group: TRAVELOKA, AFFILIATE, or CORPORATE. Defaults to TRAVELOKA if omitted.",
-                    "enum": [
-                      "TRAVELOKA",
-                      "AFFILIATE",
-                      "CORPORATE"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "profileGroup": {
+                        "type": "string",
+                        "description": "Profile group: TRAVELOKA, AFFILIATE, or CORPORATE. Defaults to TRAVELOKA if omitted.",
+                        "enum": [
+                          "TRAVELOKA",
+                          "AFFILIATE",
+                          "CORPORATE"
+                        ]
+                      },
+                      "originCountry": {
+                        "type": "string",
+                        "description": "Origin country code (ISO 2-letter), e.g. ID (Indonesia), TH (Thailand), VN (Vietnam), SG (Singapore)"
+                      },
+                      "destinationCountry": {
+                        "type": "string",
+                        "description": "Destination country code (ISO 2-letter)"
+                      },
+                      "airlineId": {
+                        "type": "string",
+                        "description": "IATA airline code, e.g. GA (Garuda), SQ (Singapore Airlines), QZ (AirAsia Indonesia), JT (Lion Air)"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
                     ]
                   },
-                  "originCountry": {
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Origin country code (ISO 2-letter), e.g. ID (Indonesia), TH (Thailand), VN (Vietnam), SG (Singapore)"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
                   },
-                  "destinationCountry": {
-                    "type": "string",
-                    "description": "Destination country code (ISO 2-letter)"
-                  },
-                  "airlineId": {
-                    "type": "string",
-                    "description": "IATA airline code, e.g. GA (Garuda), SQ (Singapore Airlines), QZ (AirAsia Indonesia), JT (Lion Air)"
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -72,26 +105,59 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "profileGroup": {
-                    "type": "string",
-                    "enum": [
-                      "TRAVELOKA",
-                      "AFFILIATE",
-                      "CORPORATE"
-                    ],
-                    "description": "Profile group. Defaults to TRAVELOKA."
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "profileGroup": {
+                        "type": "string",
+                        "enum": [
+                          "TRAVELOKA",
+                          "AFFILIATE",
+                          "CORPORATE"
+                        ],
+                        "description": "Profile group. Defaults to TRAVELOKA."
+                      },
+                      "originCountry": {
+                        "type": "string",
+                        "description": "Origin country code (ISO 2-letter)"
+                      },
+                      "destinationCountry": {
+                        "type": "string",
+                        "description": "Destination country code (ISO 2-letter)"
+                      },
+                      "airlineId": {
+                        "type": "string",
+                        "description": "IATA airline code, e.g. GA, SQ, QZ"
+                      }
+                    }
                   },
-                  "originCountry": {
-                    "type": "string",
-                    "description": "Origin country code (ISO 2-letter)"
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
                   },
-                  "destinationCountry": {
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Destination country code (ISO 2-letter)"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
                   },
-                  "airlineId": {
-                    "type": "string",
-                    "description": "IATA airline code, e.g. GA, SQ, QZ"
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -123,9 +189,42 @@
                   "currency"
                 ],
                 "properties": {
-                  "currency": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "currency": {
+                        "type": "string",
+                        "description": "Currency code: IDR (Indonesian Rupiah), THB (Thai Baht), VND (Vietnamese Dong), SGD (Singapore Dollar), MYR (Malaysian Ringgit)"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Currency code: IDR (Indonesian Rupiah), THB (Thai Baht), VND (Vietnamese Dong), SGD (Singapore Dollar), MYR (Malaysian Ringgit)"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -157,9 +256,42 @@
                   "currency"
                 ],
                 "properties": {
-                  "currency": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "currency": {
+                        "type": "string",
+                        "description": "Currency code: IDR, THB, VND, SGD, MYR"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Currency code: IDR, THB, VND, SGD, MYR"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -186,7 +318,40 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -216,9 +381,42 @@
                   "currency"
                 ],
                 "properties": {
-                  "currency": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "currency": {
+                        "type": "string",
+                        "description": "Currency code: IDR, THB, VND, SGD, MYR"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Currency code: IDR, THB, VND, SGD, MYR"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -247,25 +445,58 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "profileGroup": {
-                    "type": "string",
-                    "enum": [
-                      "TRAVELOKA",
-                      "AFFILIATE",
-                      "CORPORATE"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "profileGroup": {
+                        "type": "string",
+                        "enum": [
+                          "TRAVELOKA",
+                          "AFFILIATE",
+                          "CORPORATE"
+                        ]
+                      },
+                      "originCountry": {
+                        "type": "string",
+                        "description": "Origin country code"
+                      },
+                      "destinationCountry": {
+                        "type": "string",
+                        "description": "Destination country code"
+                      },
+                      "airlineId": {
+                        "type": "string",
+                        "description": "IATA airline code"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
                     ]
                   },
-                  "originCountry": {
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Origin country code"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
                   },
-                  "destinationCountry": {
-                    "type": "string",
-                    "description": "Destination country code"
-                  },
-                  "airlineId": {
-                    "type": "string",
-                    "description": "IATA airline code"
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -294,22 +525,55 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "profileGroup": {
-                    "type": "string",
-                    "enum": [
-                      "TRAVELOKA",
-                      "AFFILIATE",
-                      "CORPORATE"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "profileGroup": {
+                        "type": "string",
+                        "enum": [
+                          "TRAVELOKA",
+                          "AFFILIATE",
+                          "CORPORATE"
+                        ]
+                      },
+                      "originCountry": {
+                        "type": "string"
+                      },
+                      "destinationCountry": {
+                        "type": "string"
+                      },
+                      "airlineId": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
                     ]
                   },
-                  "originCountry": {
-                    "type": "string"
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
                   },
-                  "destinationCountry": {
-                    "type": "string"
-                  },
-                  "airlineId": {
-                    "type": "string"
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -338,22 +602,55 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "profileGroup": {
-                    "type": "string",
-                    "enum": [
-                      "TRAVELOKA",
-                      "AFFILIATE",
-                      "CORPORATE"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "profileGroup": {
+                        "type": "string",
+                        "enum": [
+                          "TRAVELOKA",
+                          "AFFILIATE",
+                          "CORPORATE"
+                        ]
+                      },
+                      "originCountry": {
+                        "type": "string"
+                      },
+                      "destinationCountry": {
+                        "type": "string"
+                      },
+                      "airlineId": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
                     ]
                   },
-                  "originCountry": {
-                    "type": "string"
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
                   },
-                  "destinationCountry": {
-                    "type": "string"
-                  },
-                  "airlineId": {
-                    "type": "string"
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -382,22 +679,55 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "profileGroup": {
-                    "type": "string",
-                    "enum": [
-                      "TRAVELOKA",
-                      "AFFILIATE",
-                      "CORPORATE"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "profileGroup": {
+                        "type": "string",
+                        "enum": [
+                          "TRAVELOKA",
+                          "AFFILIATE",
+                          "CORPORATE"
+                        ]
+                      },
+                      "originCountry": {
+                        "type": "string"
+                      },
+                      "destinationCountry": {
+                        "type": "string"
+                      },
+                      "airlineId": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
                     ]
                   },
-                  "originCountry": {
-                    "type": "string"
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
                   },
-                  "destinationCountry": {
-                    "type": "string"
-                  },
-                  "airlineId": {
-                    "type": "string"
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -426,17 +756,50 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "profileGroup": {
-                    "type": "string",
-                    "enum": [
-                      "TRAVELOKA",
-                      "AFFILIATE",
-                      "CORPORATE"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "profileGroup": {
+                        "type": "string",
+                        "enum": [
+                          "TRAVELOKA",
+                          "AFFILIATE",
+                          "CORPORATE"
+                        ]
+                      },
+                      "airlineId": {
+                        "type": "string",
+                        "description": "IATA airline code to filter commission rules, e.g. GA, SQ, QZ"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
                     ]
                   },
-                  "airlineId": {
+                  "clientInterface": {
                     "type": "string",
-                    "description": "IATA airline code to filter commission rules, e.g. GA, SQ, QZ"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -463,7 +826,40 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -490,21 +886,54 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "profileGroup": {
-                    "type": "string",
-                    "enum": [
-                      "TRAVELOKA",
-                      "AFFILIATE",
-                      "CORPORATE"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "profileGroup": {
+                        "type": "string",
+                        "enum": [
+                          "TRAVELOKA",
+                          "AFFILIATE",
+                          "CORPORATE"
+                        ]
+                      },
+                      "brandId": {
+                        "type": "string",
+                        "description": "Brand ID: TRAVELOKA, TIKET, etc."
+                      },
+                      "airlineId": {
+                        "type": "string",
+                        "description": "IATA airline code"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
                     ]
                   },
-                  "brandId": {
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Brand ID: TRAVELOKA, TIKET, etc."
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
                   },
-                  "airlineId": {
-                    "type": "string",
-                    "description": "IATA airline code"
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -536,9 +965,42 @@
                   "pnr"
                 ],
                 "properties": {
-                  "pnr": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "pnr": {
+                        "type": "string",
+                        "description": "Booking PNR code (e.g. ABC123)"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Booking PNR code (e.g. ABC123)"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -567,22 +1029,55 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "profileGroup": {
-                    "type": "string",
-                    "enum": [
-                      "TRAVELOKA",
-                      "AFFILIATE",
-                      "CORPORATE"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "profileGroup": {
+                        "type": "string",
+                        "enum": [
+                          "TRAVELOKA",
+                          "AFFILIATE",
+                          "CORPORATE"
+                        ]
+                      },
+                      "originCountry": {
+                        "type": "string"
+                      },
+                      "destinationCountry": {
+                        "type": "string"
+                      },
+                      "airlineId": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
                     ]
                   },
-                  "originCountry": {
-                    "type": "string"
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
                   },
-                  "destinationCountry": {
-                    "type": "string"
-                  },
-                  "airlineId": {
-                    "type": "string"
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -609,7 +1104,40 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -636,9 +1164,42 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "flightProviderId": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "flightProviderId": {
+                        "type": "string",
+                        "description": "Flight provider ID"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Flight provider ID"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 },
                 "required": [
@@ -670,9 +1231,42 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "flightProviderId": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "flightProviderId": {
+                        "type": "string",
+                        "description": "Flight provider ID"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Flight provider ID"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 },
                 "required": [
@@ -703,7 +1297,39 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -730,25 +1356,58 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "origin": {
-                    "type": "string",
-                    "description": "Origin"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "origin": {
+                        "type": "string",
+                        "description": "Origin"
+                      },
+                      "destination": {
+                        "type": "string",
+                        "description": "Destination"
+                      },
+                      "departureDate": {
+                        "type": "string",
+                        "description": "Departure date"
+                      },
+                      "airline": {
+                        "type": "string",
+                        "description": "Airline"
+                      },
+                      "provider": {
+                        "type": "string",
+                        "description": "Provider"
+                      }
+                    }
                   },
-                  "destination": {
-                    "type": "string",
-                    "description": "Destination"
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
                   },
-                  "departureDate": {
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Departure date"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
                   },
-                  "airline": {
-                    "type": "string",
-                    "description": "Airline"
-                  },
-                  "provider": {
-                    "type": "string",
-                    "description": "Provider"
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 },
                 "required": [
@@ -781,9 +1440,42 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "fareCheckingId": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "fareCheckingId": {
+                        "type": "string",
+                        "description": "Fare checking ID"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Fare checking ID"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 },
                 "required": [
@@ -815,9 +1507,42 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "configId": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "configId": {
+                        "type": "string",
+                        "description": "Config ID"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Config ID"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 },
                 "required": [
@@ -849,25 +1574,58 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "origin": {
-                    "type": "string",
-                    "description": "Origin"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "origin": {
+                        "type": "string",
+                        "description": "Origin"
+                      },
+                      "destination": {
+                        "type": "string",
+                        "description": "Destination"
+                      },
+                      "departureDate": {
+                        "type": "string",
+                        "description": "Departure date"
+                      },
+                      "airline": {
+                        "type": "string",
+                        "description": "Airline"
+                      },
+                      "provider": {
+                        "type": "string",
+                        "description": "Provider"
+                      }
+                    }
                   },
-                  "destination": {
-                    "type": "string",
-                    "description": "Destination"
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
                   },
-                  "departureDate": {
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Departure date"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
                   },
-                  "airline": {
-                    "type": "string",
-                    "description": "Airline"
-                  },
-                  "provider": {
-                    "type": "string",
-                    "description": "Provider"
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 },
                 "required": [
@@ -901,37 +1659,70 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "airlineId": {
-                    "type": "string",
-                    "description": "Airline ID"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "airlineId": {
+                        "type": "string",
+                        "description": "Airline ID"
+                      },
+                      "originCountry": {
+                        "type": "string",
+                        "description": "Origin country"
+                      },
+                      "destinationCountry": {
+                        "type": "string",
+                        "description": "Destination country"
+                      },
+                      "originAirport": {
+                        "type": "string",
+                        "description": "Origin airport"
+                      },
+                      "destinationAirport": {
+                        "type": "string",
+                        "description": "Destination airport"
+                      },
+                      "inventoryType": {
+                        "type": "string",
+                        "description": "Inventory type"
+                      },
+                      "defaultProvider": {
+                        "type": "string",
+                        "description": "Default provider"
+                      },
+                      "defaultFulfillment": {
+                        "type": "string",
+                        "description": "Default fulfillment"
+                      }
+                    }
                   },
-                  "originCountry": {
-                    "type": "string",
-                    "description": "Origin country"
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
                   },
-                  "destinationCountry": {
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Destination country"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
                   },
-                  "originAirport": {
-                    "type": "string",
-                    "description": "Origin airport"
-                  },
-                  "destinationAirport": {
-                    "type": "string",
-                    "description": "Destination airport"
-                  },
-                  "inventoryType": {
-                    "type": "string",
-                    "description": "Inventory type"
-                  },
-                  "defaultProvider": {
-                    "type": "string",
-                    "description": "Default provider"
-                  },
-                  "defaultFulfillment": {
-                    "type": "string",
-                    "description": "Default fulfillment"
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -960,17 +1751,50 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "airlineId": {
-                    "type": "string",
-                    "description": "Airline ID"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "airlineId": {
+                        "type": "string",
+                        "description": "Airline ID"
+                      },
+                      "originCountry": {
+                        "type": "string",
+                        "description": "Origin country"
+                      },
+                      "destinationCountry": {
+                        "type": "string",
+                        "description": "Destination country"
+                      }
+                    }
                   },
-                  "originCountry": {
-                    "type": "string",
-                    "description": "Origin country"
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
                   },
-                  "destinationCountry": {
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Destination country"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -999,25 +1823,58 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "airlineId": {
-                    "type": "string",
-                    "description": "Airline ID"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "airlineId": {
+                        "type": "string",
+                        "description": "Airline ID"
+                      },
+                      "originCountry": {
+                        "type": "string",
+                        "description": "Origin country"
+                      },
+                      "destinationCountry": {
+                        "type": "string",
+                        "description": "Destination country"
+                      },
+                      "month": {
+                        "type": "string",
+                        "description": "Month"
+                      },
+                      "year": {
+                        "type": "string",
+                        "description": "Year"
+                      }
+                    }
                   },
-                  "originCountry": {
-                    "type": "string",
-                    "description": "Origin country"
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
                   },
-                  "destinationCountry": {
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Destination country"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
                   },
-                  "month": {
-                    "type": "string",
-                    "description": "Month"
-                  },
-                  "year": {
-                    "type": "string",
-                    "description": "Year"
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -1046,29 +1903,62 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "airlineId": {
-                    "type": "string",
-                    "description": "Airline ID"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "airlineId": {
+                        "type": "string",
+                        "description": "Airline ID"
+                      },
+                      "inventoryType": {
+                        "type": "string",
+                        "description": "Inventory type"
+                      },
+                      "agentId": {
+                        "type": "string",
+                        "description": "Agent ID"
+                      },
+                      "locale": {
+                        "type": "string",
+                        "description": "Locale"
+                      },
+                      "originCountry": {
+                        "type": "string",
+                        "description": "Origin country"
+                      },
+                      "destinationCountry": {
+                        "type": "string",
+                        "description": "Destination country"
+                      }
+                    }
                   },
-                  "inventoryType": {
-                    "type": "string",
-                    "description": "Inventory type"
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
                   },
-                  "agentId": {
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Agent ID"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
                   },
-                  "locale": {
-                    "type": "string",
-                    "description": "Locale"
-                  },
-                  "originCountry": {
-                    "type": "string",
-                    "description": "Origin country"
-                  },
-                  "destinationCountry": {
-                    "type": "string",
-                    "description": "Destination country"
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -1097,17 +1987,50 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "airlineId": {
-                    "type": "string",
-                    "description": "Airline ID"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "airlineId": {
+                        "type": "string",
+                        "description": "Airline ID"
+                      },
+                      "inventoryType": {
+                        "type": "string",
+                        "description": "Inventory type"
+                      },
+                      "agentId": {
+                        "type": "string",
+                        "description": "Agent ID"
+                      }
+                    }
                   },
-                  "inventoryType": {
-                    "type": "string",
-                    "description": "Inventory type"
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
                   },
-                  "agentId": {
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Agent ID"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -1135,7 +2058,39 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -1161,7 +2116,39 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -1187,7 +2174,39 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -1214,9 +2233,42 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "inventoryIdentifier": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "inventoryIdentifier": {
+                        "type": "string",
+                        "description": "Inventory identifier"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Inventory identifier"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 },
                 "required": [
@@ -1248,9 +2300,42 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "compressedObject": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "compressedObject": {
+                        "type": "string",
+                        "description": "Compressed object"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Compressed object"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 },
                 "required": [
@@ -1284,9 +2369,42 @@
                   "applicationName"
                 ],
                 "properties": {
-                  "applicationName": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "applicationName": {
+                        "type": "string",
+                        "description": "Application name, e.g. fprtckt, fprcoin, fprlari, fprbud, fprtxf"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Application name, e.g. fprtckt, fprcoin, fprlari, fprbud, fprtxf"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -1313,7 +2431,39 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -1342,9 +2492,42 @@
                   "featureFlag"
                 ],
                 "properties": {
-                  "featureFlag": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "featureFlag": {
+                        "type": "string",
+                        "description": "Feature flag name/identifier"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Feature flag name/identifier"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -1371,7 +2554,39 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -1400,9 +2615,42 @@
                   "entityType"
                 ],
                 "properties": {
-                  "entityType": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "entityType": {
+                        "type": "string",
+                        "description": "Entity type to query logs for, e.g. PRICING_RULE, AUTOPILOT, BUDGET, COMMISSION"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Entity type to query logs for, e.g. PRICING_RULE, AUTOPILOT, BUDGET, COMMISSION"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -1429,7 +2677,39 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -1454,7 +2734,39 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -1485,17 +2797,50 @@
                   "amount"
                 ],
                 "properties": {
-                  "fromCurrency": {
-                    "type": "string",
-                    "description": "Source currency code, e.g. IDR, THB, VND, USD"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "fromCurrency": {
+                        "type": "string",
+                        "description": "Source currency code, e.g. IDR, THB, VND, USD"
+                      },
+                      "toCurrency": {
+                        "type": "string",
+                        "description": "Target currency code"
+                      },
+                      "amount": {
+                        "type": "number",
+                        "description": "Amount to convert"
+                      }
+                    }
                   },
-                  "toCurrency": {
-                    "type": "string",
-                    "description": "Target currency code"
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
                   },
-                  "amount": {
-                    "type": "number",
-                    "description": "Amount to convert"
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -1522,7 +2867,39 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -1551,9 +2928,42 @@
                   "profileGroup"
                 ],
                 "properties": {
-                  "profileGroup": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "profileGroup": {
+                        "type": "string",
+                        "description": "Country-based profile group code, e.g. ID (Indonesia), TH (Thailand), VN (Vietnam)"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Country-based profile group code, e.g. ID (Indonesia), TH (Thailand), VN (Vietnam)"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -1584,9 +2994,42 @@
                   "bookingId"
                 ],
                 "properties": {
-                  "bookingId": {
-                    "type": "integer",
-                    "description": "Booking ID (numeric)"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "bookingId": {
+                        "type": "integer",
+                        "description": "Booking ID (numeric)"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -1617,9 +3060,42 @@
                   "bookingId"
                 ],
                 "properties": {
-                  "bookingId": {
-                    "type": "integer",
-                    "description": "Booking ID (numeric)"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "bookingId": {
+                        "type": "integer",
+                        "description": "Booking ID (numeric)"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -1647,13 +3123,46 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "date": {
-                    "type": "string",
-                    "description": "Date for log lookup, e.g. 2024-01-15"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "date": {
+                        "type": "string",
+                        "description": "Date for log lookup, e.g. 2024-01-15"
+                      },
+                      "path": {
+                        "type": "string",
+                        "description": "S3 path to specific log object"
+                      }
+                    }
                   },
-                  "path": {
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
                     "type": "string",
-                    "description": "S3 path to specific log object"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -1684,9 +3193,42 @@
                   "winnerCode"
                 ],
                 "properties": {
-                  "winnerCode": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "winnerCode": {
+                        "type": "string",
+                        "description": "Winner code identifier"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Winner code identifier"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -1713,7 +3255,39 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -1739,17 +3313,50 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "collection": {
-                    "type": "string",
-                    "description": "MongoDB collection name"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "collection": {
+                        "type": "string",
+                        "description": "MongoDB collection name"
+                      },
+                      "operation": {
+                        "type": "string",
+                        "description": "CRUD operation: GET, UPSERT, DELETE"
+                      },
+                      "query": {
+                        "type": "string",
+                        "description": "MongoDB query as JSON string"
+                      }
+                    }
                   },
-                  "operation": {
-                    "type": "string",
-                    "description": "CRUD operation: GET, UPSERT, DELETE"
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
                   },
-                  "query": {
+                  "clientInterface": {
                     "type": "string",
-                    "description": "MongoDB query as JSON string"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -1781,13 +3388,46 @@
                   "destination"
                 ],
                 "properties": {
-                  "origin": {
-                    "type": "string",
-                    "description": "Origin airport code, e.g. CGK, BKK, SGN"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "origin": {
+                        "type": "string",
+                        "description": "Origin airport code, e.g. CGK, BKK, SGN"
+                      },
+                      "destination": {
+                        "type": "string",
+                        "description": "Destination airport code"
+                      }
+                    }
                   },
-                  "destination": {
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Destination airport code"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -1818,9 +3458,42 @@
                   "searchId"
                 ],
                 "properties": {
-                  "searchId": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "searchId": {
+                        "type": "string",
+                        "description": "Search ID from a demand search session"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Search ID from a demand search session"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
@@ -1847,7 +3520,39 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -1872,7 +3577,39 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -1897,7 +3634,39 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -1923,21 +3692,54 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "origin": {
-                    "type": "string",
-                    "description": "Origin airport code"
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "origin": {
+                        "type": "string",
+                        "description": "Origin airport code"
+                      },
+                      "destination": {
+                        "type": "string",
+                        "description": "Destination airport code"
+                      },
+                      "departureDate": {
+                        "type": "string",
+                        "description": "Departure date YYYY-MM-DD"
+                      },
+                      "paxCount": {
+                        "type": "integer",
+                        "description": "Number of passengers"
+                      }
+                    }
                   },
-                  "destination": {
-                    "type": "string",
-                    "description": "Destination airport code"
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
                   },
-                  "departureDate": {
+                  "clientInterface": {
                     "type": "string",
-                    "description": "Departure date YYYY-MM-DD"
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
                   },
-                  "paxCount": {
-                    "type": "integer",
-                    "description": "Number of passengers"
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
                   }
                 }
               }
