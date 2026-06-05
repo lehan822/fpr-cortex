@@ -1,6 +1,6 @@
 ---
 name: fpr-shared
-version: 2.1.0
+version: 2.2.0
 description: "Flight Pricing & Revenue shared layer: AgentCore Gateway auth, environment config, common parameter standards. Read this FIRST before using any fpr-* skill."
 ---
 
@@ -19,17 +19,25 @@ Every request uses **two tokens** — one from the user, one from the agent:
 
 ### User Token（用户负责）
 
-用户通过浏览器登录获取身份 token：
+用户通过浏览器登录获取身份 token。**Agent 直接执行登录脚本，自动弹出浏览器：**
 
 ```bash
-fpr-cortex auth login    # 打开浏览器 → Traveloka SSO → token 保存本地
+# staging（默认）
+node ~/.agents/skills/fpr-shared/auth/login.js
+
+# production
+node ~/.agents/skills/fpr-shared/auth/login.js --env prod
 ```
 
-- Token 存储：`~/.fpr/auth.json`
-- 自动刷新（PKCE refresh flow）
-- 如果未登录或 token 过期，提示用户：
+- 自动打开浏览器 → Traveloka SSO 登录 → token 存到 `~/.fpr/auth.json`
+- 零依赖（只需 Node.js）
+- Token 包含 env 标识（stg/prod），切环境需重新登录
 
-> 🔐 需要登录。运行 `fpr-cortex auth login` 或我帮你打开登录页面？
+**当 `~/.fpr/auth.json` 不存在或 token 过期时：**
+1. 告知用户需要登录
+2. 询问环境（staging / production）
+3. 直接执行上面的命令（async mode，等待用户在浏览器完成登录）
+4. 登录成功后继续原来的查询
 
 ### M2M Token（Agent 负责，用户不碰）
 
@@ -101,7 +109,7 @@ Content-Type: application/json
 
 ## Version Check
 
-**Current installed version: 2.1.0**
+**Current installed version: 2.2.0**
 
 When fpr-shared is first loaded in a session, check for updates:
 
@@ -109,7 +117,7 @@ When fpr-shared is first loaded in a session, check for updates:
 curl -sf https://raw.githubusercontent.com/lehan822/fpr-cortex/main/VERSION
 ```
 
-If remote version > `2.1.0`, inform user after completing their request:
+If remote version > `2.2.0`, inform user after completing their request:
 
 > ℹ️ FPR Skills 有新版本 (vX.Y.Z)。运行 `npx skills update -g` 更新。
 
