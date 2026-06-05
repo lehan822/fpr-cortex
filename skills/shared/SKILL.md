@@ -55,7 +55,7 @@ const url = require('url');
 const AUTHORIZE_URL = '<from table above>';
 const TOKEN_URL = '<from table above>';
 const CLIENT_ID = '<from table above>';
-const PORT = 18765;
+const PORT = 18999;
 const REDIRECT_URI = `http://localhost:${PORT}/callback`;
 const AUTH_FILE = path.join(process.env.HOME, '.fpr', 'auth.json');
 
