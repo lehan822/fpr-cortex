@@ -15,7 +15,6 @@ category: shared
 |------|-------|
 | PKCE login flow + script | `references/pkce-login.md` |
 | Gateway protocol (MCP JSON-RPC) | `references/gateway-protocol.md` |
-| Parameter standards + error codes | `references/parameter-standards.md` |
 
 ## Authentication (Dual Token Architecture)
 
@@ -74,17 +73,15 @@ curl -s -X POST "{gateway_endpoint}/mcp" \
 
 For full protocol details (pagination, tool discovery, response format), see `references/gateway-protocol.md`.
 
-## Common Parameter Standards
+## Error Handling
 
-| Parameter | Format | Examples |
-|-----------|--------|----------|
-| country | ISO 3166-1 alpha-2 | ID, TH, VN, MY, SG, AU |
-| currency | ISO 4217 | IDR, THB, VND, MYR, SGD, AUD |
-| profileGroup | Enum | TRAVELOKA, AFFILIATE, CORPORATE |
-| airlineId | IATA 2-letter | GA, QZ, VJ, TG |
-| originCountry | ISO 3166-1 alpha-2 | Use for country filtering (NOT profileGroup) |
-
-For error handling and full parameter reference, see `references/parameter-standards.md`.
+| HTTP Code | Meaning | Agent Action |
+|-----------|---------|-------------|
+| 401 | User token expired | Run PKCE login again |
+| 403 | Insufficient permissions | Inform user: contact FPR team |
+| 404 | Operation not found | Check operation name (needs `fprtool-backend___` prefix) |
+| 429 | Rate limited | Retry with backoff (5s, 10s, 20s) |
+| 500 | Backend error | Report error, suggest retry |
 
 ## Version Check
 
