@@ -31,10 +31,16 @@ For engineers: can give operationId list directly, skip intent collection.
 
 ### 2. Extract from Schema
 
-Read local schema file to validate and supplement:
+Read the schema file from the fpr-cortex repo to validate and supplement:
 
 ```bash
-cat ~/IdeaProjects/pricing/fpr-cortex/infra/schemas/fprtool-full.json
+# Find the schema in the fpr-cortex repo (wherever it's cloned)
+find ~ -path "*/fpr-cortex/infra/schemas/fprtool-full.json" -print -quit 2>/dev/null
+```
+
+If not found locally, fetch from GitHub:
+```bash
+curl -sf https://raw.githubusercontent.com/lehan822/fpr-cortex/main/infra/schemas/fprtool-full.json
 ```
 
 Extract from schema:
