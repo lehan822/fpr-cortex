@@ -153,10 +153,12 @@ If refresh fails (400/401) → the refresh_token has also expired → run the PK
 
 ## Gateway Configuration
 
-| Environment | Gateway Endpoint |
-|-------------|-----------------|
-| staging | `https://fpr-lehan-jwt-gw-z6tsij9aib.gateway.bedrock-agentcore.ap-southeast-1.amazonaws.com` |
-| production | TBD (pending deployment) |
+| Environment | Gateway Endpoint | Backend | Cognito Pool |
+|-------------|-----------------|---------|--------------|
+| stg (sstg) | `https://fpr-lehan-jwt-gw-z6tsij9aib.gateway.bedrock-agentcore.ap-southeast-1.amazonaws.com` | `tool-api.fpr.staging-traveloka.com` | `ap-southeast-1_ckyls0lj2` |
+| prod | TBD (pending deployment) | `tool-api.fpr.traveloka.com` | TBD |
+
+> Note: fstg (flight staging, dev) is NOT connected to Gateway — use direct curl for dev testing.
 
 ### Tool Discovery (tools/list with pagination)
 
