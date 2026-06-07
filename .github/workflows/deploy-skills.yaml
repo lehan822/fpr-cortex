@@ -64,37 +64,47 @@ jobs:
             fi
 
             echo "🚀 Deploying ${SKILL} to Registry..."
-            CONTENT=$(cat "$SKILL_FILE")
+            CONTENT=$(cat "$SKILL_FILE" | jq -Rs .)
             RECORD_NAME="fpr-${SKILL}"
+            VERSION=$(date +%Y%m%d)
+
+            # Build descriptors JSON
+            cat > /tmp/descriptors.json << EOF
+            {"optionalValue":{"agentSkills":{"optionalValue":{"skillMd":{"optionalValue":{"inlineContent":${CONTENT}}}}}}}
+            EOF
 
             # Check if record already exists
-            EXISTING=$(aws bedrock-agentcore-control get-registry-record \
+            EXISTING=$(aws bedrock-agentcore-control list-registry-records \
               --registry-id $REGISTRY_ID \
-              --record-id "$RECORD_NAME" \
-              --region $AWS_REGION 2>&1 || true)
+              --region $AWS_REGION \
+              --no-cli-pager 2>&1)
 
-            if echo "$EXISTING" | grep -q "ResourceNotFoundException"; then
-              # Create new record
-              aws bedrock-agentcore-control create-registry-record \
-                --registry-id $REGISTRY_ID \
-                --name "$RECORD_NAME" \
-                --description "FPR ${SKILL} domain skill - AI agent knowledge layer" \
-                --descriptor-type AGENT_SKILLS \
-                --descriptors "{\"agentSkills\":{\"skillMd\":{\"inlineContent\":$(echo "$CONTENT" | jq -Rs .)}}}" \
-                --record-version "$(date +%Y%m%d)" \
-                --region $AWS_REGION \
-                --no-cli-pager
-              echo "✅ Created ${RECORD_NAME}"
-            else
+            if echo "$EXISTING" | jq -r '.registryRecords[].name' | grep -q "^${RECORD_NAME}$"; then
+              # Get record ID
+              RECORD_ID=$(echo "$EXISTING" | jq -r ".registryRecords[] | select(.name==\"${RECORD_NAME}\") | .recordId")
               # Update existing record
               aws bedrock-agentcore-control update-registry-record \
                 --registry-id $REGISTRY_ID \
-                --record-id "$RECORD_NAME" \
-                --description "FPR ${SKILL} domain skill - AI agent knowledge layer" \
-                --descriptors "{\"agentSkills\":{\"skillMd\":{\"inlineContent\":$(echo "$CONTENT" | jq -Rs .)}}}" \
-                --record-version "$(date +%Y%m%d)" \
+                --record-id "$RECORD_ID" \
+                --descriptors file:///tmp/descriptors.json \
+                --record-version "$VERSION" \
                 --region $AWS_REGION \
                 --no-cli-pager
-              echo "✅ Updated ${RECORD_NAME}"
+              echo "✅ Updated ${RECORD_NAME} (${RECORD_ID})"
+            else
+              # Create new record
+              cat > /tmp/create-descriptors.json << EOF2
+              {"agentSkills":{"skillMd":{"inlineContent":${CONTENT}}}}
+            EOF2
+              aws bedrock-agentcore-control create-registry-record \
+                --registry-id $REGISTRY_ID \
+                --name "$RECORD_NAME" \
+                --description "FPR ${SKILL} domain skill" \
+                --descriptor-type AGENT_SKILLS \
+                --descriptors file:///tmp/create-descriptors.json \
+                --record-version "$VERSION" \
+                --region $AWS_REGION \
+                --no-cli-pager
+              echo "✅ Created ${RECORD_NAME}"
             fi
           done
