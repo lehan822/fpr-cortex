@@ -1,7 +1,8 @@
 ---
 name: fpr-config
-description: "fpr-cli config domain: feature flags, audit/activity logs, condition groups, currency conversion, country/airline lists. Use for cross-team configuration queries and change auditing."
+description: "[domain] feature flags, audit/activity logs, condition groups, currency conversion, country/airline lists. Use for cross-team configuration queries and change auditing."
 version: "2.0.0"
+category: domain
 domain: config
 prerequisites:
   - fpr-shared

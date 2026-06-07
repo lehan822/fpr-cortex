@@ -1,7 +1,8 @@
 ---
 name: fpr-demand
-description: "fpr-cli demand domain: booking lookup, user profiles, fare cache, search simulation, promo labels, MongoDB queries. Use for demand-side debugging — bookings, search results, user segments."
+description: "[domain] booking lookup, user profiles, fare cache, search simulation, promo labels, MongoDB queries. Use for demand-side debugging — bookings, search results, user segments."
 version: "2.0.0"
+category: domain
 domain: demand
 prerequisites:
   - fpr-shared

@@ -1,7 +1,8 @@
 ---
 name: fpr-skill-maker
 version: "1.0.0"
-description: "Help domain owners create, validate, and iterate on FPR skills. Works for engineers and non-technical product managers alike."
+description: "[meta] Help domain owners create, validate, and iterate on FPR skills. Works for engineers and non-technical product managers alike."
+category: meta
 ---
 
 # FPR Skill Maker

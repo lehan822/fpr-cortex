@@ -1,7 +1,8 @@
 ---
 name: fpr-supply
-description: "fpr-cli supply domain: fare adjusters, provider configuration, airline routes, search metadata, provider sourcing, fare checking, inventory types. Use for supply-side debugging and provider management."
+description: "[domain] fare adjusters, provider configuration, airline routes, search metadata, provider sourcing, fare checking, inventory types. Use for supply-side debugging and provider management."
 version: "2.0.0"
+category: domain
 domain: supply
 prerequisites:
   - fpr-shared

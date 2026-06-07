@@ -1,7 +1,8 @@
 ---
 name: fpr-shared
 version: 2.5.0
-description: "Flight Pricing & Revenue shared layer: AgentCore Gateway auth, environment config, common parameter standards. Read this FIRST before using any fpr-* skill."
+description: "[gateway] Flight Pricing & Revenue shared layer: AgentCore Gateway auth, environment config, common parameter standards. Read this FIRST before using any fpr-* skill."
+category: gateway
 ---
 
 # fpr-shared — Auth, Gateway, Common Standards

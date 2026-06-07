@@ -1,7 +1,8 @@
 ---
 name: fpr-pricing
-description: "fpr-cli pricing domain: pricing rules, autopilot, budget, commissions, incentives. Use when querying pricing configuration, markup/margin rules, budget balances, or commission rates."
+description: "[domain] pricing rules, autopilot, budget, commissions, incentives. Use when querying pricing configuration, markup/margin rules, budget balances, or commission rates."
 version: "2.0.0"
+category: domain
 domain: pricing
 prerequisites:
   - fpr-shared
