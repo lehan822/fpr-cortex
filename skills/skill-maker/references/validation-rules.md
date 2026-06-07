@@ -4,10 +4,15 @@ After generating or modifying a skill, check each item against the following rul
 
 ## Must Pass (❌ = Blocking)
 
-### 1. Schema Consistency
+### 1. Domain Ownership (exposed-ops.yaml)
+- Each operationId in the skill MUST be listed under that domain in `infra/config/exposed-ops.yaml`
+- If an operation is not listed there, it either belongs to a different domain or hasn't been approved for exposure
+- To add a new operation: submit a PR to `exposed-ops.yaml` (requires review)
+
+### 2. Schema Consistency
 - Each operationId must exist in the `paths` of `infra/schemas/fprtool-full.json`
 - Parameter names must match the schema's `requestBody.properties.data.properties`
-- Validation method: read the schema and check each operationId one by one
+- Validation: cross-reference exposed-ops.yaml → schema → skill
 
 ### 2. Frontmatter Completeness
 Must include:
