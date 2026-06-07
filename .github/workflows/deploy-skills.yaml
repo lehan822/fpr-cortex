@@ -1,0 +1,100 @@
+name: Deploy Skills to Registry
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'skills/*/SKILL.md'
+  workflow_dispatch:
+    inputs:
+      skill:
+        description: 'Specific skill to deploy (or "all")'
+        required: true
+        default: 'all'
+
+jobs:
+  deploy-skills:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    env:
+      REGISTRY_ID: registry_vag4x
+      AWS_REGION: us-west-2
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_STG }}
+          aws-region: us-west-2
+
+      - name: Detect changed skills
+        id: changed
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.skill }}" != "all" ]]; then
+            echo "skills=${{ inputs.skill }}" >> $GITHUB_OUTPUT
+          else
+            # Find which skill folders had SKILL.md changes
+            CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'skills/*/SKILL.md' \
+              | sed 's|skills/\([^/]*\)/SKILL.md|\1|' \
+              | grep -v "shared\|skill-maker" \
+              | tr '\n' ' ')
+            echo "skills=${CHANGED}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy skills to Registry
+        run: |
+          SKILLS="${{ steps.changed.outputs.skills }}"
+          if [[ -z "$SKILLS" ]]; then
+            echo "No skill changes detected, skipping."
+            exit 0
+          fi
+
+          for SKILL in $SKILLS; do
+            SKILL_FILE="skills/${SKILL}/SKILL.md"
+            if [[ ! -f "$SKILL_FILE" ]]; then
+              echo "⚠️  $SKILL_FILE not found, skipping."
+              continue
+            fi
+
+            echo "🚀 Deploying ${SKILL} to Registry..."
+            CONTENT=$(cat "$SKILL_FILE")
+            RECORD_NAME="fpr-${SKILL}"
+
+            # Check if record already exists
+            EXISTING=$(aws bedrock-agentcore-control get-registry-record \
+              --registry-id $REGISTRY_ID \
+              --record-id "$RECORD_NAME" \
+              --region $AWS_REGION 2>&1 || true)
+
+            if echo "$EXISTING" | grep -q "ResourceNotFoundException"; then
+              # Create new record
+              aws bedrock-agentcore-control create-registry-record \
+                --registry-id $REGISTRY_ID \
+                --name "$RECORD_NAME" \
+                --description "FPR ${SKILL} domain skill - AI agent knowledge layer" \
+                --descriptor-type AGENT_SKILLS \
+                --descriptors "{\"agentSkills\":{\"skillMd\":{\"inlineContent\":$(echo "$CONTENT" | jq -Rs .)}}}" \
+                --record-version "$(date +%Y%m%d)" \
+                --region $AWS_REGION \
+                --no-cli-pager
+              echo "✅ Created ${RECORD_NAME}"
+            else
+              # Update existing record
+              aws bedrock-agentcore-control update-registry-record \
+                --registry-id $REGISTRY_ID \
+                --record-id "$RECORD_NAME" \
+                --description "FPR ${SKILL} domain skill - AI agent knowledge layer" \
+                --descriptors "{\"agentSkills\":{\"skillMd\":{\"inlineContent\":$(echo "$CONTENT" | jq -Rs .)}}}" \
+                --record-version "$(date +%Y%m%d)" \
+                --region $AWS_REGION \
+                --no-cli-pager
+              echo "✅ Updated ${RECORD_NAME}"
+            fi
+          done
