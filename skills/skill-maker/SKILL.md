@@ -81,6 +81,32 @@ skills/<domain>/references/  (如有复杂操作)
 3. 追加到 Operations 表和 Routing Guide
 4. 重新验证
 
+## 更新现有 Skill
+
+支持以下更新场景：
+
+| 用户说 | 动作 |
+|--------|------|
+| "加一个新 operation" | 追加到 Operations 表 + Routing Guide |
+| "改一下 XX 的描述/意图" | 定位对应行，原地修改 |
+| "删掉 XX operation" | 从 Operations + Routing Guide 移除，检查 references 是否也要删 |
+| "帮我检查/验证 skill" | 运行 validation-rules，输出结果 |
+| "升级版本" | bump version，检查所有改动是否一致 |
+| "schema 更新了，帮我同步" | 对比 schema vs skill，列出差异，逐个确认是否更新 |
+
+### Schema 同步流程
+
+当后端加了新 API 或改了参数时：
+
+1. 读取最新 `infra/schemas/fprtool-full.json`
+2. 对比 skill 中列出的 operations vs schema 中该 domain 相关的 operations
+3. 输出差异报告：
+   - 🆕 schema 有但 skill 没有的 operation
+   - ⚠️ 参数名变了的 operation
+   - 🗑️ skill 有但 schema 已删除的 operation
+4. 逐个询问用户是否更新
+5. 更新后重新验证
+
 ## 常见问题处理
 
 | 情况 | 处理 |
