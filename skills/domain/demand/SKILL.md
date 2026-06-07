@@ -10,9 +10,16 @@ prerequisites:
 
 # FPR Demand
 
-> ⚠️ **Read [fpr-shared](../shared/SKILL.md) first** — it covers authentication, Gateway URL, and parameter standards.
->
 > ⚠️ **Tool name prefix required:** When calling `tools/call`, prepend `fprtool-backend___` to every operation name below. Params go inside `data:{}` envelope. See fpr-shared for full request format.
+
+## 前置条件 — 执行操作前必读
+
+**CRITICAL — 执行对应操作前，MUST 先读取以下文件：**
+1. [`fpr-shared`](../../shared/auth/SKILL.md) — 认证、Gateway 协议、error handling（所有操作通用）
+2. **执行 search simulation** → 必读 [`search-simulation.md`](references/search-simulation.md)（完整 pipeline 参数）
+3. **查询 booking** → 必读 [`booking-operations.md`](references/booking-operations.md)（bookingId vs PNR 区分）
+
+**未读完以上文件就执行相应操作会导致参数或流程错误。**
 
 ## Operations
 

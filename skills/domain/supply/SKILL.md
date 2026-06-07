@@ -10,9 +10,16 @@ prerequisites:
 
 # FPR Supply
 
-> ⚠️ **Read [fpr-shared](../shared/SKILL.md) first** — it covers authentication, Gateway URL, and parameter standards.
->
 > ⚠️ **Tool name prefix required:** When calling `tools/call`, prepend `fprtool-backend___` to every operation name below. Params go inside `data:{}` envelope. See fpr-shared for full request format.
+
+## 前置条件 — 执行操作前必读
+
+**CRITICAL — 执行对应操作前，MUST 先读取以下文件：**
+1. [`fpr-shared`](../../shared/auth/SKILL.md) — 认证、Gateway 协议、error handling（所有操作通用）
+2. **执行 fare check** → 必读 [`fare-check-workflow.md`](references/fare-check-workflow.md)（异步 2 步操作）
+3. **查询 provider 配置** → 必读 [`provider-operations.md`](references/provider-operations.md)
+
+**未读完以上文件就执行相应操作会导致流程错误。**
 
 ## Operations
 
