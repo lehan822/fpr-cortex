@@ -1,52 +1,52 @@
-# Skill 验证规则
+# Skill Validation Rules
 
-生成或修改 skill 后，按以下规则逐项检查。
+After generating or modifying a skill, check each item against the following rules.
 
-## 必须通过（❌ = 阻塞）
+## Must Pass (❌ = Blocking)
 
-### 1. Schema 一致性
-- 每个 operationId 必须存在于 `infra/schemas/fprtool-full.json` 的 `paths` 中
-- 参数名必须和 schema 的 `requestBody.properties.data.properties` 一致
-- 验证方法：读取 schema，逐个 operationId 检查
+### 1. Schema Consistency
+- Each operationId must exist in the `paths` of `infra/schemas/fprtool-full.json`
+- Parameter names must match the schema's `requestBody.properties.data.properties`
+- Validation method: read the schema and check each operationId one by one
 
-### 2. Frontmatter 完整性
-必须包含：
+### 2. Frontmatter Completeness
+Must include:
 ```yaml
-name: fpr-<domain>       # 必须以 fpr- 开头
-description: "..."       # 非空
+name: fpr-<domain>       # Must start with fpr-
+description: "..."       # Non-empty
 version: "x.y.z"        # semver
-domain: <domain>         # 和目录名一致
+domain: <domain>         # Must match the directory name
 prerequisites:
-  - fpr-shared           # 必须依赖 shared
+  - fpr-shared           # Must depend on shared
 ```
 
-### 3. 结构完整性
-- [ ] 包含 "Operations" 表（至少 1 行）
-- [ ] 包含 "Routing Guide" 表（至少覆盖每个 operation 一次）
-- [ ] 包含前缀 + data 信封提醒（⚠️ 段落）
-- [ ] 包含 fpr-shared 链接
+### 3. Structural Completeness
+- [ ] Includes an "Operations" table (at least 1 row)
+- [ ] Includes a "Routing Guide" table (covers each operation at least once)
+- [ ] Includes the prefix + data envelope reminder (⚠️ section)
+- [ ] Includes the fpr-shared link
 
-### 4. 命名规范
-- 文件路径：`skills/<domain>/SKILL.md`
-- domain 名只能是小写字母 + 连字符
-- operationId 使用 snake_case
+### 4. Naming Conventions
+- File path: `skills/<domain>/SKILL.md`
+- The domain name may contain only lowercase letters + hyphens
+- operationId uses snake_case
 
-## 建议通过（⚠️ = 警告）
+## Recommended to Pass (⚠️ = Warning)
 
-### 5. 覆盖率
-- Operations 表列出的 operation 数量 ≥ 3（太少考虑合并到其他 domain）
-- Routing Guide 行数 ≥ Operations 行数（每个 op 至少一个意图）
+### 5. Coverage
+- The number of operations listed in the Operations table should be ≥ 3 (if too few, consider merging into another domain)
+- Routing Guide row count should be ≥ Operations row count (at least one intent per op)
 
-### 6. 可用性
-- 有 "Parameter Normalization" 段（帮助 AI 理解非标准输入）
-- 有 "Disambiguation" 段（避免和其他 domain 混淆）
-- 有 "Common Codes" 段（列出领域常用编码）
+### 6. Usability
+- Has a "Parameter Normalization" section (helps AI understand non-standard input)
+- Has a "Disambiguation" section (avoids confusion with other domains)
+- Has a "Common Codes" section (lists commonly used codes in the domain)
 
 ### 7. References
-- 超过 5 个参数的复杂操作，建议有 `references/<operation>.md` 详细说明
-- 涉及多步工作流的操作，建议有 workflow reference
+- For complex operations with more than 5 parameters, a detailed `references/<operation>.md` is recommended
+- For operations involving multi-step workflows, a workflow reference is recommended
 
-## 验证输出格式
+## Validation Output Format
 
 ```
 ✅ Schema check: 5/5 operations found

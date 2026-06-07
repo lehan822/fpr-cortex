@@ -1,6 +1,6 @@
-# SKILL.md 模板
+# SKILL.md Template
 
-以下是生成 domain skill 时使用的标准模板。用 `{{}}` 标记需要填充的内容。
+Below is the standard template used when generating a domain skill. Use `{{}}` to mark content that needs to be filled in.
 
 ---
 
@@ -49,22 +49,22 @@ prerequisites:
 
 ---
 
-## 模板填充规则
+## Template Filling Rules
 
-1. **Operations 表**
-   - 每行一个 operationId
-   - Description 从 schema 的 summary/description 提取，精简到 10 字以内
-   - Key Parameters 只列 `data` 里最重要的 2-3 个参数
+1. **Operations Table**
+   - One operationId per row
+   - Extract Description from the schema's summary/description and keep it within 10 words
+   - Key Parameters should list only the 2-3 most important parameters inside `data`
 
 2. **Routing Guide**
-   - 每个 operation 至少一个意图映射
-   - 用用户实际会说的话（中文/英文混合 OK）
-   - 高频操作可以有多个意图映射
+   - At least one intent mapping for each operation
+   - Use phrases users would actually say (Chinese/English mixed is OK)
+   - High-frequency operations can have multiple intent mappings
 
 3. **Parameter Normalization**
-   - 列出用户可能输入的非标准格式
-   - 如：用户说"印尼" → normalize 为 `"ID"`
+   - List non-standard formats users may input
+   - Example: user says "Indonesia" → normalize to `"ID"`
 
 4. **Disambiguation**
-   - 列出容易混淆的术语
-   - 指向正确的 domain skill
+   - List terms that are easy to confuse
+   - Point to the correct domain skill

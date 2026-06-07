@@ -12,38 +12,38 @@ description: "Flight Pricing & Revenue shared layer: AgentCore Gateway auth, env
 
 Every request uses **two tokens** — one from the user, one from the agent:
 
-| Token | 谁负责 | 获取方式 | 放在哪 |
+| Token | Owner | How to Obtain | Stored In |
 |-------|--------|---------|--------|
-| User id_token | **用户** | 浏览器 SSO 登录（见下方流程） | `body.context.authServiceToken` |
-| M2M access_token | **Agent/Gateway** | Client Credentials Grant (预配置) | `Authorization` header (自动注入) |
+| User id_token | **User** | Browser SSO login (see flow below) | `body.context.authServiceToken` |
+| M2M access_token | **Agent/Gateway** | Client Credentials Grant (preconfigured) | `Authorization` header (auto-injected) |
 
-### M2M Token（Agent 负责，用户不碰）
+### M2M Token (Handled by the Agent; the user does not interact with it)
 
-- 由 AgentCore Gateway 基础设施预配置
-- Agent 自动获取和刷新，对用户完全透明
-- **永远不要向用户询问 client_id 或 client_secret**
+- Preconfigured by the AgentCore Gateway infrastructure
+- Automatically obtained and refreshed by the agent; completely transparent to the user
+- **Never ask the user for client_id or client_secret**
 
-### User Token — PKCE 登录流程
+### User Token — PKCE Login Flow
 
-**当 `~/.fpr/auth.json` 不存在或 `expires_at` < 当前时间时，执行以下登录流程：**
+**When `~/.fpr/auth.json` does not exist or `expires_at` < current time, run the following login flow:**
 
-1. 询问用户要用哪个环境（staging / production）
-2. 用 inline Node.js 脚本执行 PKCE OAuth 流程（见下方）
-3. 登录成功后继续用户原来的查询
+1. Ask the user which environment to use (staging / production)
+2. Run the PKCE OAuth flow using the inline Node.js script below
+3. After login succeeds, continue the user's original request
 
-#### 环境配置
+#### Environment Configuration
 
-| 环境 | Authorize URL | Token URL | Client ID |
+| Environment | Authorize URL | Token URL | Client ID |
 |------|--------------|-----------|-----------|
 | staging | `https://internal-id.ath.staging-traveloka.com/oauth2/authorize` | `https://internal-id.ath.staging-traveloka.com/oauth2/token` | `38taf824vlbfba3lta3eitcuhi` |
 | production | `https://internal-id.ath.traveloka.com/oauth2/authorize` | `https://internal-id.ath.traveloka.com/oauth2/token` | `i01t804ups4dme8p1kfoat8jb` |
 
-#### PKCE 登录步骤
+#### PKCE Login Steps
 
-用 bash async mode 执行以下 inline Node.js 脚本：
+Run the following inline Node.js script in bash async mode:
 
 ```javascript
-// 替换 AUTHORIZE_URL, TOKEN_URL, CLIENT_ID 为上表对应环境的值
+// Replace AUTHORIZE_URL, TOKEN_URL, and CLIENT_ID with the values for the corresponding environment in the table above
 const http = require('http');
 const https = require('https');
 const crypto = require('crypto');
@@ -107,12 +107,12 @@ server.listen(PORT, () => {
 setTimeout(()=>{console.error('⏰ Timeout');process.exit(1);},120000);
 ```
 
-#### 读取 Token
+#### Read Tokens
 
-登录完成后，从 `~/.fpr/auth.json` 读取两个 token：
+After login completes, read the two tokens from `~/.fpr/auth.json`:
 
 ```bash
-# 检查是否过期
+# Check whether expired
 node -e "const a=JSON.parse(require('fs').readFileSync(process.env.HOME+'/.fpr/auth.json'));
   if(a.expires_at<Date.now()){console.log('EXPIRED');process.exit(1);}
   console.log('OK');"
@@ -124,12 +124,12 @@ node -e "console.log(JSON.parse(require('fs').readFileSync(process.env.HOME+'/.f
 node -e "console.log(JSON.parse(require('fs').readFileSync(process.env.HOME+'/.fpr/auth.json')).id_token)"
 ```
 
-#### Token 刷新
+#### Token Refresh
 
-当 `expires_at` < 当前时间但 `refresh_token` 存在时，**先尝试刷新，不要重新登录：**
+When `expires_at` < current time but `refresh_token` exists, **try refreshing first; do not log in again yet:**
 
 ```bash
-# 读取环境配置
+# Read environment configuration
 ENV=$(cat ~/.fpr/auth.json | node -e "process.stdin.on('data',d=>console.log(JSON.parse(d).env||'stg'))")
 REFRESH_TOKEN=$(cat ~/.fpr/auth.json | node -e "process.stdin.on('data',d=>console.log(JSON.parse(d).refresh_token))")
 
@@ -141,15 +141,15 @@ curl -s -X POST "$TOKEN_URL" \
   -d "grant_type=refresh_token&client_id=$CLIENT_ID&refresh_token=$REFRESH_TOKEN"
 ```
 
-成功返回新 tokens → 更新 `~/.fpr/auth.json`（同结构）。
-如果 refresh 失败（400/401）→ refresh_token 也过期了 → 重新执行 PKCE 登录流程。
+If new tokens are returned successfully → update `~/.fpr/auth.json` (same structure).
+If refresh fails (400/401) → the refresh_token has also expired → run the PKCE login flow again.
 
-#### 检查顺序
+#### Check Order
 
-1. `~/.fpr/auth.json` 不存在 → PKCE 登录
-2. `expires_at` > now → 直接用 `id_token`
-3. `expires_at` < now + `refresh_token` 存在 → 尝试 refresh
-4. refresh 失败 → PKCE 登录
+1. `~/.fpr/auth.json` does not exist → PKCE login
+2. `expires_at` > now → use `id_token` directly
+3. `expires_at` < now + `refresh_token` exists → try refresh
+4. refresh fails → PKCE login
 
 ## Gateway Configuration
 
@@ -284,9 +284,9 @@ curl -s -X POST "https://fpr-lehan-jwt-gw-z6tsij9aib.gateway.bedrock-agentcore.a
 
 | HTTP Code | Meaning | Agent Action |
 |-----------|---------|-------------|
-| 401 | User token expired | 重新执行 PKCE 登录流程 |
-| 403 | Insufficient permissions | 告知用户："需要额外权限，请联系 FPR team" |
-| 404 | Operation not found | 检查 operation name |
+| 401 | User token expired | Run the PKCE login flow again |
+| 403 | Insufficient permissions | Inform the user: "Additional permissions are required; please contact the FPR team" |
+| 404 | Operation not found | Check the operation name |
 | 429 | Rate limited | Retry with backoff (5s, 10s, 20s) |
 | 500 | Backend error | Report error, suggest retry |
 
@@ -302,4 +302,4 @@ curl -sf https://raw.githubusercontent.com/lehan822/fpr-cortex/main/VERSION
 
 If remote version > `2.5.0`, inform user after completing their request:
 
-> ℹ️ FPR Skills 有新版本 (vX.Y.Z)。运行 `npx skills update -g` 更新。
+> ℹ️ A new version of FPR Skills is available (vX.Y.Z). Run `npx skills update -g` to update.
