@@ -3,7 +3,7 @@
 > Auto-generated — do not edit manually.
 > Run: `python scripts/generate-catalog.py`
 
-**Total: 55 operations**
+**Total: 55 operations** across 1 backend(s): fprtool
 
 | operationId | Description | Domain |
 |---|---|---|
