@@ -1,5 +1,7 @@
 # fpr-cortex
 
+[![CI](https://github.com/lehan822/fpr-cortex/actions/workflows/ci.yml/badge.svg)](https://github.com/lehan822/fpr-cortex/actions/workflows/ci.yml)
+
 > Flight Pricing & Revenue — AI Skills + Schema Pipeline
 
 ## For Users (install skills)
