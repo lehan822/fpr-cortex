@@ -20,15 +20,20 @@ for schema_file in schema_files:
                 desc = detail.get("summary", detail.get("description", "")).split("\n")[0][:80]
                 all_ops[detail["operationId"]] = {"desc": desc, "backend": backend}
 
-domains = [d for d in os.listdir(SKILLS_DIR)
-           if os.path.isfile(os.path.join(SKILLS_DIR, d, "SKILL.md"))
-           and d not in ("shared", "skill-maker")]
+domains = {}
+# Walk skills directory to find all SKILL.md files (supports nested structure)
+for root, dirs, files in os.walk(SKILLS_DIR):
+    if "SKILL.md" in files:
+        rel = os.path.relpath(root, SKILLS_DIR)
+        # Skip shared-layer skills (auth, skill-maker)
+        if rel.startswith("shared"):
+            continue
+        domain_name = os.path.basename(root)
+        with open(os.path.join(root, "SKILL.md")) as f:
+            content = f.read()
+        domains[domain_name] = [op for op in all_ops if op in content]
 
-domain_ops = {}
-for domain in domains:
-    with open(os.path.join(SKILLS_DIR, domain, "SKILL.md")) as f:
-        content = f.read()
-    domain_ops[domain] = [op for op in all_ops if op in content]
+domain_ops = domains
 
 backends = sorted(set(v["backend"] for v in all_ops.values()))
 multi_backend = len(backends) > 1
