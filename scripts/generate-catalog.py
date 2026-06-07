@@ -52,15 +52,12 @@ else:
 
 for op_id in sorted(all_ops.keys()):
     info = all_ops[op_id]
-    owner = "❌ unclaimed"
-    for domain, ops in domain_ops.items():
-        if op_id in ops:
-            owner = domain
-            break
+    owners = [domain for domain, ops in domain_ops.items() if op_id in ops]
+    owner_str = ", ".join(sorted(owners)) if owners else "❌ unclaimed"
     if multi_backend:
-        lines.append(f"| `{op_id}` | {info['desc']} | {info['backend']} | {owner} |")
+        lines.append(f"| `{op_id}` | {info['desc']} | {info['backend']} | {owner_str} |")
     else:
-        lines.append(f"| `{op_id}` | {info['desc']} | {owner} |")
+        lines.append(f"| `{op_id}` | {info['desc']} | {owner_str} |")
 
 claimed = len(set(op for ops in domain_ops.values() for op in ops))
 lines += ["", "## Summary", "", f"- **Claimed:** {claimed}/{len(all_ops)}", f"- **Unclaimed:** {len(all_ops) - claimed}", ""]
