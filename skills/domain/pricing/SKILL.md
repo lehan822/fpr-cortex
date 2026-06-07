@@ -12,15 +12,15 @@ prerequisites:
 
 > ⚠️ **Tool name prefix required:** When calling `tools/call`, prepend `fprtool-backend___` to every operation name below (e.g. `fprtool-backend___load_commission_incentive_rules`). Params go inside `data:{}` envelope. See fpr-shared for full request format.
 
-## 前置条件 — 执行操作前必读
+## Prerequisites — Read Before Executing
 
-**CRITICAL — 执行对应操作前，MUST 先读取以下文件：**
-1. [`fpr-shared`](../../shared/auth/SKILL.md) — 认证、Gateway 协议、error handling（所有操作通用）
-2. **查询 commission/incentive** → 必读 [`commission-operations.md`](references/commission-operations.md)
-3. **查询 budget** → 必读 [`budget-operations.md`](references/budget-operations.md)
-4. **参数不确定时** → 必读 [`parameter-standards.md`](references/parameter-standards.md)（profileGroup enum、originCountry 区分）
+**CRITICAL — You MUST read the following files before executing the corresponding operations:**
+1. [`fpr-shared`](../../shared/auth/SKILL.md) — Auth, Gateway protocol, error handling (required for all operations)
+2. **Querying commission/incentive** → MUST read [`commission-operations.md`](references/commission-operations.md)
+3. **Querying budget** → MUST read [`budget-operations.md`](references/budget-operations.md)
+4. **Unsure about parameters** → MUST read [`parameter-standards.md`](references/parameter-standards.md) (profileGroup enum, originCountry distinction)
 
-**未读完以上文件就执行相应操作会导致参数错误。**
+**Executing operations without reading the required files above will lead to parameter errors.**
 
 ## Operations
 

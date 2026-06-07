@@ -12,13 +12,13 @@ prerequisites:
 
 > ⚠️ **Tool name prefix required:** When calling `tools/call`, prepend `fprtool-backend___` to every operation name below. Params go inside `data:{}` envelope. See fpr-shared for full request format.
 
-## 前置条件 — 执行操作前必读
+## Prerequisites — Read Before Executing
 
-**CRITICAL — 执行操作前，MUST 先读取以下文件：**
-1. [`fpr-shared`](../../shared/auth/SKILL.md) — 认证、Gateway 协议、error handling（所有操作通用）
-2. **查询 feature flags** → 必读 [`feature-flags.md`](references/feature-flags.md)（appName 对照表、flag 状态解读）
+**CRITICAL — You MUST read the following files before executing the corresponding operations:**
+1. [`fpr-shared`](../../shared/auth/SKILL.md) — Auth, Gateway protocol, error handling (required for all operations)
+2. **Querying feature flags** → MUST read [`feature-flags.md`](references/feature-flags.md) (appName mapping, flag state interpretation)
 
-**未读完以上文件就执行相应操作会导致参数错误。**
+**Executing operations without reading the required files above will lead to parameter errors.**
 
 ## Operations
 

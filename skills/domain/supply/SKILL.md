@@ -12,14 +12,14 @@ prerequisites:
 
 > ⚠️ **Tool name prefix required:** When calling `tools/call`, prepend `fprtool-backend___` to every operation name below. Params go inside `data:{}` envelope. See fpr-shared for full request format.
 
-## 前置条件 — 执行操作前必读
+## Prerequisites — Read Before Executing
 
-**CRITICAL — 执行对应操作前，MUST 先读取以下文件：**
-1. [`fpr-shared`](../../shared/auth/SKILL.md) — 认证、Gateway 协议、error handling（所有操作通用）
-2. **执行 fare check** → 必读 [`fare-check-workflow.md`](references/fare-check-workflow.md)（异步 2 步操作）
-3. **查询 provider 配置** → 必读 [`provider-operations.md`](references/provider-operations.md)
+**CRITICAL — You MUST read the following files before executing the corresponding operations:**
+1. [`fpr-shared`](../../shared/auth/SKILL.md) — Auth, Gateway protocol, error handling (required for all operations)
+2. **Running fare check** → MUST read [`fare-check-workflow.md`](references/fare-check-workflow.md) (async 2-step operation)
+3. **Querying provider config** → MUST read [`provider-operations.md`](references/provider-operations.md)
 
-**未读完以上文件就执行相应操作会导致流程错误。**
+**Executing operations without reading the required files above will lead to workflow errors.**
 
 ## Operations
 

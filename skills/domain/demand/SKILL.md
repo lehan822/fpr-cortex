@@ -12,14 +12,14 @@ prerequisites:
 
 > ⚠️ **Tool name prefix required:** When calling `tools/call`, prepend `fprtool-backend___` to every operation name below. Params go inside `data:{}` envelope. See fpr-shared for full request format.
 
-## 前置条件 — 执行操作前必读
+## Prerequisites — Read Before Executing
 
-**CRITICAL — 执行对应操作前，MUST 先读取以下文件：**
-1. [`fpr-shared`](../../shared/auth/SKILL.md) — 认证、Gateway 协议、error handling（所有操作通用）
-2. **执行 search simulation** → 必读 [`search-simulation.md`](references/search-simulation.md)（完整 pipeline 参数）
-3. **查询 booking** → 必读 [`booking-operations.md`](references/booking-operations.md)（bookingId vs PNR 区分）
+**CRITICAL — You MUST read the following files before executing the corresponding operations:**
+1. [`fpr-shared`](../../shared/auth/SKILL.md) — Auth, Gateway protocol, error handling (required for all operations)
+2. **Running search simulation** → MUST read [`search-simulation.md`](references/search-simulation.md) (full pipeline parameters)
+3. **Querying bookings** → MUST read [`booking-operations.md`](references/booking-operations.md) (bookingId vs PNR distinction)
 
-**未读完以上文件就执行相应操作会导致参数或流程错误。**
+**Executing operations without reading the required files above will lead to parameter or workflow errors.**
 
 ## Operations
 
