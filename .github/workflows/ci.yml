@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Skill Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Run skill validation
+        run: python tests/validation/test_skills.py
+
+  eval:
+    name: Skill Accuracy Eval
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run skill accuracy eval
+        id: eval
+        run: |
+          python tests/eval/test_skill_accuracy.py 2>&1 | tee eval_output.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Generate PR comment report
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const results = JSON.parse(fs.readFileSync('tests/eval/results.json', 'utf8'));
+            const output = fs.readFileSync('eval_output.txt', 'utf8');
+
+            const skillPct = Math.round(results.skill_accuracy * 100);
+            const opPct = Math.round(results.operation_accuracy * 100);
+            const fullPct = Math.round(results.full_accuracy * 100);
+
+            const emoji = fullPct >= 80 ? '✅' : fullPct >= 60 ? '⚠️' : '❌';
+
+            const failures = results.cases
+              .filter(c => c.status !== '✅')
+              .map(c => `| ${c.prompt.substring(0, 50)} | ${c.expected} | ${c.predicted} |`)
+              .join('\n');
+
+            const body = `## ${emoji} Skill Eval Report
+
+            | Metric | Score |
+            |--------|-------|
+            | Skill routing | **${skillPct}%** (${Math.round(results.skill_accuracy * results.total)}/${results.total}) |
+            | Operation match | **${opPct}%** (${Math.round(results.operation_accuracy * results.total)}/${results.total}) |
+            | Full accuracy | **${fullPct}%** |
+
+            ${failures ? `### Failures\n\n| Prompt | Expected | Got |\n|--------|----------|-----|\n${failures}` : 'All test cases passed! 🎉'}
+
+            <details><summary>Full output</summary>\n\n\`\`\`\n${output}\n\`\`\`\n</details>`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      - name: Post job summary
+        if: always()
+        run: |
+          python -c "
+          import json
+          r = json.load(open('tests/eval/results.json'))
+          pct = int(r['full_accuracy'] * 100)
+          emoji = '✅' if pct >= 80 else '⚠️' if pct >= 60 else '❌'
+          print(f'## {emoji} Skill Accuracy: {pct}%')
+          print(f'- Skill routing: {int(r[\"skill_accuracy\"]*100)}%')
+          print(f'- Operation match: {int(r[\"operation_accuracy\"]*100)}%')
+          print(f'- Total cases: {r[\"total\"]}')
+          fails = [c for c in r['cases'] if c['status'] != '✅']
+          if fails:
+              print(f'\n### {len(fails)} failures:')
+              for f in fails:
+                  print(f'- {f[\"prompt\"][:50]} → expected {f[\"expected\"]}')
+          " >> $GITHUB_STEP_SUMMARY
+
+  catalog:
+    name: Operation Catalog Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Regenerate catalog
+        run: python scripts/generate-catalog.py
+
+      - name: Check catalog is up to date
+        run: |
+          if git diff --quiet docs/operation-catalog.md; then
+            echo "✅ Catalog is up to date"
+          else
+            echo "❌ Catalog is out of date. Run: python scripts/generate-catalog.py"
+            git diff docs/operation-catalog.md
+            exit 1
+          fi
