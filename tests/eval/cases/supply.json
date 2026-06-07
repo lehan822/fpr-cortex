@@ -1,0 +1,8 @@
+[
+  {"prompt": "Check fare for GA CGK-DPS tomorrow", "operation": "check_fare"},
+  {"prompt": "What's the fare adjuster for Lion Air?", "operation": "load_fare_adjuster_by_base_fare"},
+  {"prompt": "Show provider config for provider 123", "operation": "read_pricing_provider"},
+  {"prompt": "Active routes for VietJet", "operation": "get_airline_routes"},
+  {"prompt": "Where does fare come from for GA CGK-SIN?", "operation": "get_provider_sourcing"},
+  {"prompt": "Special fare config for TG", "operation": "get_special_fare_config"}
+]

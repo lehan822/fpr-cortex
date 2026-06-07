@@ -6,6 +6,72 @@
   "full_accuracy": 0.52,
   "cases": [
     {
+      "status": "\u274c",
+      "prompt": "Is feature X enabled?",
+      "expected": "fpr-config \u2192 get_feature_flags",
+      "predicted": "None \u2192 none"
+    },
+    {
+      "status": "\u274c",
+      "prompt": "Who changed the pricing rule yesterday?",
+      "expected": "fpr-config \u2192 get_activity_log",
+      "predicted": "None \u2192 none"
+    },
+    {
+      "status": "\u274c",
+      "prompt": "List all airline codes",
+      "expected": "fpr-config \u2192 get_airline_ids",
+      "predicted": "None \u2192 none"
+    },
+    {
+      "status": "\u274c",
+      "prompt": "Convert 100 IDR to THB",
+      "expected": "fpr-config \u2192 convert_currency",
+      "predicted": "None \u2192 none"
+    },
+    {
+      "status": "\u2705",
+      "prompt": "Show condition group rules",
+      "expected": "fpr-config \u2192 load_condition_groups",
+      "predicted": "fpr-config \u2192 load_condition_groups"
+    },
+    {
+      "status": "\u274c",
+      "prompt": "Look up booking ABC123",
+      "expected": "fpr-demand \u2192 get_flight_info",
+      "predicted": "None \u2192 none"
+    },
+    {
+      "status": "\u274c",
+      "prompt": "Simulate search CGK to DPS next Monday",
+      "expected": "fpr-demand \u2192 simulate_search",
+      "predicted": "None \u2192 none"
+    },
+    {
+      "status": "\u2705",
+      "prompt": "Search fare cache CGK-SIN",
+      "expected": "fpr-demand \u2192 search_cache_content",
+      "predicted": "fpr-demand \u2192 search_cache_content"
+    },
+    {
+      "status": "\u2705",
+      "prompt": "User profile for user 12345",
+      "expected": "fpr-demand \u2192 search_user_profile",
+      "predicted": "fpr-demand \u2192 search_user_profile"
+    },
+    {
+      "status": "\u2705",
+      "prompt": "Active promo labels for GA",
+      "expected": "fpr-demand \u2192 search_promo_labels",
+      "predicted": "fpr-demand \u2192 search_promo_labels"
+    },
+    {
+      "status": "\u2705",
+      "prompt": "Booking log for order XYZ",
+      "expected": "fpr-demand \u2192 get_booking_log",
+      "predicted": "fpr-demand \u2192 get_booking_log"
+    },
+    {
       "status": "\u2705",
       "prompt": "What's the commission rate for GA?",
       "expected": "fpr-pricing \u2192 load_commission_incentive_rules",
@@ -88,72 +154,6 @@
       "prompt": "Special fare config for TG",
       "expected": "fpr-supply \u2192 get_special_fare_config",
       "predicted": "fpr-supply \u2192 get_special_fare_config"
-    },
-    {
-      "status": "\u274c",
-      "prompt": "Look up booking ABC123",
-      "expected": "fpr-demand \u2192 get_flight_info",
-      "predicted": "None \u2192 none"
-    },
-    {
-      "status": "\u274c",
-      "prompt": "Simulate search CGK to DPS next Monday",
-      "expected": "fpr-demand \u2192 simulate_search",
-      "predicted": "None \u2192 none"
-    },
-    {
-      "status": "\u2705",
-      "prompt": "Search fare cache CGK-SIN",
-      "expected": "fpr-demand \u2192 search_cache_content",
-      "predicted": "fpr-demand \u2192 search_cache_content"
-    },
-    {
-      "status": "\u2705",
-      "prompt": "User profile for user 12345",
-      "expected": "fpr-demand \u2192 search_user_profile",
-      "predicted": "fpr-demand \u2192 search_user_profile"
-    },
-    {
-      "status": "\u2705",
-      "prompt": "Active promo labels for GA",
-      "expected": "fpr-demand \u2192 search_promo_labels",
-      "predicted": "fpr-demand \u2192 search_promo_labels"
-    },
-    {
-      "status": "\u2705",
-      "prompt": "Booking log for order XYZ",
-      "expected": "fpr-demand \u2192 get_booking_log",
-      "predicted": "fpr-demand \u2192 get_booking_log"
-    },
-    {
-      "status": "\u274c",
-      "prompt": "Is feature X enabled?",
-      "expected": "fpr-config \u2192 get_feature_flags",
-      "predicted": "None \u2192 none"
-    },
-    {
-      "status": "\u274c",
-      "prompt": "Who changed the pricing rule yesterday?",
-      "expected": "fpr-config \u2192 get_activity_log",
-      "predicted": "None \u2192 none"
-    },
-    {
-      "status": "\u274c",
-      "prompt": "List all airline codes",
-      "expected": "fpr-config \u2192 get_airline_ids",
-      "predicted": "None \u2192 none"
-    },
-    {
-      "status": "\u274c",
-      "prompt": "Convert 100 IDR to THB",
-      "expected": "fpr-config \u2192 convert_currency",
-      "predicted": "None \u2192 none"
-    },
-    {
-      "status": "\u2705",
-      "prompt": "Show condition group rules",
-      "expected": "fpr-config \u2192 load_condition_groups",
-      "predicted": "fpr-config \u2192 load_condition_groups"
     }
   ]
 }

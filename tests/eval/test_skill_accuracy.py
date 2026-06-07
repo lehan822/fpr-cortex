@@ -12,47 +12,43 @@ import os, re, sys, json, argparse
 from pathlib import Path
 
 SKILLS_DIR = "skills"
+CASES_DIR = "tests/eval/cases"
 
 # Gemini config (company staging endpoint, OpenAI-compatible)
 GEMINI_ENDPOINT = os.environ.get("GEMINI_ENDPOINT", "https://genai.stg.tvlk-data.com/openai")
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "sk-3e66d456e9e674")
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 
-# Test cases: (user_prompt, expected_skill_name, expected_operations)
-TEST_CASES = [
-    # Pricing
-    ("What's the commission rate for GA?", "fpr-pricing", ["load_commission_incentive_rules"]),
-    ("Check budget balance for IDR", "fpr-pricing", ["get_budget_balance"]),
-    ("Show me autopilot rules for Thailand", "fpr-pricing", ["load_autopilot_rules"]),
-    ("What's the markup for Garuda?", "fpr-pricing", ["load_baseline_pricing_rules"]),
-    ("Any flash sale active?", "fpr-pricing", ["load_price_cut_modifier_rules"]),
-    ("Show tiered incentive for this PNR", "fpr-pricing", ["check_tiered_incentive_progress"]),
-    ("Transaction fee rules", "fpr-pricing", ["load_trx_fee_rules"]),
-    ("Price prediction rules", "fpr-pricing", ["load_price_prediction_rules"]),
 
-    # Supply
-    ("Check fare for GA CGK-DPS tomorrow", "fpr-supply", ["check_fare"]),
-    ("What's the fare adjuster for Lion Air?", "fpr-supply", ["load_fare_adjuster_by_base_fare"]),
-    ("Show provider config for provider 123", "fpr-supply", ["read_pricing_provider"]),
-    ("Active routes for VietJet", "fpr-supply", ["get_airline_routes"]),
-    ("Where does fare come from for GA CGK-SIN?", "fpr-supply", ["get_provider_sourcing"]),
-    ("Special fare config for TG", "fpr-supply", ["get_special_fare_config"]),
+def load_test_cases():
+    """Load test cases from per-domain JSON files in cases/ directory.
 
-    # Demand
-    ("Look up booking ABC123", "fpr-demand", ["get_flight_info"]),
-    ("Simulate search CGK to DPS next Monday", "fpr-demand", ["simulate_search"]),
-    ("Search fare cache CGK-SIN", "fpr-demand", ["search_cache_content"]),
-    ("User profile for user 12345", "fpr-demand", ["search_user_profile"]),
-    ("Active promo labels for GA", "fpr-demand", ["search_promo_labels"]),
-    ("Booking log for order XYZ", "fpr-demand", ["get_booking_log"]),
+    Each file is named {domain}.json and maps to skill fpr-{domain}.
+    Format: [{"prompt": "...", "operation": "..."}]
+    """
+    cases = []
+    cases_path = Path(CASES_DIR)
+    if not cases_path.exists():
+        print(f"❌ Cases directory not found: {CASES_DIR}")
+        sys.exit(1)
 
-    # Config
-    ("Is feature X enabled?", "fpr-config", ["get_feature_flags"]),
-    ("Who changed the pricing rule yesterday?", "fpr-config", ["get_activity_log"]),
-    ("List all airline codes", "fpr-config", ["get_airline_ids"]),
-    ("Convert 100 IDR to THB", "fpr-config", ["convert_currency"]),
-    ("Show condition group rules", "fpr-config", ["load_condition_groups"]),
-]
+    for case_file in sorted(cases_path.glob("*.json")):
+        domain = case_file.stem  # e.g., "pricing" from "pricing.json"
+        skill_name = f"fpr-{domain}"
+        with open(case_file) as f:
+            domain_cases = json.load(f)
+        for tc in domain_cases:
+            cases.append((tc["prompt"], skill_name, [tc["operation"]]))
+
+    if not cases:
+        print("❌ No test cases found")
+        sys.exit(1)
+
+    return cases
+
+
+# Load test cases from JSON files
+TEST_CASES = load_test_cases()
 
 
 def load_skills():
