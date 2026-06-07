@@ -1,6 +1,10 @@
 name: Update Operation Catalog
 
 on:
+  pull_request:
+    paths:
+      - 'skills/*/SKILL.md'
+      - 'infra/schemas/fprtool-full.json'
   push:
     branches: [main]
     paths:
@@ -15,6 +19,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Generate catalog
         run: python scripts/generate-catalog.py
