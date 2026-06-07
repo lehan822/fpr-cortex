@@ -62,8 +62,8 @@ User → AI Agent → loads Skill (routing + auth)
 ```
 fpr-cortex/
 ├── skills/
-│   ├── shared/              ← Auth, standards & tooling
-│   │   ├── SKILL.md         # fpr-shared (read FIRST)
+│   ├── shared/              ← Cross-domain shared skills
+│   │   ├── auth/SKILL.md    # fpr-shared (auth + gateway + standards)
 │   │   └── skill-maker/     # fpr-skill-maker
 │   ├── domain/              ← Business logic
 │   │   ├── pricing/SKILL.md
