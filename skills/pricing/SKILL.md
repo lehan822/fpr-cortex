@@ -54,7 +54,8 @@ prerequisites:
 
 | Parameter | Accepts | Normalized To |
 |-----------|---------|--------------|
-| profileGroup | "Indonesia", "ID", "id" | `"ID"` |
+| profileGroup | "traveloka", "affiliate", "corporate" | `"TRAVELOKA"` / `"AFFILIATE"` / `"CORPORATE"` |
+| originCountry | "Thailand", "TH", "th" | `"TH"` |
 | currency | "rupiah", "idr" | `"IDR"` |
 | airlineId | "Garuda", "garuda" | `"GA"` |
 
@@ -62,7 +63,9 @@ prerequisites:
 
 **Airlines:** GA=Garuda, JT=Lion Air, QZ=AirAsia ID, ID=Batik Air, SQ=Singapore Airlines, TG=Thai Airways, VJ=VietJet, QG=Citilink, TR=Scoot, AK=AirAsia
 
-**Profile Groups:** ID=Indonesia, TH=Thailand, VN=Vietnam, MY=Malaysia, SG=Singapore, PH=Philippines
+**Profile Groups:** TRAVELOKA (default B2C), AFFILIATE (B2B partners), CORPORATE (corporate accounts)
+
+**Countries:** ID=Indonesia, TH=Thailand, VN=Vietnam, MY=Malaysia, SG=Singapore, PH=Philippines, AU=Australia
 
 ## Disambiguation
 
