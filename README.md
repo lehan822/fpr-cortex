@@ -14,11 +14,12 @@ After install, your AI agent gains FPR pricing knowledge. Try:
 
 ## Skills
 
-### 🔑 Gateway
+### 🔗 Shared — Auth, Standards & Tooling
 
 | Skill | Description |
 |-------|-------------|
 | `fpr-shared` | Auth (PKCE login), Gateway protocol, environment config, parameter standards |
+| `fpr-skill-maker` | Create, validate, and iterate on FPR skills |
 
 ### 📦 Domain — Business Logic
 
@@ -29,35 +30,19 @@ After install, your AI agent gains FPR pricing knowledge. Try:
 | `fpr-demand` | Bookings, search simulation, fare cache, promo labels |
 | `fpr-config` | Feature flags, condition groups, audit logs, FX, country/airline lists |
 
-### ⚙️ Ops — Infrastructure & Operations
-
-| Skill | Description |
-|-------|-------------|
-| `fpr-ops-infra` | S3 paths, BQ datasets, DynamoDB tables, Redis clusters |
-| `fpr-ops-deploy` | CI/CD pipelines, CodeDeploy, canary, rollback |
-| `fpr-ops-oncall` | Runbooks, error codes, escalation paths, incident response |
-| `fpr-ops-data` | BigQuery queries, CDE pipeline, data schemas |
-
-### 🛠 Meta — Tooling
-
-| Skill | Description |
-|-------|-------------|
-| `fpr-skill-maker` | Create, validate, and iterate on FPR skills |
-
 ## Naming Convention
 
 ```
+fpr-shared         → Auth + env + standards (read FIRST)
 fpr-{domain}       → Business domain skills (pricing, supply, demand, config)
-fpr-ops-{area}     → Operations/infrastructure skills (infra, deploy, oncall, data)
-fpr-shared         → Gateway (auth + env, read FIRST)
-fpr-skill-maker    → Meta tooling
+fpr-skill-maker    → Skill authoring tool
+fpr-ops-{area}     → Operations skills (future: infra, deploy, oncall, data)
 ```
 
 All skills include a `[category]` tag in their description for quick identification:
-- `[gateway]` — Auth & shared standards
+- `[shared]` — Auth, standards & tooling
 - `[domain]` — Business logic & API operations
-- `[ops]` — Infrastructure, deployment, monitoring
-- `[meta]` — Skill authoring tools
+- `[ops]` — Infrastructure, deployment, monitoring (future)
 
 ## How It Works
 
@@ -77,20 +62,14 @@ User → AI Agent → loads Skill (routing + auth)
 ```
 fpr-cortex/
 ├── skills/
-│   ├── gateway/             ← Auth + shared standards
-│   │   └── shared/SKILL.md
+│   ├── shared/              ← Auth, standards & tooling
+│   │   ├── SKILL.md         # fpr-shared (read FIRST)
+│   │   └── skill-maker/     # fpr-skill-maker
 │   ├── domain/              ← Business logic
 │   │   ├── pricing/SKILL.md
 │   │   ├── supply/SKILL.md
 │   │   ├── demand/SKILL.md
 │   │   └── config/SKILL.md
-│   ├── ops/                 ← Infrastructure & operations
-│   │   ├── infra/SKILL.md
-│   │   ├── deploy/SKILL.md
-│   │   ├── oncall/SKILL.md
-│   │   └── data/SKILL.md
-│   └── meta/               ← Tooling
-│       └── skill-maker/SKILL.md
 ├── infra/                   ← Schema pipeline (CI/CD, not distributed)
 │   ├── schemas/
 │   ├── config/
