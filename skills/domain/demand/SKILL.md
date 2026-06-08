@@ -1,25 +1,23 @@
 ---
 name: fpr-demand
-description: "[domain] booking lookup, user profiles, fare cache, search simulation, promo labels, MongoDB queries. Use for demand-side debugging — bookings, search results, user segments."
-version: "2.0.0"
+description: "Booking lookup, user profiles, fare cache, search simulation, promo labels, MongoDB queries. Use for demand-side debugging — bookings, search results, user segments."
+version: "2.1.0"
 category: domain
 domain: demand
 prerequisites:
-  - fpr-shared
+  local: [fpr-shared]
+  agentcore: []
 ---
 
 # FPR Demand
 
-> ⚠️ **Tool name prefix required:** When calling `tools/call`, prepend `fprtool-backend___` to every operation name below. Params go inside `data:{}` envelope. See fpr-shared for full request format.
-
 ## Prerequisites — Read Before Executing
 
-**CRITICAL — You MUST read the following files before executing the corresponding operations:**
-1. [`fpr-shared`](../../shared/auth/SKILL.md) — Auth, Gateway protocol, error handling (required for all operations)
+1. **Local MCP only** → read **fpr-shared** first (auth, tool name prefix, request envelope)
 2. **Running search simulation** → MUST read [`search-simulation.md`](references/search-simulation.md) (full pipeline parameters)
 3. **Querying bookings** → MUST read [`booking-operations.md`](references/booking-operations.md) (bookingId vs PNR distinction)
 
-**Executing operations without reading the required files above will lead to parameter or workflow errors.**
+**Executing operations without reading the required references will lead to parameter or workflow errors.**
 
 ## Operations
 

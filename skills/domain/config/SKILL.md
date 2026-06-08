@@ -1,24 +1,22 @@
 ---
 name: fpr-config
-description: "[domain] feature flags, audit/activity logs, condition groups, currency conversion, country/airline lists. Use for cross-team configuration queries and change auditing."
-version: "2.0.0"
+description: "Feature flags, audit/activity logs, condition groups, currency conversion, country/airline lists. Use for cross-team configuration queries and change auditing."
+version: "2.1.0"
 category: domain
 domain: config
 prerequisites:
-  - fpr-shared
+  local: [fpr-shared]
+  agentcore: []
 ---
 
 # FPR Config
 
-> ⚠️ **Tool name prefix required:** When calling `tools/call`, prepend `fprtool-backend___` to every operation name below. Params go inside `data:{}` envelope. See fpr-shared for full request format.
-
 ## Prerequisites — Read Before Executing
 
-**CRITICAL — You MUST read the following files before executing the corresponding operations:**
-1. [`fpr-shared`](../../shared/auth/SKILL.md) — Auth, Gateway protocol, error handling (required for all operations)
+1. **Local MCP only** → read **fpr-shared** first (auth, tool name prefix, request envelope)
 2. **Querying feature flags** → MUST read [`feature-flags.md`](references/feature-flags.md) (appName mapping, flag state interpretation)
 
-**Executing operations without reading the required files above will lead to parameter errors.**
+**Executing operations without reading the required references will lead to parameter errors.**
 
 ## Operations
 

@@ -1,13 +1,13 @@
 ---
 name: fpr-shared
-version: 2.5.0
-description: "[shared] Flight Pricing & Revenue shared layer: AgentCore Gateway auth, environment config, common parameter standards. Read this FIRST before using any fpr-* skill."
+version: 2.6.0
+description: "Flight Pricing & Revenue shared layer: auth, calling conventions, common parameter standards. Required for LOCAL MCP only — AgentCore agents skip this."
 category: shared
 ---
 
-# fpr-shared — Auth, Gateway, Common Standards
+# fpr-shared — Local MCP Calling Convention
 
-**Read this FIRST before using any domain skill (fpr-pricing, fpr-supply, etc.)**
+> **Scope:** This skill applies ONLY to local agents (Copilot CLI, Cursor, Claude Code, etc.) connecting via local MCP server. AgentCore agents do NOT need this — Gateway handles auth and request formatting automatically.
 
 ## Quick Reference
 
@@ -15,6 +15,12 @@ category: shared
 |------|-------|
 | PKCE login flow + script | `references/pkce-login.md` |
 | Gateway protocol (MCP JSON-RPC) | `references/gateway-protocol.md` |
+
+## Calling Convention (Local MCP)
+
+- **Tool name prefix:** `fprtool-backend___<operationId>` (e.g. `fprtool-backend___load_autopilot_rules`)
+- **Params:** wrapped in `data:{}` envelope with `context.authServiceToken`, `clientInterface`, `fields`
+- **Auth:** dual token (id_token + access_token from PKCE login)
 
 ## Authentication (Dual Token Architecture)
 

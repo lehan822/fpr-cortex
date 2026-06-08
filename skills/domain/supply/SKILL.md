@@ -1,25 +1,23 @@
 ---
 name: fpr-supply
-description: "[domain] fare adjusters, provider configuration, airline routes, search metadata, provider sourcing, fare checking, inventory types. Use for supply-side debugging and provider management."
-version: "2.0.0"
+description: "Fare adjusters, provider configuration, airline routes, search metadata, provider sourcing, fare checking, inventory types. Use for supply-side debugging and provider management."
+version: "2.1.0"
 category: domain
 domain: supply
 prerequisites:
-  - fpr-shared
+  local: [fpr-shared]
+  agentcore: []
 ---
 
 # FPR Supply
 
-> ⚠️ **Tool name prefix required:** When calling `tools/call`, prepend `fprtool-backend___` to every operation name below. Params go inside `data:{}` envelope. See fpr-shared for full request format.
-
 ## Prerequisites — Read Before Executing
 
-**CRITICAL — You MUST read the following files before executing the corresponding operations:**
-1. [`fpr-shared`](../../shared/auth/SKILL.md) — Auth, Gateway protocol, error handling (required for all operations)
+1. **Local MCP only** → read **fpr-shared** first (auth, tool name prefix, request envelope)
 2. **Running fare check** → MUST read [`fare-check-workflow.md`](references/fare-check-workflow.md) (async 2-step operation)
 3. **Querying provider config** → MUST read [`provider-operations.md`](references/provider-operations.md)
 
-**Executing operations without reading the required files above will lead to workflow errors.**
+**Executing operations without reading the required references will lead to workflow errors.**
 
 ## Operations
 

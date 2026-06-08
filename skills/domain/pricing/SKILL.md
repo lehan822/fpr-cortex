@@ -1,26 +1,24 @@
 ---
 name: fpr-pricing
-description: "[domain] pricing rules, autopilot, budget, commissions, incentives. Use when querying pricing configuration, markup/margin rules, budget balances, or commission rates."
-version: "2.0.0"
+description: "Pricing rules, autopilot, budget, commissions, incentives. Use when querying pricing configuration, markup/margin rules, budget balances, or commission rates."
+version: "2.1.0"
 category: domain
 domain: pricing
 prerequisites:
-  - fpr-shared
+  local: [fpr-shared]
+  agentcore: []
 ---
 
 # FPR Pricing
 
-> ⚠️ **Tool name prefix required:** When calling `tools/call`, prepend `fprtool-backend___` to every operation name below (e.g. `fprtool-backend___load_commission_incentive_rules`). Params go inside `data:{}` envelope. See fpr-shared for full request format.
-
 ## Prerequisites — Read Before Executing
 
-**CRITICAL — You MUST read the following files before executing the corresponding operations:**
-1. [`fpr-shared`](../../shared/auth/SKILL.md) — Auth, Gateway protocol, error handling (required for all operations)
+1. **Local MCP only** → read **fpr-shared** first (auth, tool name prefix, request envelope)
 2. **Querying commission/incentive** → MUST read [`commission-operations.md`](references/commission-operations.md)
 3. **Querying budget** → MUST read [`budget-operations.md`](references/budget-operations.md)
 4. **Unsure about parameters** → MUST read [`parameter-standards.md`](references/parameter-standards.md) (profileGroup enum, originCountry distinction)
 
-**Executing operations without reading the required files above will lead to parameter errors.**
+**Executing operations without reading the required references will lead to parameter errors.**
 
 ## Operations
 
