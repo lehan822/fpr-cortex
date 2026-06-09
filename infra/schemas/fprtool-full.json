@@ -437,7 +437,7 @@
       "post": {
         "operationId": "load_bundling_pricing_rules",
         "summary": "Load Bundling Pricing Rules",
-        "description": "Retrieve bundling pricing rules that define how bundled products (flight + hotel, flight + insurance) are priced. Use when someone asks about 'bundle pricing', 'bundling rules', or 'package deal pricing config'.",
+        "description": "Retrieve bundling pricing rules that define how bundled products (flight + hotel, flight + insurance) are priced differently from standalone flights. Filter by country pair and airline. Use when asked about \"bundling rules\", \"package pricing\", \"cross-sell pricing\", or \"combo discounts\".",
         "requestBody": {
           "required": true,
           "content": {
@@ -456,19 +456,20 @@
                           "TRAVELOKA",
                           "AFFILIATE",
                           "CORPORATE"
-                        ]
+                        ],
+                        "description": "Profile group: TRAVELOKA (B2C), AFFILIATE (B2B partners), or CORPORATE (business travel). Defaults to TRAVELOKA if omitted."
                       },
                       "originCountry": {
                         "type": "string",
-                        "description": "Origin country code"
+                        "description": "Origin country code (ISO 2-letter), e.g. ID (Indonesia), TH (Thailand), VN (Vietnam), SG (Singapore), MY (Malaysia)"
                       },
                       "destinationCountry": {
                         "type": "string",
-                        "description": "Destination country code"
+                        "description": "Destination country code (ISO 2-letter), e.g. ID, TH, VN, SG, MY, JP, AU"
                       },
                       "airlineId": {
                         "type": "string",
-                        "description": "IATA airline code"
+                        "description": "IATA airline code, e.g. GA (Garuda), SQ (Singapore Airlines), QZ (AirAsia Indonesia), JT (Lion Air), VJ (VietJet)"
                       }
                     }
                   },
@@ -517,7 +518,7 @@
       "post": {
         "operationId": "load_price_prediction_rules",
         "summary": "Load Price Prediction Rules",
-        "description": "Retrieve anchor fare and price prediction rules used for dynamic pricing. These rules define how the system predicts fare trends and sets anchor prices. Use when someone asks about 'price prediction', 'anchor fare rules', 'dynamic pricing prediction', or 'fare forecast config'.",
+        "description": "Retrieve anchor fare and price prediction rules used for dynamic pricing. These rules define how the system predicts fair prices and sets price anchors for display. Filter by country pair and airline. Use when asked about \"price prediction\", \"anchor fare\", \"dynamic pricing rules\", or \"price display logic\".",
         "requestBody": {
           "required": true,
           "content": {
@@ -536,16 +537,20 @@
                           "TRAVELOKA",
                           "AFFILIATE",
                           "CORPORATE"
-                        ]
+                        ],
+                        "description": "Profile group: TRAVELOKA (B2C), AFFILIATE (B2B partners), or CORPORATE (business travel). Defaults to TRAVELOKA if omitted."
                       },
                       "originCountry": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Origin country code (ISO 2-letter), e.g. ID (Indonesia), TH (Thailand), VN (Vietnam), SG (Singapore), MY (Malaysia)"
                       },
                       "destinationCountry": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Destination country code (ISO 2-letter), e.g. ID, TH, VN, SG, MY, JP, AU"
                       },
                       "airlineId": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "IATA airline code, e.g. GA (Garuda), SQ (Singapore Airlines), QZ (AirAsia Indonesia), JT (Lion Air), VJ (VietJet)"
                       }
                     }
                   },
@@ -594,7 +599,7 @@
       "post": {
         "operationId": "load_price_cut_modifier_rules",
         "summary": "Load Price Cut / Promo Modifier Rules",
-        "description": "Retrieve price cut and promotional modifier rules. These define temporary price reductions, flash sales, and promotional adjustments. Use when someone asks about 'price cut rules', 'promo modifiers', 'discount config', or 'flash sale pricing'.",
+        "description": "Retrieve price cut and promotional modifier rules. These define temporary price reductions, flash sale discounts, and promotional adjustments applied on top of base pricing. Filter by country pair and airline. Use when asked about \"price cuts\", \"promo modifiers\", \"flash sale rules\", or \"discount configuration\".",
         "requestBody": {
           "required": true,
           "content": {
@@ -613,16 +618,20 @@
                           "TRAVELOKA",
                           "AFFILIATE",
                           "CORPORATE"
-                        ]
+                        ],
+                        "description": "Profile group: TRAVELOKA (B2C), AFFILIATE (B2B partners), or CORPORATE (business travel). Defaults to TRAVELOKA if omitted."
                       },
                       "originCountry": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Origin country code (ISO 2-letter), e.g. ID (Indonesia), TH (Thailand), VN (Vietnam), SG (Singapore), MY (Malaysia)"
                       },
                       "destinationCountry": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Destination country code (ISO 2-letter), e.g. ID, TH, VN, SG, MY, JP, AU"
                       },
                       "airlineId": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "IATA airline code, e.g. GA (Garuda), SQ (Singapore Airlines), QZ (AirAsia Indonesia), JT (Lion Air), VJ (VietJet)"
                       }
                     }
                   },
@@ -671,7 +680,7 @@
       "post": {
         "operationId": "load_trx_fee_rules",
         "summary": "Load Transaction Fee Rules",
-        "description": "Retrieve transaction/service fee rules. These define additional fees charged on top of the base fare (e.g. booking fee, service charge). Use when someone asks about 'transaction fees', 'service fees', 'booking charges', or 'trx fee config'.",
+        "description": "Retrieve transaction/service fee rules. These define additional fees charged on top of the base fare (e.g. booking fee, payment processing fee). Filter by country pair and airline. Use when asked about \"transaction fees\", \"service fees\", \"booking fees\", or \"additional charges\".",
         "requestBody": {
           "required": true,
           "content": {
@@ -690,16 +699,20 @@
                           "TRAVELOKA",
                           "AFFILIATE",
                           "CORPORATE"
-                        ]
+                        ],
+                        "description": "Profile group: TRAVELOKA (B2C), AFFILIATE (B2B partners), or CORPORATE (business travel). Defaults to TRAVELOKA if omitted."
                       },
                       "originCountry": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Origin country code (ISO 2-letter), e.g. ID (Indonesia), TH (Thailand), VN (Vietnam), SG (Singapore), MY (Malaysia)"
                       },
                       "destinationCountry": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Destination country code (ISO 2-letter), e.g. ID, TH, VN, SG, MY, JP, AU"
                       },
                       "airlineId": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "IATA airline code, e.g. GA (Garuda), SQ (Singapore Airlines), QZ (AirAsia Indonesia), JT (Lion Air), VJ (VietJet)"
                       }
                     }
                   },
@@ -748,7 +761,7 @@
       "post": {
         "operationId": "load_commission_incentive_rules",
         "summary": "Load Commission Incentive Rules",
-        "description": "Retrieve commission rate rules for airline partners. Defines how much commission Traveloka receives per ticket from each airline. Use when someone asks about 'commission rates', 'airline commission', 'incentive rules for SQ', or 'partner commission config'.",
+        "description": "Retrieve commission rate rules for airline partners. Defines how much commission Traveloka receives from airlines for ticket sales. Filter by airline. Use when asked about \"commission rates\", \"airline incentives\", \"partner margins\", or \"revenue share rules\".",
         "requestBody": {
           "required": true,
           "content": {
@@ -767,11 +780,12 @@
                           "TRAVELOKA",
                           "AFFILIATE",
                           "CORPORATE"
-                        ]
+                        ],
+                        "description": "Profile group: TRAVELOKA (B2C), AFFILIATE (B2B partners), or CORPORATE (business travel). Defaults to TRAVELOKA if omitted."
                       },
                       "airlineId": {
                         "type": "string",
-                        "description": "IATA airline code to filter commission rules, e.g. GA, SQ, QZ"
+                        "description": "IATA airline code to filter commission rules, e.g. GA (Garuda), SQ (Singapore Airlines), QZ (AirAsia Indonesia), JT (Lion Air)"
                       }
                     }
                   },
@@ -878,7 +892,7 @@
       "post": {
         "operationId": "load_tiered_incentive_rules",
         "summary": "Load Tiered Incentive Rules",
-        "description": "Retrieve volume-based tiered incentive rules. These define bonus commission tiers based on booking volume (e.g. sell 100+ tickets = extra 2% commission). Use when someone asks about 'tiered incentives', 'volume bonuses', 'tier-based commission', or 'incentive tiers for a brand'.",
+        "description": "Retrieve volume-based tiered incentive rules. These define bonus commission tiers based on booking volume \u2014 the more tickets sold for an airline, the higher the commission tier. Use when asked about \"tiered incentives\", \"volume bonuses\", \"performance tiers\", or \"incentive brackets\".",
         "requestBody": {
           "required": true,
           "content": {
@@ -897,15 +911,16 @@
                           "TRAVELOKA",
                           "AFFILIATE",
                           "CORPORATE"
-                        ]
+                        ],
+                        "description": "Profile group: TRAVELOKA (B2C), AFFILIATE (B2B partners), or CORPORATE (business travel). Defaults to TRAVELOKA if omitted."
                       },
                       "brandId": {
                         "type": "string",
-                        "description": "Brand ID: TRAVELOKA, TIKET, etc."
+                        "description": "Brand identifier: TRAVELOKA, TIKET, or other brand under the group"
                       },
                       "airlineId": {
                         "type": "string",
-                        "description": "IATA airline code"
+                        "description": "IATA airline code, e.g. GA (Garuda), SQ (Singapore Airlines), QZ (AirAsia Indonesia), JT (Lion Air)"
                       }
                     }
                   },
@@ -1021,7 +1036,7 @@
       "post": {
         "operationId": "load_issuance_fee_rules",
         "summary": "Load Ticket Issuance Fee Rules",
-        "description": "Retrieve ticket issuance fee rules. These define fees charged for issuing airline tickets through different providers. Use when someone asks about 'issuance fees', 'ticketing fees', 'ticket issuance charges', or 'issuance fee config'.",
+        "description": "Retrieve ticket issuance fee rules. These define fees charged for issuing airline tickets through different channels and fulfillment methods. Filter by country pair and airline. Use when asked about \"issuance fees\", \"ticketing fees\", \"fulfillment charges\", or \"ticket issue cost\".",
         "requestBody": {
           "required": true,
           "content": {
@@ -1040,16 +1055,20 @@
                           "TRAVELOKA",
                           "AFFILIATE",
                           "CORPORATE"
-                        ]
+                        ],
+                        "description": "Profile group: TRAVELOKA (B2C), AFFILIATE (B2B partners), or CORPORATE (business travel). Defaults to TRAVELOKA if omitted."
                       },
                       "originCountry": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Origin country code (ISO 2-letter), e.g. ID (Indonesia), TH (Thailand), VN (Vietnam), SG (Singapore), MY (Malaysia)"
                       },
                       "destinationCountry": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Destination country code (ISO 2-letter), e.g. ID, TH, VN, SG, MY, JP, AU"
                       },
                       "airlineId": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "IATA airline code, e.g. GA (Garuda), SQ (Singapore Airlines), QZ (AirAsia Indonesia), JT (Lion Air), VJ (VietJet)"
                       }
                     }
                   },
