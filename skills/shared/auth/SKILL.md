@@ -16,9 +16,23 @@ category: shared
 | PKCE login flow + script | `references/pkce-login.md` |
 | Gateway protocol (MCP JSON-RPC) | `references/gateway-protocol.md` |
 
-## Calling Convention (Local MCP)
+## Tool Invocation
 
-- **Tool name prefix:** `fprtool-backend___<operationId>` (e.g. `fprtool-backend___load_autopilot_rules`)
+All tools are called via MCP Gateway. Tool name format:
+
+```
+{target_prefix}___{operation_name}
+```
+
+| Environment | Target Prefix | Example |
+|-------------|--------------|---------|
+| Local (Copilot CLI / Claude Code) | `fprtool-backend` | `fprtool-backend___load_autopilot_rules` |
+| AgentCore (oncall agent) | `fprtool-fpr` | `fprtool-fpr___load_autopilot_rules` |
+
+> The `operation_name` is the same across environments. Only the prefix differs based on which Gateway target you connect to.
+
+## Request Format (Local MCP)
+
 - **Params:** wrapped in `data:{}` envelope with `context.authServiceToken`, `clientInterface`, `fields`
 - **Auth:** dual token (id_token + access_token from PKCE login)
 
@@ -55,7 +69,10 @@ Every request uses **two tokens**:
 
 ## Gateway — How to Call Tools
 
-⚠️ Tool names are prefixed: `fprtool-backend___<operationId>`
+⚠️ Tool names use target prefix: `{target_prefix}___<operationId>`
+
+- Local: `fprtool-backend___load_autopilot_rules`
+- AgentCore: `fprtool-fpr___load_autopilot_rules`
 
 ```bash
 curl -s -X POST "{gateway_endpoint}/mcp" \
