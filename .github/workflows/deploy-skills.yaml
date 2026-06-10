@@ -1,16 +1,24 @@
-name: Deploy Skills to Registry
+name: Deploy Skills to S3
 
 on:
   push:
-    branches: [main]
+    branches: [main, release]
     paths:
-      - 'skills/*/SKILL.md'
+      - 'skills/**/*.md'
   workflow_dispatch:
     inputs:
       skill:
         description: 'Specific skill to deploy (or "all")'
         required: true
         default: 'all'
+      environment:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options:
+          - stg
+          - prod
+        default: stg
 
 jobs:
   deploy-skills:
@@ -20,91 +28,89 @@ jobs:
       contents: read
 
     env:
-      REGISTRY_ID: registry_vag4x
-      AWS_REGION: us-west-2
+      STG_BUCKET: bedrock-agentcore-runtime-354767975881-ap-southeast-1-a1beixhzs
+      PROD_BUCKET: TBD-prod-bucket
 
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
-      - name: Configure AWS credentials
+      - name: Determine environment
+        id: env
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "env=${{ inputs.environment }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "env=stg" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/release" ]]; then
+            echo "env=prod" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Configure AWS credentials (stg)
+        if: steps.env.outputs.env == 'stg'
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN_STG }}
-          aws-region: us-west-2
+          aws-region: ap-southeast-1
+
+      - name: Configure AWS credentials (prod)
+        if: steps.env.outputs.env == 'prod'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_PROD }}
+          aws-region: ap-southeast-1
+
+      - name: Set bucket
+        id: bucket
+        run: |
+          if [[ "${{ steps.env.outputs.env }}" == "stg" ]]; then
+            echo "name=${{ env.STG_BUCKET }}" >> $GITHUB_OUTPUT
+          else
+            echo "name=${{ env.PROD_BUCKET }}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Detect changed skills
         id: changed
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.skill }}" != "all" ]]; then
             echo "skills=${{ inputs.skill }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.skill }}" == "all" ]]; then
+            # Deploy all skills
+            SKILLS=$(find skills -name "SKILL.md" -exec dirname {} \; | xargs -I{} basename {} | tr '\n' ' ')
+            echo "skills=${SKILLS}" >> $GITHUB_OUTPUT
           else
-            # Find which skill folders had SKILL.md changes
-            CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'skills/*/SKILL.md' \
-              | sed 's|skills/\([^/]*\)/SKILL.md|\1|' \
-              | grep -v "shared\|skill-maker" \
+            # Find which skill folders had changes
+            CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'skills/**/*.md' \
+              | sed 's|skills/[^/]*/\([^/]*\)/.*|\1|' \
+              | sort -u \
               | tr '\n' ' ')
             echo "skills=${CHANGED}" >> $GITHUB_OUTPUT
           fi
 
-      - name: Deploy skills to Registry
+      - name: Deploy skills to S3
         run: |
-          SKILLS="${{ steps.changed.outputs.skills }}"
-          if [[ -z "$SKILLS" ]]; then
-            echo "No skill changes detected, skipping."
-            exit 0
-          fi
+          BUCKET="${{ steps.bucket.outputs.name }}"
+          echo "Deploying to ${{ steps.env.outputs.env }} → s3://${BUCKET}/skills/"
 
-          for SKILL in $SKILLS; do
-            SKILL_FILE="skills/${SKILL}/SKILL.md"
-            if [[ ! -f "$SKILL_FILE" ]]; then
-              echo "⚠️  $SKILL_FILE not found, skipping."
+          for SKILL in ${{ steps.changed.outputs.skills }}; do
+            # Find the skill directory (could be under domain/ or shared/)
+            SKILL_DIR=$(find skills -type d -name "$SKILL" | head -1)
+            if [[ -z "$SKILL_DIR" ]]; then
+              echo "⚠️ Skill directory not found: $SKILL"
               continue
             fi
 
-            echo "🚀 Deploying ${SKILL} to Registry..."
-            CONTENT=$(cat "$SKILL_FILE" | jq -Rs .)
-            RECORD_NAME="fpr-${SKILL}"
-            VERSION=$(date +%Y%m%d)
+            echo "📦 Uploading ${SKILL} from ${SKILL_DIR}..."
+            aws s3 sync "${SKILL_DIR}/" "s3://${BUCKET}/skills/${SKILL}/" \
+              --exclude ".*" \
+              --delete
 
-            # Build descriptors JSON
-            cat > /tmp/descriptors.json << EOF
-            {"optionalValue":{"agentSkills":{"optionalValue":{"skillMd":{"optionalValue":{"inlineContent":${CONTENT}}}}}}}
-            EOF
-
-            # Check if record already exists
-            EXISTING=$(aws bedrock-agentcore-control list-registry-records \
-              --registry-id $REGISTRY_ID \
-              --region $AWS_REGION \
-              --no-cli-pager 2>&1)
-
-            if echo "$EXISTING" | jq -r '.registryRecords[].name' | grep -q "^${RECORD_NAME}$"; then
-              # Get record ID
-              RECORD_ID=$(echo "$EXISTING" | jq -r ".registryRecords[] | select(.name==\"${RECORD_NAME}\") | .recordId")
-              # Update existing record
-              aws bedrock-agentcore-control update-registry-record \
-                --registry-id $REGISTRY_ID \
-                --record-id "$RECORD_ID" \
-                --descriptors file:///tmp/descriptors.json \
-                --record-version "$VERSION" \
-                --region $AWS_REGION \
-                --no-cli-pager
-              echo "✅ Updated ${RECORD_NAME} (${RECORD_ID})"
-            else
-              # Create new record
-              cat > /tmp/create-descriptors.json << EOF2
-              {"agentSkills":{"skillMd":{"inlineContent":${CONTENT}}}}
-            EOF2
-              aws bedrock-agentcore-control create-registry-record \
-                --registry-id $REGISTRY_ID \
-                --name "$RECORD_NAME" \
-                --description "FPR ${SKILL} domain skill" \
-                --descriptor-type AGENT_SKILLS \
-                --descriptors file:///tmp/create-descriptors.json \
-                --record-version "$VERSION" \
-                --region $AWS_REGION \
-                --no-cli-pager
-              echo "✅ Created ${RECORD_NAME}"
-            fi
+            echo "✅ Deployed ${SKILL}"
           done
+
+      - name: Verify deployment
+        run: |
+          BUCKET="${{ steps.bucket.outputs.name }}"
+          echo "Skills in S3:"
+          aws s3 ls "s3://${BUCKET}/skills/" --recursive | head -30
