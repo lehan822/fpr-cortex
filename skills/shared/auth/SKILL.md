@@ -26,8 +26,8 @@ All tools are called via MCP Gateway. Tool name format:
 
 | Environment | Target Prefix | Example |
 |-------------|--------------|---------|
-| Local (Copilot CLI / Claude Code) | `fprtool-backend` | `fprtool-backend___load_autopilot_rules` |
-| AgentCore (oncall agent) | `fprtool-fpr` | `fprtool-fpr___load_autopilot_rules` |
+| stg (all agents) | `fprtool-fpr` | `fprtool-fpr___load_autopilot_rules` |
+| prod | TBD | — |
 
 > The `operation_name` is the same across environments. Only the prefix differs based on which Gateway target you connect to.
 
@@ -62,7 +62,7 @@ Every request uses **two tokens**:
 
 | Environment | Gateway Endpoint | Backend | Client ID |
 |-------------|-----------------|---------|-----------|
-| stg (sstg) | `https://fpr-lehan-jwt-gw-z6tsij9aib.gateway.bedrock-agentcore.ap-southeast-1.amazonaws.com` | `tool-api.fpr.staging-traveloka.com` | `38taf824vlbfba3lta3eitcuhi` |
+| stg (sstg) | `https://fpr-cortex-sg-ruypqkcdov.gateway.bedrock-agentcore.ap-southeast-1.amazonaws.com` | `tool-api.fpr.staging-traveloka.com` | `38taf824vlbfba3lta3eitcuhi` |
 | prod | TBD | `tool-api.fpr.traveloka.com` | `i01t804ups4dme8p1kfoat8jb` |
 
 > fstg (flight staging, dev) is NOT connected to Gateway — use direct curl for dev testing.
