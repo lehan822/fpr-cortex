@@ -69,10 +69,7 @@ Every request uses **two tokens**:
 
 ## Gateway — How to Call Tools
 
-⚠️ Tool names use target prefix: `{target_prefix}___<operationId>`
-
-- Local: `fprtool-backend___load_autopilot_rules`
-- AgentCore: `fprtool-fpr___load_autopilot_rules`
+⚠️ Tool names use target prefix: `fprtool-fpr___<operationId>`
 
 ```bash
 curl -s -X POST "{gateway_endpoint}/mcp" \
@@ -83,7 +80,7 @@ curl -s -X POST "{gateway_endpoint}/mcp" \
     "method": "tools/call",
     "id": "1",
     "params": {
-      "name": "fprtool-backend___<operationId>",
+      "name": "fprtool-fpr___<operationId>",
       "arguments": {
         "data": { ... },
         "context": { "authServiceToken": "<id_token>" },
@@ -102,13 +99,13 @@ For full protocol details (pagination, tool discovery, response format), see `re
 |-----------|---------|-------------|
 | 401 | User token expired | Run PKCE login again |
 | 403 | Insufficient permissions | Inform user: contact FPR team |
-| 404 | Operation not found | Check operation name (needs `fprtool-backend___` prefix) |
+| 404 | Operation not found | Check operation name (needs `fprtool-fpr___` prefix) |
 | 429 | Rate limited | Retry with backoff (5s, 10s, 20s) |
 | 500 | Backend error | Report error, suggest retry |
 
 ## Version Check
 
-**Current: 2.5.0** — On first load, check:
+**Current: 2.6.0** — On first load, check:
 
 ```bash
 curl -sf https://raw.githubusercontent.com/lehan822/fpr-cortex/main/VERSION

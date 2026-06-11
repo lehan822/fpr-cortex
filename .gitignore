@@ -3,3 +3,4 @@ infra/schemas/pricing/
 infra/schemas/supply/
 infra/schemas/demand/
 infra/schemas/config/
+*.DS_Store

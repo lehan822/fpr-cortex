@@ -1,12 +1,27 @@
 ---
 name: fpr-demand
 description: "Booking lookup, user profiles, fare cache, search simulation, promo labels, MongoDB queries. Use for demand-side debugging — bookings, search results, user segments."
-version: "2.1.0"
+version: "2.2.0"
 category: domain
 domain: demand
 prerequisites:
   local: [fpr-shared]
   agentcore: []
+tools:
+  - get_booking_log
+  - get_flight_info
+  - get_flight_info_json
+  - get_promo_label_data
+  - get_winner_details
+  - list_mongo_collections
+  - load_profiling_config
+  - search_cache_by_id
+  - search_cache_content
+  - search_promo_labels
+  - search_user_profile
+  - search_winner
+  - simple_crud_query
+  - simulate_search
 ---
 
 # FPR Demand

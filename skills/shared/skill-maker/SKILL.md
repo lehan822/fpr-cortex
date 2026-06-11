@@ -118,6 +118,6 @@ When backend adds new APIs or changes parameters:
 
 | Situation | Action |
 |-----------|--------|
-| operationId not in schema | Tell user: operation not yet registered in fprtool-backend, backend team needs to add it first |
+| operationId not in schema | Tell user: operation not yet registered in fprtool-fpr, backend team needs to add it first |
 | User gives description but doesn't know operationId | Search schema for matching description, recommend candidates |
 | Cross-domain operation | Suggest placing in most relevant domain, note in Disambiguation section |

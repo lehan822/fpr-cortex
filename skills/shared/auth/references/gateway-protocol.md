@@ -26,9 +26,9 @@ Total tools: **55** across 2 pages. Always paginate until `nextCursor` is absent
 
 ## Tool Naming Convention
 
-⚠️ Gateway prefixes tool names with target name: `fprtool-backend___<operationId>`
+⚠️ Gateway prefixes tool names with target name: `fprtool-fpr___<operationId>`
 
-- ✅ `fprtool-backend___load_commission_incentive_rules`
+- ✅ `fprtool-fpr___load_commission_incentive_rules`
 - ❌ `load_commission_incentive_rules` (will fail with "tool not found")
 
 ## Request Format (tools/call)
@@ -52,7 +52,7 @@ curl -s -X POST "{gateway_endpoint}/mcp" \
     "method": "tools/call",
     "id": "1",
     "params": {
-      "name": "fprtool-backend___<operationId>",
+      "name": "fprtool-fpr___<operationId>",
       "arguments": {
         "data": {
           "<param1>": "<value1>",
@@ -80,7 +80,7 @@ curl -s -X POST "https://fpr-lehan-jwt-gw-z6tsij9aib.gateway.bedrock-agentcore.a
     "method": "tools/call",
     "id": "1",
     "params": {
-      "name": "fprtool-backend___load_commission_incentive_rules",
+      "name": "fprtool-fpr___load_commission_incentive_rules",
       "arguments": {
         "data": {
           "airline": "GA"
@@ -110,7 +110,7 @@ curl -s -X POST "https://fpr-lehan-jwt-gw-z6tsij9aib.gateway.bedrock-agentcore.a
 ## Key Points
 
 - `Authorization` header → `access_token` (Cognito, for Gateway auth)
-- `arguments.context.authServiceToken` → `id_token` (for fprtool-backend user identity)
+- `arguments.context.authServiceToken` → `id_token` (for fprtool-fpr user identity)
 - `arguments.data` → all tool-specific params go inside `data` wrapper
-- `name` = `fprtool-backend___<operationId>` (with target prefix)
+- `name` = `fprtool-fpr___<operationId>` (with target prefix)
 - All operations use `method: "tools/call"`

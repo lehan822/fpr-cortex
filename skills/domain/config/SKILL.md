@@ -1,12 +1,21 @@
 ---
 name: fpr-config
 description: "Feature flags, audit/activity logs, condition groups, currency conversion, country/airline lists. Use for cross-team configuration queries and change auditing."
-version: "2.1.0"
+version: "2.2.0"
 category: domain
 domain: config
 prerequisites:
   local: [fpr-shared]
   agentcore: []
+tools:
+  - get_activity_log
+  - get_airline_ids
+  - get_countries
+  - get_feature_flags
+  - get_flag_applications
+  - get_flag_configuration
+  - load_condition_groups
+  - convert_currency
 ---
 
 # FPR Config
