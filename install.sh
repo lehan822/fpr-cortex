@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 # FPR Cortex Skills — Quick Install
-# Usage: curl -sL https://raw.githubusercontent.com/lehan822/fpr-cortex/main/install.sh | bash
+# Usage: curl -sL https://raw.githubusercontent.com/lehan822/fpr-cortex/main/install.sh | sh
 
 set -e
 
@@ -9,37 +9,33 @@ REPO_URL="https://raw.githubusercontent.com/lehan822/fpr-cortex/main"
 
 echo "📦 Installing FPR Cortex skills..."
 
-# Skill name → repo path mapping
-declare -A SKILLS=(
-  ["fpr-shared"]="skills/shared/auth"
-  ["fpr-skill-maker"]="skills/shared/skill-maker"
-  ["fpr-pricing"]="skills/domain/pricing"
-  ["fpr-supply"]="skills/domain/supply"
-  ["fpr-demand"]="skills/domain/demand"
-  ["fpr-config"]="skills/domain/config"
-)
+install_skill() {
+  name="$1"
+  src="$2"
+  dest="${SKILLS_DIR}/${name}"
 
-for skill in "${!SKILLS[@]}"; do
-  src="${SKILLS[$skill]}"
-  dest="${SKILLS_DIR}/${skill}"
-  
-  echo "  → ${skill}"
+  echo "  → ${name}"
   mkdir -p "${dest}"
   curl -sf "${REPO_URL}/${src}/SKILL.md" -o "${dest}/SKILL.md"
-  
-  # Also fetch references/ if they exist
-  refs_dir="${dest}/references"
-  mkdir -p "${refs_dir}" 2>/dev/null || true
-  # Try common reference files (silent fail if not exist)
+
+  # Fetch references/ (silent fail if not exist)
   for ref in pkce-login.md gateway-protocol.md; do
-    curl -sf "${REPO_URL}/${src}/references/${ref}" -o "${refs_dir}/${ref}" 2>/dev/null || rm -f "${refs_dir}/${ref}"
+    mkdir -p "${dest}/references" 2>/dev/null || true
+    curl -sf "${REPO_URL}/${src}/references/${ref}" -o "${dest}/references/${ref}" 2>/dev/null || rm -f "${dest}/references/${ref}"
   done
   # Clean empty refs dir
-  rmdir "${refs_dir}" 2>/dev/null || true
-done
+  rmdir "${dest}/references" 2>/dev/null || true
+}
+
+install_skill "fpr-shared"      "skills/shared/auth"
+install_skill "fpr-skill-maker" "skills/shared/skill-maker"
+install_skill "fpr-pricing"     "skills/domain/pricing"
+install_skill "fpr-supply"      "skills/domain/supply"
+install_skill "fpr-demand"      "skills/domain/demand"
+install_skill "fpr-config"      "skills/domain/config"
 
 echo ""
-echo "✅ Done! ${#SKILLS[@]} skills installed to ${SKILLS_DIR}"
+echo "✅ Done! 6 skills installed to ${SKILLS_DIR}"
 echo ""
 echo "Next: open Copilot CLI or Claude Code and ask a question like:"
 echo '  "查一下 THB budget balance"'
