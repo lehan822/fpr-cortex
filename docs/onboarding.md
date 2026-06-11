@@ -11,10 +11,10 @@ Get up and running with the FPR AI Agent in **2 minutes**.
 ## Step 1 — Install Skills
 
 ```bash
-npx skills install github:lehan822/fpr-cortex -g
+curl -sL https://raw.githubusercontent.com/lehan822/fpr-cortex/main/install.sh | bash
 ```
 
-This installs all FPR skills (`fpr-shared`, `fpr-pricing`, `fpr-supply`, `fpr-demand`, etc.) globally.
+This installs all FPR skills (`fpr-shared`, `fpr-pricing`, `fpr-supply`, `fpr-demand`, `fpr-config`) to `~/.agents/skills/`.
 
 ## Step 2 — First Query (triggers login)
 
@@ -56,19 +56,17 @@ You (natural language) → AI Agent → Skill (routing) → MCP Gateway → fprt
 | Issue | Fix |
 |-------|-----|
 | "Token expired" | Agent auto-refreshes; if it fails, delete `~/.fpr/auth.json` and retry |
-| "Operation not found" | Skill may be outdated — run `npx skills update -g` |
+| "Operation not found" | Skill may be outdated — re-run the install script |
 | "403 Forbidden" | Your SSO account may lack permissions — contact FPR team |
 | Slow first response | Normal — first call warms up the Gateway connection |
 
 ## Updating Skills
 
-When new operations are added:
+When new operations are added, re-run:
 
 ```bash
-npx skills update -g
+curl -sL https://raw.githubusercontent.com/lehan822/fpr-cortex/main/install.sh | bash
 ```
-
-Skills are versioned — the agent will notify you if an update is available.
 
 ## Architecture (for the curious)
 
