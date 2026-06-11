@@ -1,0 +1,31 @@
+{
+  "name": "fpr-cortex",
+  "version": "2.6.0",
+  "description": "FPR AI Agent Skills — pricing, supply, demand, config",
+  "skills": {
+    "fpr-shared": {
+      "skillPath": "skills/shared/auth/SKILL.md",
+      "description": "Auth, gateway, common standards (required by all domain skills)"
+    },
+    "fpr-skill-maker": {
+      "skillPath": "skills/shared/skill-maker/SKILL.md",
+      "description": "Help create and validate FPR skills"
+    },
+    "fpr-pricing": {
+      "skillPath": "skills/domain/pricing/SKILL.md",
+      "description": "Pricing rules, autopilot, budget, commissions"
+    },
+    "fpr-supply": {
+      "skillPath": "skills/domain/supply/SKILL.md",
+      "description": "Fare adjusters, provider config, airline routes"
+    },
+    "fpr-demand": {
+      "skillPath": "skills/domain/demand/SKILL.md",
+      "description": "Booking lookup, fare cache, search simulation"
+    },
+    "fpr-config": {
+      "skillPath": "skills/domain/config/SKILL.md",
+      "description": "Feature flags, audit logs, condition groups"
+    }
+  }
+}
