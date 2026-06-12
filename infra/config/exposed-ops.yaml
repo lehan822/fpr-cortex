@@ -1,0 +1,275 @@
+# FPR Cortex — Exposed Operations Config
+# Source of truth for which fprtool-backend APIs are exposed via MCP Gateway.
+#
+# Usage:
+#   python infra/scripts/gen-schema.py
+#
+# Path formats:
+#   - "api/path"                        → Standard API (prefix /api/v2/ auto-added)
+#   - "crud/getEntryList(entityType)"   → CRUD framework list op (script scans backend for filters/sort)
+#   - "crud/getEntryDetail(entityType)" → CRUD framework detail op
+#
+# Adding a new op: add entry here → run gen-schema → CI pushes to S3 → Gateway picks up.
+
+pricing:
+  - id: load_autopilot_rules
+    path: flight-auto-pilot/load-rules
+    description: Autopilot dynamic pricing rules
+
+  - id: load_baseline_pricing_rules
+    path: baseline-pricing-rule/load-rules
+    description: Base markup/margin rules
+
+  - id: load_bundling_pricing_rules
+    path: bundling-pricing-rule/load-rules
+    description: Bundle pricing (flight+hotel)
+
+  - id: load_price_prediction_rules
+    path: flight-price-prediction/load-rules
+    description: Anchor fare / price prediction
+
+  - id: load_price_cut_modifier_rules
+    path: price-cut-modifier-rule/load-rules
+    description: Price cut / promo modifiers
+
+  - id: load_trx_fee_rules
+    path: trx-fee/load-rules
+    description: Transaction/service fee
+
+  - id: load_issuance_fee_rules
+    path: issuance-fee-rule-data/load-rules
+    description: Ticket issuance fees
+
+  - id: load_pricing_profiles
+    path: pricing-profile/load-profileNames
+    description: Pricing profile names
+
+  - id: load_condition_groups
+    path: condition-group/load
+    description: Reusable filter condition groups
+
+  - id: load_fare_adjuster_by_airport_tax
+    path: load_fare_adjuster_by_airport_tax
+    description: Fare adjuster by airport tax
+
+  - id: load_fare_adjuster_by_base_fare
+    path: load_fare_adjuster_by_base_fare
+    description: Fare adjuster by base fare
+
+  - id: read_pricing_provider
+    path: read_pricing_provider
+    description: Pricing provider config
+
+  - id: load_commission_incentive_rules
+    path: commission-incentive-rule-data/load-rules
+    description: Commission rates
+
+  - id: load_commission_incentive_profiles
+    path: commission-incentive/load-profiles
+    description: Commission profile list
+
+  - id: load_tiered_incentive_rules
+    path: tiered-incentive-rule-data/load-rules
+    description: Volume-based incentive tiers
+
+  - id: check_tiered_incentive_progress
+    path: tiered-incentive-progress/check-booking-pnr
+    description: Check incentive progress for a booking
+
+  - id: get_budget_balance
+    path: pricing/budget/balance
+    description: Budget balance by currency/country
+
+  - id: get_budget_user_balance
+    path: pricing/budget/user-balance
+    description: User-level budget balance
+
+  - id: list_active_budgets
+    path: pricing/budget/list-active
+    description: List active budgets
+
+  - id: get_budget_levels
+    path: pricing/budget/levels
+    description: Budget level types
+
+supply:
+  - id: search_regular_fare
+    path: supply-search-tool/search-regular-fare
+    description: Search regular fares
+
+  - id: search_special_fare
+    path: supply-search-tool/search-special-fare
+    description: Special fare search
+
+  - id: search_upsell_fare
+    path: supply-search-tool/search-upsell-fare
+    description: Upsell fare search
+
+  - id: revalidate_regular_fare
+    path: supply-search-tool/revalidate-regular-fare
+    description: Revalidate regular fare
+
+  - id: revalidate_special_fare
+    path: supply-search-tool/revalidate-special-fare
+    description: Revalidate special fare
+
+  - id: revalidate_upsell_fare
+    path: supply-search-tool/revalidate-upsell-fare
+    description: Revalidate upsell fare
+
+  - id: simulate_search
+    path: search-simulation/traveloka-initial
+    description: Simulate full user search
+
+  - id: get_provider_sourcing
+    path: provider-source/v2/get-provider-sourcing
+    description: Provider sourcing config
+
+  - id: get_provider_source_histories
+    path: get_provider_source_histories
+    description: Sourcing change history
+
+  - id: get_provider_source_latest_version
+    path: get_provider_source_latest_version
+    description: Latest sourcing version
+
+  - id: get_airline_routes
+    path: supply/airline-route/load
+    description: Airline routes
+
+  - id: get_airline_route_history
+    path: supply/airline-route/get-history
+    description: Airline route history
+
+  - id: get_airline_route_history_filtered
+    path: supply/airline-route/get-history-filtered
+    description: Airline route history filtered
+
+  - id: get_arbitration_modes
+    path: supply/arbitration/get-modes
+    description: Arbitration modes
+
+  - id: get_inventory_detail
+    path: supply/inventory/get-detail
+    description: Inventory detail
+
+  - id: get_inventory_types
+    path: supply/inventory/get-types
+    description: Inventory types
+
+  - id: get_special_fare_config
+    path: supply/special-fare/get-config
+    description: Special fare config
+
+  - id: check_fare
+    path: supply/fare-check/check
+    description: Check fare
+
+  - id: get_fare_check_result
+    path: supply/fare-check/get-result
+    description: Fare check result
+
+demand:
+  # — Promo Label —
+  - id: search_promo_labels
+    path: crud/getEntryList(flightPromoLabel)
+    description: Search/list promo label configs
+
+  - id: get_promo_label_detail
+    path: crud/getEntryDetail(flightPromoLabel)
+    description: Get single promo label by ID
+
+  - id: get_promo_label_data
+    path: flight-promo-label/get-promo-label-supporting-data
+    description: Promo label dropdown options
+
+  # — Search Cache —
+  - id: search_cache_content
+    path: demand/search-cache/get
+    description: Lookup cached fare by route
+
+  - id: search_cache_by_id
+    path: demand/search-cache/get-by-id
+    description: Lookup cache by search ID
+
+  # — Experiment —
+  - id: get_demand_experiment_variant
+    path: demand-experiment/get-variant-namespace
+    description: Experiment variant namespace
+
+  - id: get_demand_experiment_contextid
+    path: demand-experiment/get-contextid-namespace
+    description: Experiment context ID
+
+  # — Mongo —
+  - id: list_mongo_collections
+    path: flight/mongo-operation-manager/collection-name
+    description: List mongo collections
+
+  - id: simple_crud_query
+    path: simplecrud/simple-crud-query
+    description: Direct mongo CRUD (GET/UPSERT/DELETE)
+
+  # — Winner —
+  - id: search_winner
+    path: demand/winner/search
+    description: Search winners
+
+  - id: get_winner_details
+    path: demand/winner/get-winner-details
+    description: Winner details
+
+  # — Booking —
+  - id: get_booking_log
+    path: demand/booking/get-booking-log
+    description: Booking log
+
+  - id: get_flight_info
+    path: demand/booking/get-flight-info
+    description: Booking flight info
+
+  - id: get_flight_info_json
+    path: demand/booking/get-flight-info-json
+    description: Booking flight info (JSON)
+
+  # — User Profile —
+  - id: search_user_profile
+    path: demand/user-profile/search
+    description: Search user profile
+
+  - id: load_profiling_config
+    path: demand/profiling/load-config
+    description: Profiling configuration
+
+config:
+  - id: get_flag_applications
+    path: flag/get-applications
+    description: List all apps with feature flags
+
+  - id: get_feature_flags
+    path: flag/get-feature-flags-by-application
+    description: Get flags for an app
+
+  - id: get_flag_configuration
+    path: flag/get-flag-configuration
+    description: Get flag detail/rules/rollout
+
+  - id: get_activity_log
+    path: activity-log/getLogs
+    description: Who changed what config and when
+
+  - id: get_decompressed_object
+    path: get_decompressed_object
+    description: Decompress S3/stored object
+
+  - id: convert_currency
+    path: convert-currency
+    description: Convert currency
+
+  - id: get_airline_ids
+    path: get-airline-ids
+    description: List all airline IDs
+
+  - id: get_countries
+    path: get-countries
+    description: List all countries

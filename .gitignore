@@ -1,6 +1,9 @@
 node_modules/
+*.DS_Store
+
+# Generated schemas — output of `python infra/scripts/gen-schema.py`
+# Only infra/config/exposed-ops.yaml + scripts are source-controlled.
 infra/schemas/pricing/
 infra/schemas/supply/
 infra/schemas/demand/
 infra/schemas/config/
-*.DS_Store
