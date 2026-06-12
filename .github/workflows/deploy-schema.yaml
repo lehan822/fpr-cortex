@@ -4,6 +4,8 @@ on:
   push:
     branches: [main, release]
     paths:
+      - 'infra/config/exposed-ops.yaml'
+      - 'infra/scripts/gen-schema.py'
       - 'infra/schemas/fprtool-full.json'
   workflow_dispatch:
     inputs:
@@ -24,10 +26,37 @@ jobs:
 
     env:
       STG_BUCKET: bedrock-agentcore-runtime-354767975881-ap-southeast-1-a1beixhzs
-      PROD_BUCKET: TBD-prod-bucket
+      PROD_BUCKET: bedrock-agentcore-runtime-348767535692-ap-southeast-1-837werwc9
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Checkout fprtool-backend (for CRUD schema scanning)
+        uses: actions/checkout@v4
+        with:
+          repository: traveloka/fpr-fprtool-backend
+          path: fpr-fprtool-backend
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sparse-checkout: |
+            fpr-tools-common-impl/src/main/java
+            fpr-tools-demand-impl/src/main/java
+            fpr-tools-supply-impl/src/main/java
+            fpc-tools-budget-impl/src/main/java
+            fpc-tools-pricing-profile-impl/src/main/java
+            fpc-tools-pricing-provider-impl/src/main/java
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Generate per-domain schemas
+        run: |
+          python infra/scripts/gen-schema.py \
+            --backend-path fpr-fprtool-backend \
+            --output-dir infra/schemas
 
       - name: Determine environment
         id: env
@@ -63,12 +92,23 @@ jobs:
             echo "name=${{ env.PROD_BUCKET }}" >> $GITHUB_OUTPUT
           fi
 
-      - name: Upload schema to S3
+      - name: Upload schemas to S3
         run: |
-          echo "Deploying to ${{ steps.env.outputs.env }} → s3://${{ steps.bucket.outputs.name }}"
-          aws s3 cp infra/schemas/fprtool-full.json \
-            s3://${{ steps.bucket.outputs.name }}/schemas/fprtool-full.json
+          echo "Deploying to ${{ steps.env.outputs.env }} → s3://${{ steps.bucket.outputs.name }}/schemas/"
+          for domain in pricing supply demand config; do
+            if [ -f "infra/schemas/$domain/$domain.json" ]; then
+              aws s3 cp "infra/schemas/$domain/$domain.json" \
+                "s3://${{ steps.bucket.outputs.name }}/schemas/$domain.json"
+              echo "  ✅ $domain.json uploaded"
+            fi
+          done
+          # Keep fprtool-full.json as fallback
+          if [ -f "infra/schemas/fprtool-full.json" ]; then
+            aws s3 cp infra/schemas/fprtool-full.json \
+              "s3://${{ steps.bucket.outputs.name }}/schemas/fprtool-full.json"
+            echo "  ✅ fprtool-full.json uploaded"
+          fi
 
       - name: Verify upload
         run: |
-          aws s3 ls s3://${{ steps.bucket.outputs.name }}/schemas/fprtool-full.json
+          aws s3 ls "s3://${{ steps.bucket.outputs.name }}/schemas/"
