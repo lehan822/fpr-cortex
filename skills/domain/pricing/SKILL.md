@@ -135,13 +135,13 @@ data: {airlineId: "GA", fulfillmentId: "amadeus"}
 
 **All update operations MUST follow this safety flow:**
 
-1. **Load current** → `load_*_rules` → show user the baseline
+1. **Load current** → `load_*_rules` → get baseline + `version` (optimistic lock)
 2. **Search schema** → `x_amz_bedrock_agentcore_search(tool_name)` → get field structure
-3. **Build payload** → assemble changes, show diff to user → **wait for confirmation**
-4. **Call update** → only after user says "确认" / "ok" / approves
+3. **Build payload** → assemble changes based on current rules + user request
+4. **Call update** → submit (backend has approval flow built-in)
 5. **Verify** → `load_*_rules` again → confirm changes took effect
 
-**Never auto-execute updates without user confirmation.**
+**All updates require loading current state first** — both for the `version` field and to understand existing rules before modifying.
 
 ## Common Codes
 
