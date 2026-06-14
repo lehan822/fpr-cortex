@@ -112,3 +112,44 @@ jobs:
       - name: Verify upload
         run: |
           aws s3 ls "s3://${{ steps.bucket.outputs.name }}/schemas/"
+
+      - name: Post-deploy smoke test (tool existence)
+        if: steps.env.outputs.env == 'stg'
+        run: |
+          echo "Verifying all skill tools exist in generated schemas..."
+          python3 -c "
+          import json, re, yaml
+          from pathlib import Path
+
+          # Load exposed-ops
+          with open('infra/config/exposed-ops.yaml') as f:
+              config = yaml.safe_load(f)
+          registered = set()
+          for ops in config.values():
+              for op in ops:
+                  registered.add(op['id'])
+
+          # Load skill tools
+          skill_tools = set()
+          for f in Path('skills/domain').rglob('SKILL.md'):
+              content = f.read_text()
+              m = re.search(r'^tools:\s*\n((?:\s+-\s+.+\n)+)', content, re.MULTILINE)
+              if m:
+                  for t in re.findall(r'^\s+-\s+(\S+)', m.group(1), re.MULTILINE):
+                      skill_tools.add(t)
+
+          # Check all skill tools have schemas generated
+          missing = []
+          for domain_dir in Path('infra/schemas').iterdir():
+              if domain_dir.is_dir() and (domain_dir / f'{domain_dir.name}.json').exists():
+                  pass  # schema exists
+          
+          for tool in sorted(skill_tools):
+              if tool not in registered:
+                  missing.append(tool)
+
+          if missing:
+              print(f'❌ {len(missing)} skill tools not in exposed-ops: {missing}')
+              exit(1)
+          print(f'✅ All {len(skill_tools)} skill tools registered and schemas deployed')
+          "

@@ -60,6 +60,30 @@ def check_references(filepath, content):
             errors.append(f"{filepath}: references '{ref}' but file not found: {ref_path}")
 
 
+def check_tools_registered(filepath, fm):
+    """Ensure all tools declared in skill exist in exposed-ops.yaml."""
+    tools = fm.get("tools", [])
+    if not tools:
+        return
+    # Load exposed-ops.yaml
+    config_path = os.path.join("infra", "config", "exposed-ops.yaml")
+    if not os.path.isfile(config_path):
+        return  # skip if config not available
+    with open(config_path) as f:
+        config = yaml.safe_load(f)
+    # Collect all registered operation IDs
+    registered = set()
+    for domain_ops in config.values():
+        if isinstance(domain_ops, list):
+            for op in domain_ops:
+                if isinstance(op, dict) and "id" in op:
+                    registered.add(op["id"])
+    # Check each tool
+    for tool in tools:
+        if tool not in registered:
+            errors.append(f"{filepath}: tool '{tool}' not found in exposed-ops.yaml")
+
+
 def main():
     skill_files = sorted(globmod.glob(os.path.join(SKILLS_DIR, "**", "SKILL.md"), recursive=True))
 
@@ -76,6 +100,7 @@ def main():
             continue
         check_frontmatter(filepath, fm)
         check_references(filepath, content)
+        check_tools_registered(filepath, fm)
 
     if errors:
         print(f"❌ {len(errors)} error(s) found:\n")
