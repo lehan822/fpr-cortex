@@ -139,7 +139,6 @@ data: {airlineId: "GA", fulfillmentId: "amadeus"}
 2. **Search schema** → `x_amz_bedrock_agentcore_search(tool_name)` → get field structure
 3. **Build payload** → assemble changes based on current rules + user request
 4. **Call update** → submit (backend has approval flow built-in)
-5. **Verify** → `load_*_rules` again → confirm changes took effect
 
 **All updates require loading current state first** — both for the `version` field and to understand existing rules before modifying.
 
