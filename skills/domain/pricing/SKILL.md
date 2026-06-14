@@ -131,6 +131,18 @@ data: {airlineId: "GA", fulfillmentId: "amadeus"}
 2. `load_tiered_incentive_rules` with brandId — check volume tiers
 3. `check_tiered_incentive_progress` with pnr — verify specific booking
 
+### Update Rules (any rule type) ⚠️
+
+**All update operations MUST follow this safety flow:**
+
+1. **Load current** → `load_*_rules` → show user the baseline
+2. **Search schema** → `x_amz_bedrock_agentcore_search(tool_name)` → get field structure
+3. **Build payload** → assemble changes, show diff to user → **wait for confirmation**
+4. **Call update** → only after user says "确认" / "ok" / approves
+5. **Verify** → `load_*_rules` again → confirm changes took effect
+
+**Never auto-execute updates without user confirmation.**
+
 ## Common Codes
 
 **Airlines:** GA=Garuda, JT=Lion Air, QZ=AirAsia ID, ID=Batik Air, SQ=Singapore Airlines, TG=Thai Airways, VJ=VietJet, QG=Citilink, TR=Scoot, AK=AirAsia
