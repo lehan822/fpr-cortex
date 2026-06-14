@@ -9,6 +9,7 @@ prerequisites:
   agentcore: []
 tools:
   - load_autopilot_rules
+  - update_autopilot_rules
   - get_budget_balance
   - get_budget_levels
   - get_budget_user_balance
@@ -62,6 +63,7 @@ data: {airlineId: "GA", fulfillmentId: "amadeus"}
 | Operation | Source | Description | Key Parameters |
 |-----------|--------|-------------|----------------|
 | `load_autopilot_rules` | fprtool | Automated pricing rules by country/airline | profileGroup, originCountry, airlineId |
+| `update_autopilot_rules` | fprtool | Update/create autopilot rules (conditions + adjustments) | autopilotToolData, version, notes ⚠️ complex — use search to load schema |
 | `get_budget_balance` | fprtool | Budget remaining/used by currency | currency |
 | `list_active_budgets` | fprtool | Active budgets by currency and level | currency |
 | `load_baseline_pricing_rules` | fprtool | Base markup/margin rules | profileGroup, airlineId |
@@ -87,7 +89,8 @@ data: {airlineId: "GA", fulfillmentId: "amadeus"}
 | "commission", "airline commission rate" | `load_commission_incentive_rules` |
 | "flash sale", "promo", "discount" | `load_price_cut_modifier_rules` |
 | "bundle", "package", "flight+hotel" | `load_bundling_pricing_rules` |
-| "autopilot", "automated pricing" | `load_autopilot_rules` |
+| "autopilot", "automated pricing", "查看 autopilot" | `load_autopilot_rules` |
+| "update autopilot", "修改 autopilot", "add rule", "改规则" | `update_autopilot_rules` |
 | "service fee", "transaction fee" | `load_trx_fee_rules` |
 | "issuance fee", "ticketing fee" | `load_issuance_fee_rules` |
 | "incentive progress", "PNR check" | `check_tiered_incentive_progress` |

@@ -16,6 +16,10 @@ pricing:
     path: flight-auto-pilot/load-rules
     description: Autopilot dynamic pricing rules
 
+  - id: update_autopilot_rules
+    path: flight-auto-pilot/update-rules
+    description: Update autopilot pricing rules (create/modify rules with conditions and adjustments)
+
   - id: load_baseline_pricing_rules
     path: baseline-pricing-rule/load-rules
     description: Base markup/margin rules

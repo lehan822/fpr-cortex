@@ -1,0 +1,57 @@
+{
+  "env": "stg",
+  "model": "anthropic.claude-3-haiku-20240307-v1:0",
+  "timestamp": "2026-06-13 23:00:13",
+  "total": 5,
+  "same": 2,
+  "same_pct": 40.0,
+  "avg_search_count": 10.0,
+  "skill_tools": 51,
+  "cases": [
+    {
+      "id": "TS-01",
+      "category": "TS",
+      "prompt": "How much commission do we give GA on ...",
+      "mode_a": "load_commission_incentive_rules",
+      "mode_b": "load_commission_incentive_rules",
+      "search_count": 10,
+      "same": true
+    },
+    {
+      "id": "TS-02",
+      "category": "TS",
+      "prompt": "What are our default margin settings ...",
+      "mode_a": "load_baseline_pricing_rules",
+      "mode_b": "load_baseline_pricing_rules",
+      "search_count": 10,
+      "same": true
+    },
+    {
+      "id": "TS-03",
+      "category": "TS",
+      "prompt": "我们越南盾的补贴还剩多少？",
+      "mode_a": "load_budget_balance",
+      "mode_b": "load_autopilot_rules",
+      "search_count": 10,
+      "same": false
+    },
+    {
+      "id": "TS-04",
+      "category": "TS",
+      "prompt": "What service charge do we add on affi...",
+      "mode_a": "load_issuance_fee_rules",
+      "mode_b": "load_trx_fee_rules",
+      "search_count": 10,
+      "same": false
+    },
+    {
+      "id": "TS-05",
+      "category": "TS",
+      "prompt": "Check if PNR XYZABC has hit the volum...",
+      "mode_a": "load_tiered_incentive_rules",
+      "mode_b": "load_tiered_incentive_progress",
+      "search_count": 10,
+      "same": false
+    }
+  ]
+}
