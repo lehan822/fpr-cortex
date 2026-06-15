@@ -9,9 +9,12 @@ prerequisites:
   agentcore: []
 tools:
   - get_booking_log
+  - get_demand_experiment_contextid
+  - get_demand_experiment_variant
   - get_flight_info
   - get_flight_info_json
   - get_promo_label_data
+  - get_promo_label_detail
   - get_winner_details
   - list_mongo_collections
   - load_profiling_config
@@ -21,7 +24,6 @@ tools:
   - search_user_profile
   - search_winner
   - simple_crud_query
-  - simulate_search
 ---
 
 # FPR Demand

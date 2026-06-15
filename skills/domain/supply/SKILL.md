@@ -9,18 +9,24 @@ prerequisites:
   agentcore: []
 tools:
   - check_fare
-  - get_fare_check_result
   - get_airline_route_history
+  - get_airline_route_history_filtered
   - get_airline_routes
   - get_arbitration_modes
+  - get_fare_check_result
   - get_inventory_detail
   - get_inventory_types
+  - get_provider_source_histories
+  - get_provider_source_latest_version
   - get_provider_sourcing
   - get_special_fare_config
-  - load_fare_adjuster_by_airport_tax
-  - load_fare_adjuster_by_base_fare
-  - read_pricing_provider
+  - revalidate_regular_fare
+  - revalidate_special_fare
+  - revalidate_upsell_fare
   - search_regular_fare
+  - search_special_fare
+  - search_upsell_fare
+  - simulate_search
 ---
 
 # FPR Supply

@@ -8,23 +8,27 @@ prerequisites:
   local: [fpr-shared]
   agentcore: []
 tools:
-  - load_autopilot_rules
-  - update_autopilot_rules
+  - check_tiered_incentive_progress
   - get_budget_balance
   - get_budget_levels
   - get_budget_user_balance
   - list_active_budgets
+  - load_autopilot_rules
   - load_baseline_pricing_rules
   - load_bundling_pricing_rules
   - load_commission_incentive_profiles
   - load_commission_incentive_rules
+  - load_condition_groups
+  - load_fare_adjuster_by_airport_tax
+  - load_fare_adjuster_by_base_fare
   - load_issuance_fee_rules
   - load_price_cut_modifier_rules
   - load_price_prediction_rules
   - load_pricing_profiles
   - load_tiered_incentive_rules
   - load_trx_fee_rules
-  - check_tiered_incentive_progress
+  - read_pricing_provider
+  - update_autopilot_rules
 ---
 
 # FPR Pricing

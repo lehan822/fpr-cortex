@@ -8,14 +8,14 @@ prerequisites:
   local: [fpr-shared]
   agentcore: []
 tools:
+  - convert_currency
   - get_activity_log
   - get_airline_ids
   - get_countries
+  - get_decompressed_object
   - get_feature_flags
   - get_flag_applications
   - get_flag_configuration
-  - load_condition_groups
-  - convert_currency
 ---
 
 # FPR Config
