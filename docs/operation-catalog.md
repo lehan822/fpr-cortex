@@ -3,7 +3,7 @@
 > Auto-generated — do not edit manually.
 > Run: `python scripts/generate-catalog.py`
 
-**Total: 56 operations** across 1 backend(s): fprtool
+**Total: 64 operations** across 1 backend(s): fprtool
 
 | operationId | Description | Domain |
 |---|---|---|
@@ -22,6 +22,8 @@
 | `get_budget_user_balance` | Get User-Level Budget Balance | pricing |
 | `get_countries` | List All Countries | config |
 | `get_decompressed_object` | Get decompressed object | ❌ unclaimed |
+| `get_demand_experiment_contextid` | Experiment context ID | ❌ unclaimed |
+| `get_demand_experiment_variant` | Experiment variant namespace | ❌ unclaimed |
 | `get_fare_check_result` | Get fare check result | supply |
 | `get_feature_flags` | Get Feature Flags | config |
 | `get_flag_applications` | List Flag Applications | config |
@@ -31,6 +33,7 @@
 | `get_inventory_detail` | Get inventory detail | supply |
 | `get_inventory_types` | Get inventory types | supply |
 | `get_promo_label_data` | Get Promo Label Supporting Data | demand |
+| `get_promo_label_detail` | Get single promo label by ID | ❌ unclaimed |
 | `get_provider_source_histories` | Get provider source histories | supply-search |
 | `get_provider_source_latest_version` | Get provider source latest version | supply-search |
 | `get_provider_sourcing` | Get provider sourcing | supply, supply-search |
@@ -54,10 +57,15 @@
 | `load_tiered_incentive_rules` | Load Tiered Incentive Rules | pricing |
 | `load_trx_fee_rules` | Load Transaction Fee Rules | pricing |
 | `read_pricing_provider` | Read pricing provider | supply |
+| `revalidate_regular_fare` | Revalidate regular fare | ❌ unclaimed |
+| `revalidate_special_fare` | Revalidate special fare | ❌ unclaimed |
+| `revalidate_upsell_fare` | Revalidate upsell fare | ❌ unclaimed |
 | `search_cache_by_id` | Search Cache by Search ID | demand |
 | `search_cache_content` | Search Fare Cache by Route | demand |
 | `search_promo_labels` | Search Promo Labels | demand |
 | `search_regular_fare` | Search regular fare | supply, supply-search |
+| `search_special_fare` | Special fare search | ❌ unclaimed |
+| `search_upsell_fare` | Upsell fare search | ❌ unclaimed |
 | `search_user_profile` | Search User Profile | demand |
 | `search_winner` | Search Winners | demand |
 | `simple_crud_query` | MongoDB CRUD Query | demand |
@@ -66,8 +74,8 @@
 
 ## Summary
 
-- **Claimed:** 54/56
-- **Unclaimed:** 2
+- **Claimed:** 54/64
+- **Unclaimed:** 10
 
 - **config:** 8 ops
 - **demand:** 14 ops
