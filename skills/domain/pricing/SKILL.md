@@ -1,7 +1,7 @@
 ---
 name: fpr-pricing
 description: "Pricing rules, autopilot, budget, commissions, incentives. Use when querying pricing configuration, markup/margin rules, budget balances, or commission rates."
-version: "2.3.0"
+version: "2.4.0"
 category: domain
 domain: pricing
 prerequisites:
@@ -119,6 +119,8 @@ data: {airlineId: "GA", fulfillmentId: "amadeus"}
 - `currency` must be ISO 4217 uppercase (e.g. `"THB"`, not `"thb"` or `"Baht"`)
 - `airlineId` is IATA 2-letter code, uppercase (e.g. `"GA"`, not `"Garuda"`)
 - Commission queries require both `airlineId` AND `fulfillmentId`
+- **AP rule match ≠ AP pricing**: Even if a rule matches, scraping data must be fresh (within `maximumAgeMinute`). Stale data → fallback to baseline
+- **`allowFallback`** in `scrapingCriterion`: if `true`, uses baseline when no scraping data; if `false`, pricing fails entirely
 
 ### Autopilot profileName → currency mapping
 
@@ -133,6 +135,82 @@ data: {airlineId: "GA", fulfillmentId: "amadeus"}
 | Australia | DEFAULT | AUD |
 | Japan | DEFAULT | JPY |
 | South Korea | DEFAULT | KRW |
+
+## API Call Reference
+
+### load_autopilot_rules
+
+```json
+{
+  "data": {
+    "profileGroup": "TRAVELOKA",
+    "profileType": "DEFAULT",
+    "productType": "STANDALONE",
+    "profileName": "DEFAULT",
+    "currency": "THB"
+  }
+}
+```
+
+**Response key paths:**
+- `data.autopilotToolData.rules[]` — array of pricing rules (evaluated top-down)
+- Each rule: `.title`, `.enabled`, `.adjustment`, `.conditions`
+- Conditions: `.routeCriterion`, `.inventoryCriterion`, `.multiSourceScrapingConfig`, `.scrapingCriterion`
+- `data.autopilotToolData.version` — needed for updates (optimistic lock)
+
+**Rule condition fields:**
+| Field | Path | Example |
+|-------|------|---------|
+| Airline | `inventoryCriterion.BRAND_ID` | `["FD", "SL"]` |
+| Domestic country | `routeCriterion.ROUTE_N_DOMESTIC_COUNTRY` | `"TH"` |
+| Origin airports | `routeCriterion.SOURCE_AIRPORT` | `["HKT", "KBV"]` |
+| Dest airports | `routeCriterion.DESTINATION_AIRPORT` | `["DMK", "BKK"]` |
+| Scraping source | `multiSourceScrapingConfig.siteNameSet` | `["tripcom"]` or `["skyscanner"]` |
+| Max data age | `scrapingCriterion.maximumAgeMinute` | `360` (= 6 hours) |
+| Fallback to baseline | `scrapingCriterion.allowFallback` | `true` / `false` |
+
+### load_baseline_pricing_rules
+
+```json
+{
+  "data": {
+    "profileGroup": "TRAVELOKA",
+    "originCountry": "TH",
+    "airlineId": "FD"
+  }
+}
+```
+
+**Response key paths:**
+- `data.pricingBaselineToolData.rules[]` — array of baseline markup rules
+- Each rule: `.title`, `.enabled`, `.conditions`, `.adjustment`
+- `adjustment.defaultTreatment.treatmentCalcBase` — markup base (`"TOTAL_FARE"`, `"DEFAULT_ENMFFNR_INSANCIL"`)
+- `adjustment.defaultTreatment.tieredRules[].adjustmentPctFromBaseCalculation` — markup percentage (e.g. `"5.0"` = 5%)
+- `adjustment.defaultTreatment.tieredRules[].adjustmentOffset` — flat markup amount
+- `adjustment.specific` — whether route-specific overrides exist
+
+### get_activity_log (via fpr-config skill)
+
+```json
+{
+  "data": {
+    "entityType": "flight-PricingAutopilotRules",
+    "entryId": "TRAVELOKA.DEFAULT.STANDALONE.DEFAULT.THB"
+  }
+}
+```
+
+**Response key paths:**
+- `data.revisions[]` — version history (newest first)
+- Each revision: `.createdAt` (ms timestamp), `.version`, `.notes` (JIRA ticket), `.payload.entry`
+- `.payload.entry` contains the full rule snapshot at that version
+
+**Other entityType values:**
+| Entity | entityType |
+|--------|-----------|
+| Autopilot rules | `flight-PricingAutopilotRules` |
+| Baseline pricing | `flight-PricingBaselineRules` |
+| Commission incentive | `flight-CommissionIncentiveRules` |
 
 ## Workflows
 
@@ -160,18 +238,29 @@ When a flight shows `BASELINE_PRICING` instead of `AUTOPILOT`:
    - `routeCriterion.ROUTE_N_DOMESTIC_COUNTRY` — does it cover the route type?
    - `routeCriterion.SOURCE_AIRPORT` / `DESTINATION_AIRPORT` — any airport restriction?
 
-3. **Check scraping source** — the matched rule's `multiSourceScrapingConfig.siteNameSet`:
-   - If `["skyscanner"]` → needs fresh skyscanner data for that route
-   - If `["tripcom"]` → needs fresh tripcom data
-   - `scrapingCriterion.maximumAgeMinute` → max data freshness (e.g. 360 = 6 hours)
+3. **Check scraping data freshness** — rule match alone is NOT enough:
+   - `multiSourceScrapingConfig.siteNameSet` → which source? (tripcom, skyscanner)
+   - `scrapingCriterion.maximumAgeMinute` → max acceptable age (e.g. 360 = 6 hours)
+   - If scraping data for that route is older than this → **fallback to baseline even though rule matches**
 
-4. **Root causes** (most common):
-   | Symptom | Cause |
-   |---------|-------|
-   | No rule matches | Airline/route not covered by any enabled rule |
-   | Rule matches but BASELINE | `allowFallback=false` + scraping data expired/missing |
-   | Rule matches wrong scraping source | e.g. rule uses tripcom but user expects skyscanner pricing |
-   | Multiple rules, wrong priority | Rules evaluated top-down; higher rule may NOT match, lower rule does but has stale data |
+4. **Check baseline (fallback)** — what pricing applies when AP fails:
+   ```
+   load_baseline_pricing_rules → profileGroup="TRAVELOKA", originCountry=<TH/ID/...>, airlineId=<FD/GA/...>
+   ```
+   - Look at `adjustment.defaultTreatment.tieredRules[0].adjustmentPctFromBaseCalculation`
+
+5. **Root causes** (most common):
+   | Symptom | Cause | Fix |
+   |---------|-------|-----|
+   | No rule matches route/airline | Airline/route not covered by any enabled rule | Add new rule or expand existing |
+   | Rule matches but BASELINE shown | Scraping data expired (older than `maximumAgeMinute`) | Add another scraping source or increase age limit |
+   | Rule matches wrong scraping source | e.g. rule uses tripcom but skyscanner has data | Add skyscanner to `siteNameSet` |
+   | Multiple rules, wrong priority | Rules evaluated top-down; first match wins | Reorder rules |
+
+6. **Check activity log** (optional — when was rule configured?):
+   ```
+   get_activity_log → entityType="flight-PricingAutopilotRules", entryId="TRAVELOKA.DEFAULT.STANDALONE.DEFAULT.THB"
+   ```
 
 ### Commission Investigation
 1. `load_commission_incentive_rules` with airlineId + fulfillmentId — get rates
