@@ -364,8 +364,6 @@ def main():
                         help='Path to fpr-fprtool-backend repo')
     parser.add_argument('--output-dir', default=DEFAULT_OUTPUT,
                         help='Output directory for generated schemas')
-    parser.add_argument('--upload-s3', action='store_true',
-                        help='Upload generated schemas to S3 after generation')
     args = parser.parse_args()
 
     backend_path = os.path.abspath(args.backend_path)
@@ -402,12 +400,27 @@ def main():
 
     print(f"\n✅ Generated {total_ops} total operations across {len(domain_specs)} domains")
 
-    if args.upload_s3:
-        print("\n📤 Uploading to S3...")
-        # TODO: implement S3 upload (aws s3 sync)
-        print("  ⚠️  S3 upload not yet implemented — run manually:")
-        for domain in domain_specs:
-            print(f"  aws s3 cp {output_dir}/{domain}/{domain}.json s3://fpr-cortex-schemas/{domain}.json")
+    # Merge all ops into fprtool-full.json (Gateway reads this file)
+    if full_spec:
+        merged_count = 0
+        for domain, spec in domain_specs.items():
+            for path, methods in spec['paths'].items():
+                for method, op in methods.items():
+                    op_id = op.get('operationId', '')
+                    # Check if already in full spec
+                    existing_path, existing_op = find_standard_op_in_spec(full_spec, op_id)
+                    if not existing_op:
+                        if path not in full_spec['paths']:
+                            full_spec['paths'][path] = {}
+                        full_spec['paths'][path][method] = op
+                        merged_count += 1
+
+        if merged_count > 0:
+            with open(FULL_SPEC_PATH, 'w') as f:
+                json.dump(full_spec, f, indent=2)
+            print(f"  📦 Merged {merged_count} new ops into fprtool-full.json ({len(full_spec['paths'])} total)")
+        else:
+            print(f"  📦 fprtool-full.json already up-to-date ({len(full_spec['paths'])} paths)")
 
 
 if __name__ == '__main__':

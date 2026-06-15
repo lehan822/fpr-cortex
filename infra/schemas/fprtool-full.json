@@ -3787,6 +3787,305 @@
           }
         }
       }
+    },
+    "/api/v2/supply-search-tool/search-special-fare": {
+      "post": {
+        "operationId": "search_special_fare",
+        "summary": "Special fare search",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply-search-tool/search-upsell-fare": {
+      "post": {
+        "operationId": "search_upsell_fare",
+        "summary": "Upsell fare search",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply-search-tool/revalidate-regular-fare": {
+      "post": {
+        "operationId": "revalidate_regular_fare",
+        "summary": "Revalidate regular fare",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply-search-tool/revalidate-special-fare": {
+      "post": {
+        "operationId": "revalidate_special_fare",
+        "summary": "Revalidate special fare",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply-search-tool/revalidate-upsell-fare": {
+      "post": {
+        "operationId": "revalidate_upsell_fare",
+        "summary": "Revalidate upsell fare",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/crud/getEntryDetail#get_promo_label_detail": {
+      "post": {
+        "operationId": "get_promo_label_detail",
+        "summary": "Get single promo label by ID",
+        "description": "Get single flightPromoLabel entry by ID. POST /api/v2/crud/getEntryDetail",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context",
+                  "clientInterface"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "entityType",
+                      "entryId"
+                    ],
+                    "properties": {
+                      "entityType": {
+                        "type": "string",
+                        "const": "flightPromoLabel"
+                      },
+                      "entryId": {
+                        "type": "string",
+                        "description": "Entry identifier"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "desktop"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Entry detail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/demand-experiment/get-variant-namespace": {
+      "post": {
+        "operationId": "get_demand_experiment_variant",
+        "summary": "Experiment variant namespace",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/demand-experiment/get-contextid-namespace": {
+      "post": {
+        "operationId": "get_demand_experiment_contextid",
+        "summary": "Experiment context ID",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "tags": [
