@@ -124,7 +124,7 @@ def generate_crud_tool_schema(op_id, crud_action, entity_info, description):
                                     'properties': {
                                         'entityType': {
                                             'type': 'string',
-                                            'const': entity_type,
+                                            'enum': [entity_type],
                                             'description': f'Must be "{entity_type}"'
                                         },
                                         'search': {
@@ -233,7 +233,7 @@ def generate_crud_tool_schema(op_id, crud_action, entity_info, description):
                                     'type': 'object',
                                     'required': ['entityType', 'entryId'],
                                     'properties': {
-                                        'entityType': {'type': 'string', 'const': entity_type},
+                                        'entityType': {'type': 'string', 'enum': [entity_type]},
                                         'entryId': {'type': 'string', 'description': 'Entry identifier'}
                                     }
                                 },
