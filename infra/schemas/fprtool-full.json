@@ -3977,7 +3977,9 @@
                     "properties": {
                       "entityType": {
                         "type": "string",
-                        "const": "flightPromoLabel"
+                        "enum": [
+                          "flightPromoLabel"
+                        ]
                       },
                       "entryId": {
                         "type": "string",

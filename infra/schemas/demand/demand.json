@@ -50,8 +50,10 @@
                     "properties": {
                       "entityType": {
                         "type": "string",
-                        "const": "flightPromoLabel",
-                        "description": "Must be \"flightPromoLabel\""
+                        "description": "Must be \"flightPromoLabel\"",
+                        "enum": [
+                          "flightPromoLabel"
+                        ]
                       },
                       "search": {
                         "type": "object",
@@ -200,7 +202,9 @@
                     "properties": {
                       "entityType": {
                         "type": "string",
-                        "const": "flightPromoLabel"
+                        "enum": [
+                          "flightPromoLabel"
+                        ]
                       },
                       "entryId": {
                         "type": "string",
