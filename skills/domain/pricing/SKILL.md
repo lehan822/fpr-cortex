@@ -46,7 +46,7 @@ tools:
 
 ```
 tool: load_autopilot_rules
-data: {profileGroup: "TRAVELOKA", originCountry: "TH"}
+data: {profileGroup: "TRAVELOKA", profileType: "DEFAULT", productType: "STANDALONE", profileName: "DEFAULT", currency: "THB"}
 → returns autopilot pricing rules for Thailand B2C
 ```
 
@@ -66,7 +66,7 @@ data: {airlineId: "GA", fulfillmentId: "amadeus"}
 
 | Operation | Source | Description | Key Parameters |
 |-----------|--------|-------------|----------------|
-| `load_autopilot_rules` | fprtool | Automated pricing rules by country/airline | profileGroup, originCountry, airlineId |
+| `load_autopilot_rules` | fprtool | Automated pricing rules by country/airline | profileGroup, profileType, productType, profileName, currency |
 | `update_autopilot_rules` | fprtool | Update/create autopilot rules (conditions + adjustments) | autopilotToolData, version, notes ⚠️ complex — use search to load schema |
 | `get_budget_balance` | fprtool | Budget remaining/used by currency | currency |
 | `list_active_budgets` | fprtool | Active budgets by currency and level | currency |
@@ -94,6 +94,7 @@ data: {airlineId: "GA", fulfillmentId: "amadeus"}
 | "flash sale", "promo", "discount" | `load_price_cut_modifier_rules` |
 | "bundle", "package", "flight+hotel" | `load_bundling_pricing_rules` |
 | "autopilot", "automated pricing", "查看 autopilot" | `load_autopilot_rules` |
+| "why not autopilot", "为啥不走 autopilot", "BASELINE instead of AUTOPILOT" | `load_autopilot_rules` → then follow **Autopilot Debug** workflow |
 | "update autopilot", "修改 autopilot", "add rule", "改规则" | `update_autopilot_rules` |
 | "service fee", "transaction fee" | `load_trx_fee_rules` |
 | "issuance fee", "ticketing fee" | `load_issuance_fee_rules` |
@@ -113,10 +114,25 @@ data: {airlineId: "GA", fulfillmentId: "amadeus"}
 ## Gotchas
 
 - `profileGroup` is an enum (`TRAVELOKA` / `AFFILIATE` / `CORPORATE`), NOT a country code
-- Use `originCountry` for country filtering (e.g. `"TH"`), not `profileGroup`
+- **Autopilot `profileName`** is almost always `"DEFAULT"` — NOT a country code. Currency determines the country (THB=Thailand, IDR=Indonesia, etc.)
+- Autopilot document ID format: `{profileGroup}.{profileType}.{productType}.{profileName}.{currency}` (e.g. `TRAVELOKA.DEFAULT.STANDALONE.DEFAULT.THB`)
 - `currency` must be ISO 4217 uppercase (e.g. `"THB"`, not `"thb"` or `"Baht"`)
 - `airlineId` is IATA 2-letter code, uppercase (e.g. `"GA"`, not `"Garuda"`)
 - Commission queries require both `airlineId` AND `fulfillmentId`
+
+### Autopilot profileName → currency mapping
+
+| Country | profileName | currency |
+|---------|-------------|----------|
+| Indonesia | DEFAULT | IDR |
+| Thailand | DEFAULT | THB |
+| Vietnam | DEFAULT | VND |
+| Malaysia | DEFAULT | MYR |
+| Singapore | DEFAULT | SGD |
+| Philippines | DEFAULT | PHP |
+| Australia | DEFAULT | AUD |
+| Japan | DEFAULT | JPY |
+| South Korea | DEFAULT | KRW |
 
 ## Workflows
 
@@ -126,9 +142,36 @@ data: {airlineId: "GA", fulfillmentId: "amadeus"}
 3. `get_budget_levels` — understand budget hierarchy if needed
 
 ### Pricing Rule Audit (by country)
-1. `load_autopilot_rules` with originCountry — see dynamic rules
+1. `load_autopilot_rules` with profileName="DEFAULT", currency=<country_currency> — see dynamic rules
 2. `load_baseline_pricing_rules` — compare with base markup
 3. `load_price_cut_modifier_rules` — check if promo is active
+
+### Autopilot Debug — "Why isn't X hitting autopilot?"
+
+When a flight shows `BASELINE_PRICING` instead of `AUTOPILOT`:
+
+1. **Load autopilot rules** for the currency:
+   ```
+   load_autopilot_rules → profileName="DEFAULT", currency=<THB/IDR/...>
+   ```
+
+2. **Find matching rule** — check each enabled rule's conditions:
+   - `inventoryCriterion.BRAND_ID` — does it include the airline? (FD, VZ, TG, etc.)
+   - `routeCriterion.ROUTE_N_DOMESTIC_COUNTRY` — does it cover the route type?
+   - `routeCriterion.SOURCE_AIRPORT` / `DESTINATION_AIRPORT` — any airport restriction?
+
+3. **Check scraping source** — the matched rule's `multiSourceScrapingConfig.siteNameSet`:
+   - If `["skyscanner"]` → needs fresh skyscanner data for that route
+   - If `["tripcom"]` → needs fresh tripcom data
+   - `scrapingCriterion.maximumAgeMinute` → max data freshness (e.g. 360 = 6 hours)
+
+4. **Root causes** (most common):
+   | Symptom | Cause |
+   |---------|-------|
+   | No rule matches | Airline/route not covered by any enabled rule |
+   | Rule matches but BASELINE | `allowFallback=false` + scraping data expired/missing |
+   | Rule matches wrong scraping source | e.g. rule uses tripcom but user expects skyscanner pricing |
+   | Multiple rules, wrong priority | Rules evaluated top-down; higher rule may NOT match, lower rule does but has stale data |
 
 ### Commission Investigation
 1. `load_commission_incentive_rules` with airlineId + fulfillmentId — get rates
