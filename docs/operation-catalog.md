@@ -3,7 +3,7 @@
 > Auto-generated — do not edit manually.
 > Run: `python scripts/generate-catalog.py`
 
-**Total: 55 operations** across 1 backend(s): fprtool
+**Total: 56 operations** across 1 backend(s): fprtool
 
 | operationId | Description | Domain |
 |---|---|---|
@@ -31,9 +31,9 @@
 | `get_inventory_detail` | Get inventory detail | supply |
 | `get_inventory_types` | Get inventory types | supply |
 | `get_promo_label_data` | Get Promo Label Supporting Data | demand |
-| `get_provider_source_histories` | Get provider source histories | ❌ unclaimed |
-| `get_provider_source_latest_version` | Get provider source latest version | ❌ unclaimed |
-| `get_provider_sourcing` | Get provider sourcing | supply |
+| `get_provider_source_histories` | Get provider source histories | supply-search |
+| `get_provider_source_latest_version` | Get provider source latest version | supply-search |
+| `get_provider_sourcing` | Get provider sourcing | supply, supply-search |
 | `get_special_fare_config` | Get special fare config | supply |
 | `get_winner_details` | Get Winner Details | demand |
 | `list_active_budgets` | List Active Budgets | pricing |
@@ -57,18 +57,20 @@
 | `search_cache_by_id` | Search Cache by Search ID | demand |
 | `search_cache_content` | Search Fare Cache by Route | demand |
 | `search_promo_labels` | Search Promo Labels | demand |
-| `search_regular_fare` | Search regular fare | supply |
+| `search_regular_fare` | Search regular fare | supply, supply-search |
 | `search_user_profile` | Search User Profile | demand |
 | `search_winner` | Search Winners | demand |
 | `simple_crud_query` | MongoDB CRUD Query | demand |
 | `simulate_search` | Simulate Flight Search | demand |
+| `update_autopilot_rules` | Update autopilot pricing rules (create/modify rules with conditions and adjustme | pricing |
 
 ## Summary
 
-- **Claimed:** 51/55
-- **Unclaimed:** 4
+- **Claimed:** 54/56
+- **Unclaimed:** 2
 
 - **config:** 8 ops
 - **demand:** 14 ops
-- **pricing:** 16 ops
+- **pricing:** 17 ops
 - **supply:** 13 ops
+- **supply-search:** 4 ops
