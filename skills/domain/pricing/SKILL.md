@@ -1,7 +1,7 @@
 ---
 name: fpr-pricing
 description: "Pricing rules, autopilot, budget, commissions, incentives. Use when querying pricing configuration, markup/margin rules, budget balances, or commission rates."
-version: "2.4.0"
+version: "2.5.0"
 category: domain
 domain: pricing
 prerequisites:
@@ -114,15 +114,21 @@ data: {airlineId: "GA", fulfillmentId: "amadeus"}
 ## Gotchas
 
 - `profileGroup` is an enum (`TRAVELOKA` / `AFFILIATE` / `CORPORATE`), NOT a country code
-- **Autopilot `profileName`** is almost always `"DEFAULT"` — NOT a country code. Currency determines the country (THB=Thailand, IDR=Indonesia, etc.)
-- Autopilot document ID format: `{profileGroup}.{profileType}.{productType}.{profileName}.{currency}` (e.g. `TRAVELOKA.DEFAULT.STANDALONE.DEFAULT.THB`)
+- **Autopilot `profileName`**: B2C uses `"DEFAULT"`, but affiliate partners use specific names (e.g. `"skyscanner-flight"`)
+- **`profileType`**: `"DEFAULT"` for B2C, `"SPECIFIC"` for affiliate partner-specific configs
+- Autopilot document ID format: `{profileGroup}.{profileType}.{productType}.{profileName}.{currency}` (e.g. `TRAVELOKA.DEFAULT.STANDALONE.DEFAULT.THB` or `AFFILIATE.SPECIFIC.STANDALONE.skyscanner-flight.THB`)
 - `currency` must be ISO 4217 uppercase (e.g. `"THB"`, not `"thb"` or `"Baht"`)
 - `airlineId` is IATA 2-letter code, uppercase (e.g. `"GA"`, not `"Garuda"`)
 - Commission queries require both `airlineId` AND `fulfillmentId`
 - **AP rule match ≠ AP pricing**: Even if a rule matches, scraping data must be fresh (within `maximumAgeMinute`). Stale data → fallback to baseline
 - **`allowFallback`** in `scrapingCriterion`: if `true`, uses baseline when no scraping data; if `false`, pricing fails entirely
+- **`load_baseline_pricing_rules` API may not return all rules** — actual matched baseline can differ (e.g. MAB experiment rules not exposed via API)
+- **B2C vs Affiliate use different scraping sources**: B2C (TRAVELOKA) typically uses `tripcom`; affiliate Meta/skyscanner uses `skyscanner`. Having data in one source doesn't help the other channel
+- **AP matching uses TOP-N**: if cheapest competitor price exceeds threshold, tries next-cheapest (TOP3/TOP4). Only falls to baseline if ALL competitor prices fail to match
 
-### Autopilot profileName → currency mapping
+### Autopilot Document Lookup
+
+**B2C (TRAVELOKA):** always `profileType=DEFAULT`, `profileName=DEFAULT`, currency determines country:
 
 | Country | profileName | currency |
 |---------|-------------|----------|
@@ -135,6 +141,25 @@ data: {airlineId: "GA", fulfillmentId: "amadeus"}
 | Australia | DEFAULT | AUD |
 | Japan | DEFAULT | JPY |
 | South Korea | DEFAULT | KRW |
+
+**Affiliate (partner-specific):** `profileType=SPECIFIC`, `profileName=<partner-name>`:
+
+| Partner | profileName | Scraping Source |
+|---------|-------------|----------------|
+| Skyscanner | skyscanner-flight | skyscanner |
+| Shopee | (TBD) | (TBD) |
+
+Example: `AFFILIATE.SPECIFIC.STANDALONE.skyscanner-flight.THB`
+
+### Channel → Scraping Source Mapping
+
+| Channel | profileGroup | Scraping Source | Notes |
+|---------|-------------|----------------|-------|
+| Main website/app (B2C) | TRAVELOKA | tripcom | TH domestic uses tripcom exclusively |
+| Meta/Skyscanner redirect | AFFILIATE (SPECIFIC) | skyscanner | Partner-specific profile |
+| Shopee/other affiliates | AFFILIATE | varies | Check partner-specific profile |
+
+⚠️ Having skyscanner data does NOT help B2C — they only read tripcom. Vice versa.
 
 ## API Call Reference
 
@@ -228,9 +253,15 @@ data: {airlineId: "GA", fulfillmentId: "amadeus"}
 
 When a flight shows `BASELINE_PRICING` instead of `AUTOPILOT`:
 
-1. **Load autopilot rules** for the currency:
+0. **Determine the channel** — which document to query:
+   - B2C (main site/app): `profileGroup=TRAVELOKA, profileType=DEFAULT, profileName=DEFAULT`
+   - Meta/skyscanner: `profileGroup=AFFILIATE, profileType=SPECIFIC, profileName=skyscanner-flight`
+   - If unknown, check BigQuery `flight_search_result_item_pricing_layer` for the profileGroup
+
+1. **Load autopilot rules** for the correct document:
    ```
-   load_autopilot_rules → profileName="DEFAULT", currency=<THB/IDR/...>
+   B2C: load_autopilot_rules → profileGroup=TRAVELOKA, profileType=DEFAULT, productType=STANDALONE, profileName=DEFAULT, currency=<THB/IDR/...>
+   Affiliate: load_autopilot_rules → profileGroup=AFFILIATE, profileType=SPECIFIC, productType=STANDALONE, profileName=skyscanner-flight, currency=<THB/IDR/...>
    ```
 
 2. **Find matching rule** — check each enabled rule's conditions:
@@ -256,6 +287,9 @@ When a flight shows `BASELINE_PRICING` instead of `AUTOPILOT`:
    | Rule matches but BASELINE shown | Scraping data expired (older than `maximumAgeMinute`) | Add another scraping source or increase age limit |
    | Rule matches wrong scraping source | e.g. rule uses tripcom but skyscanner has data | Add skyscanner to `siteNameSet` |
    | Multiple rules, wrong priority | Rules evaluated top-down; first match wins | Reorder rules |
+   | Scraping source honeypotted | tripcom/skyscanner blocked our scraper → no fresh data | Wait for recovery or add alternative source |
+   | AP matched but pricing_layer=AUTOPILOT with bad price | Threshold/TOP-N matching — ENTA too far from competitor | Adjust threshold bounds or calc base |
+   | B2C shows BP but affiliate shows AP | Different channels use different scraping sources | Check correct document for the channel |
 
 6. **Check activity log** (optional — when was rule configured?):
    ```
