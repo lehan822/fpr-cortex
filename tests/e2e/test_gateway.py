@@ -13,7 +13,7 @@ Tests:
 import json, os, subprocess, sys
 
 AUTH_FILE = os.path.expanduser("~/.fpr/auth.json")
-GATEWAY_STG = "https://fpr-lehan-jwt-gw-z6tsij9aib.gateway.bedrock-agentcore.ap-southeast-1.amazonaws.com"
+GATEWAY_STG = "https://fpr-cortex-sg-ruypqkcdov.gateway.bedrock-agentcore.ap-southeast-1.amazonaws.com"
 
 
 def load_tokens():
