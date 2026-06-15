@@ -6,7 +6,7 @@ on:
     paths:
       - 'infra/config/exposed-ops.yaml'
       - 'infra/scripts/gen-schema.py'
-      - 'infra/schemas/fprtool-full.json'
+      - 'infra/schemas/**'
   workflow_dispatch:
     inputs:
       environment:
@@ -31,32 +31,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Checkout fprtool-backend (for CRUD schema scanning)
-        uses: actions/checkout@v4
-        with:
-          repository: traveloka/fpr-fprtool-backend
-          path: fpr-fprtool-backend
-          token: ${{ secrets.GITHUB_TOKEN }}
-          sparse-checkout: |
-            fpr-tools-common-impl/src/main/java
-            fpr-tools-demand-impl/src/main/java
-            fpr-tools-supply-impl/src/main/java
-            fpc-tools-budget-impl/src/main/java
-            fpc-tools-pricing-profile-impl/src/main/java
-            fpc-tools-pricing-provider-impl/src/main/java
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: pip install pyyaml
-
-      - name: Generate per-domain schemas
-        run: |
-          python infra/scripts/gen-schema.py \
-            --backend-path fpr-fprtool-backend \
-            --output-dir infra/schemas
+      # Schemas are pre-generated locally (scripts/deploy-schema.sh --gen-only)
+      # and committed to repo. CI only uploads to S3.
 
       - name: Determine environment
         id: env
