@@ -3755,6 +3755,38 @@
           "demand"
         ]
       }
+    },
+    "/api/v2/flight-auto-pilot/update-rules": {
+      "post": {
+        "operationId": "update_autopilot_rules",
+        "summary": "Update autopilot pricing rules (create/modify rules with conditions and adjustments)",
+        "tags": [
+          "pricing"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "tags": [
