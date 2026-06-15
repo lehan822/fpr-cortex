@@ -23,7 +23,7 @@ jobs:
           ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Generate catalog
-        run: python scripts/generate-catalog.py
+        run: python infra/scripts/generate-catalog.py
 
       - name: Commit if changed
         run: |

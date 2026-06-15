@@ -109,14 +109,14 @@ jobs:
           python-version: "3.11"
 
       - name: Regenerate catalog
-        run: python scripts/generate-catalog.py
+        run: python infra/scripts/generate-catalog.py
 
       - name: Check catalog is up to date
         run: |
           if git diff --quiet docs/operation-catalog.md; then
             echo "✅ Catalog is up to date"
           else
-            echo "❌ Catalog is out of date. Run: python scripts/generate-catalog.py"
+            echo "❌ Catalog is out of date. Run: python infra/scripts/generate-catalog.py"
             git diff docs/operation-catalog.md
             exit 1
           fi
