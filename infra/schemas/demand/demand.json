@@ -50,10 +50,10 @@
                     "properties": {
                       "entityType": {
                         "type": "string",
-                        "description": "Must be \"flightPromoLabel\"",
                         "enum": [
                           "flightPromoLabel"
-                        ]
+                        ],
+                        "description": "Must be \"flightPromoLabel\""
                       },
                       "search": {
                         "type": "object",

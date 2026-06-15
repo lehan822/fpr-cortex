@@ -34,35 +34,54 @@
                 "properties": {
                   "data": {
                     "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
+                    "description": "Request parameters for loading autopilot rules",
                     "properties": {
                       "profileGroup": {
                         "type": "string",
-                        "description": "Profile group: TRAVELOKA, AFFILIATE, or CORPORATE. Defaults to TRAVELOKA if omitted.",
+                        "description": "Profile group",
                         "enum": [
                           "TRAVELOKA",
                           "AFFILIATE",
                           "CORPORATE"
                         ]
                       },
-                      "originCountry": {
+                      "profileType": {
                         "type": "string",
-                        "description": "Origin country code (ISO 2-letter), e.g. ID (Indonesia), TH (Thailand), VN (Vietnam), SG (Singapore)"
+                        "description": "Profile type",
+                        "enum": [
+                          "DEFAULT",
+                          "SPECIFIC"
+                        ],
+                        "default": "DEFAULT"
                       },
-                      "destinationCountry": {
+                      "productType": {
                         "type": "string",
-                        "description": "Destination country code (ISO 2-letter)"
+                        "description": "Product type",
+                        "enum": [
+                          "STANDALONE",
+                          "BUNDLE"
+                        ],
+                        "default": "STANDALONE"
                       },
-                      "airlineId": {
+                      "profileName": {
                         "type": "string",
-                        "description": "IATA airline code, e.g. GA (Garuda), SQ (Singapore Airlines), QZ (AirAsia Indonesia), JT (Lion Air)"
+                        "description": "Country code (ISO 2-letter) that identifies the rule set. E.g. ID (Indonesia), TH (Thailand), VN (Vietnam), SG (Singapore), MY (Malaysia), PH (Philippines)"
+                      },
+                      "currency": {
+                        "type": "string",
+                        "description": "Currency code for the country. E.g. IDR (Indonesia), THB (Thailand), VND (Vietnam), SGD (Singapore), MYR (Malaysia), PHP (Philippines)"
                       }
-                    }
+                    },
+                    "required": [
+                      "profileGroup",
+                      "profileType",
+                      "productType",
+                      "profileName",
+                      "currency"
+                    ]
                   },
                   "context": {
                     "type": "object",
-                    "description": "Authentication context",
                     "properties": {
                       "authServiceToken": {
                         "type": "string",
@@ -75,7 +94,6 @@
                   },
                   "clientInterface": {
                     "type": "string",
-                    "description": "Client interface type",
                     "default": "DESKTOP"
                   },
                   "fields": {
@@ -83,10 +101,13 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Response field filter",
                     "default": []
                   }
-                }
+                },
+                "required": [
+                  "data",
+                  "context"
+                ]
               }
             }
           }
@@ -114,7 +135,178 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "TODO: scan backend for schema"
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request payload for updating autopilot rules. Must include the full autopilotToolData from load-rules response with modifications, plus version for optimistic locking.",
+                    "properties": {
+                      "autopilotToolData": {
+                        "type": "object",
+                        "description": "The full autopilot document. Get this from load-rules response, modify rules as needed, then pass back.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Document ID from load-rules response (e.g. 'TH')"
+                          },
+                          "profileGroup": {
+                            "type": "string",
+                            "enum": [
+                              "TRAVELOKA",
+                              "AFFILIATE",
+                              "CORPORATE"
+                            ]
+                          },
+                          "profileType": {
+                            "type": "string",
+                            "enum": [
+                              "DEFAULT",
+                              "SPECIFIC"
+                            ]
+                          },
+                          "productType": {
+                            "type": "string",
+                            "enum": [
+                              "STANDALONE",
+                              "BUNDLE"
+                            ]
+                          },
+                          "profileName": {
+                            "type": "string",
+                            "description": "Profile name from load-rules response"
+                          },
+                          "currency": {
+                            "type": "string",
+                            "description": "Currency code (e.g. THB, IDR, VND)"
+                          },
+                          "notes": {
+                            "type": "string",
+                            "description": "Document-level notes"
+                          },
+                          "enable": {
+                            "type": "boolean",
+                            "description": "Whether the document is enabled"
+                          },
+                          "rules": {
+                            "type": "array",
+                            "description": "Array of autopilot rules. Each rule has conditions, adjustmentDefault, and optional adjustmentFallback.",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "description": "Rule ID (preserve from load-rules)"
+                                },
+                                "title": {
+                                  "type": "string",
+                                  "description": "Rule title/name"
+                                },
+                                "enabled": {
+                                  "type": "boolean"
+                                },
+                                "conditions": {
+                                  "type": "object",
+                                  "description": "Rule conditions (routes, airlines, etc). Preserve from load-rules response.",
+                                  "additionalProperties": true
+                                },
+                                "adjustmentDefault": {
+                                  "type": "object",
+                                  "description": "Default price adjustment",
+                                  "additionalProperties": true
+                                },
+                                "adjustmentFallback": {
+                                  "type": "object",
+                                  "description": "Fallback adjustment when scraping data unavailable",
+                                  "additionalProperties": true
+                                },
+                                "adjustmentExperiment": {
+                                  "type": "array",
+                                  "description": "Experiment variant adjustments",
+                                  "items": {
+                                    "type": "object",
+                                    "additionalProperties": true
+                                  }
+                                },
+                                "adjustmentFallbackExperiment": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "additionalProperties": true
+                                  }
+                                }
+                              },
+                              "required": [
+                                "title",
+                                "enabled",
+                                "conditions",
+                                "adjustmentDefault"
+                              ]
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "profileGroup",
+                          "profileType",
+                          "productType",
+                          "profileName",
+                          "currency",
+                          "rules",
+                          "enable"
+                        ]
+                      },
+                      "version": {
+                        "type": "integer",
+                        "description": "Optimistic lock version from load-rules response. MUST match current version or update will be rejected."
+                      },
+                      "notes": {
+                        "type": "string",
+                        "description": "Change notes describing what was modified"
+                      },
+                      "method": {
+                        "type": "string",
+                        "description": "Update method (optional)",
+                        "default": ""
+                      },
+                      "approvalRequester": {
+                        "type": "string",
+                        "description": "Email of the person requesting approval (optional)",
+                        "default": ""
+                      }
+                    },
+                    "required": [
+                      "autopilotToolData",
+                      "version",
+                      "notes"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                },
+                "required": [
+                  "data",
+                  "context"
+                ]
               }
             }
           }
