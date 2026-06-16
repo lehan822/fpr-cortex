@@ -2643,9 +2643,21 @@
                     "properties": {
                       "entityType": {
                         "type": "string",
-                        "description": "Entity type to query logs for, e.g. PRICING_RULE, AUTOPILOT, BUDGET, COMMISSION"
+                        "description": "Entity type (CRUD entity name). Common values: flight-PricingAutopilotRules, flight-PricingBaselineRules, flight-CommissionIncentiveRules, flight-PricingBudget, flight-PricePredictionRules, flight-TransactionFee"
+                      },
+                      "entryId": {
+                        "type": "string",
+                        "description": "Entry ID to query logs for. For autopilot: {profileGroup}.{profileType}.{productType}.{profileName}.{currency} e.g. AFFILIATE.SPECIFIC.STANDALONE.skyscanner-flight.THB"
+                      },
+                      "nextToken": {
+                        "type": "string",
+                        "description": "Pagination token from previous response"
                       }
-                    }
+                    },
+                    "required": [
+                      "entityType",
+                      "entryId"
+                    ]
                   },
                   "context": {
                     "type": "object",
