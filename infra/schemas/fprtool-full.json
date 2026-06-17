@@ -8,7 +8,7 @@
   "servers": [
     {
       "url": "https://tz0pqimy4l.execute-api.ap-southeast-1.amazonaws.com/stg",
-      "description": "Staging (via API Gateway)"
+      "description": "Staging (via fprspdt-agentcore-api)"
     }
   ],
   "paths": {
@@ -3600,63 +3600,6 @@
         ]
       }
     },
-    "/api/v2/flight-promo-label/get-promo-label-info": {
-      "post": {
-        "operationId": "search_promo_labels",
-        "summary": "Search Promo Labels",
-        "description": "Search promo label information and configuration. Promo labels are displayed on search results to highlight deals or promotions. Use when someone asks about 'promo labels', 'promotional tags', 'deal labels', or 'what promos are shown on search'. Keywords: promo labels, promotional tags, deal labels.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Promo label information retrieved successfully"
-          }
-        },
-        "tags": [
-          "demand"
-        ]
-      }
-    },
     "/api/v2/flight-promo-label/get-promo-label-supporting-data": {
       "post": {
         "operationId": "get_promo_label_data",
@@ -4286,6 +4229,157 @@
               "application/json": {
                 "schema": {
                   "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/crud/getEntryList#search_promo_labels": {
+      "post": {
+        "operationId": "search_promo_labels",
+        "summary": "Search/list promo label configs",
+        "description": "List/search flightPromoLabel entries via CRUD framework.\nAvailable filter fields: archived, enabled, end_date, last_update, priority\nRequest goes to POST /api/v2/crud/getEntryList",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context",
+                  "clientInterface"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "entityType",
+                      "search"
+                    ],
+                    "properties": {
+                      "entityType": {
+                        "type": "string",
+                        "enum": [
+                          "flightPromoLabel"
+                        ],
+                        "description": "Must be \"flightPromoLabel\""
+                      },
+                      "search": {
+                        "type": "object",
+                        "required": [
+                          "entriesCount",
+                          "offset",
+                          "sort",
+                          "filter"
+                        ],
+                        "properties": {
+                          "searchQuery": {
+                            "type": "string",
+                            "description": "Free-text search (optional)",
+                            "default": ""
+                          },
+                          "entriesCount": {
+                            "type": "integer",
+                            "description": "Page size (max entries to return)",
+                            "default": 10
+                          },
+                          "offset": {
+                            "type": "integer",
+                            "description": "Pagination offset",
+                            "default": 0
+                          },
+                          "sort": {
+                            "type": "object",
+                            "properties": {
+                              "fieldName": {
+                                "type": "string",
+                                "description": "Field to sort by"
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "ASCENDING",
+                                  "DESCENDING"
+                                ]
+                              }
+                            }
+                          },
+                          "filter": {
+                            "type": "array",
+                            "description": "Filter conditions. Known fields: archived, enabled, end_date, last_update, priority",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "fieldName": {
+                                  "type": "string"
+                                },
+                                "arguments": {
+                                  "type": "object",
+                                  "properties": {
+                                    "value": {}
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "JWT auth token"
+                      }
+                    }
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "desktop"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Entry list result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "totalEntries": {
+                          "type": "string"
+                        },
+                        "entries": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }

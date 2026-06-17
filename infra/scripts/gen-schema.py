@@ -401,24 +401,38 @@ def main():
     print(f"\n✅ Generated {total_ops} total operations across {len(domain_specs)} domains")
 
     # Merge all ops into fprtool-full.json (Gateway reads this file)
+    # Domain schemas are source of truth — overwrite full spec only when different
     if full_spec:
-        merged_count = 0
+        updated_count = 0
+        added_count = 0
         for domain, spec in domain_specs.items():
             for path, methods in spec['paths'].items():
                 for method, op in methods.items():
                     op_id = op.get('operationId', '')
-                    # Check if already in full spec
                     existing_path, existing_op = find_standard_op_in_spec(full_spec, op_id)
-                    if not existing_op:
+                    if existing_op:
+                        # Skip if path and schema are identical
+                        if existing_path == path and existing_op == op:
+                            continue
+                        # Remove stale entry if path changed
+                        if existing_path != path:
+                            del full_spec['paths'][existing_path][method]
+                            if not full_spec['paths'][existing_path]:
+                                del full_spec['paths'][existing_path]
                         if path not in full_spec['paths']:
                             full_spec['paths'][path] = {}
                         full_spec['paths'][path][method] = op
-                        merged_count += 1
+                        updated_count += 1
+                    else:
+                        if path not in full_spec['paths']:
+                            full_spec['paths'][path] = {}
+                        full_spec['paths'][path][method] = op
+                        added_count += 1
 
-        if merged_count > 0:
+        if updated_count > 0 or added_count > 0:
             with open(FULL_SPEC_PATH, 'w') as f:
                 json.dump(full_spec, f, indent=2)
-            print(f"  📦 Merged {merged_count} new ops into fprtool-full.json ({len(full_spec['paths'])} total)")
+            print(f"  📦 Updated fprtool-full.json: {added_count} added, {updated_count} overwritten ({len(full_spec['paths'])} total paths)")
         else:
             print(f"  📦 fprtool-full.json already up-to-date ({len(full_spec['paths'])} paths)")
 
