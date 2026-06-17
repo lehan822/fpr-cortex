@@ -104,19 +104,54 @@ node -e "console.log(JSON.parse(require('fs').readFileSync(process.env.HOME+'/.f
 
 ## Token Refresh
 
-When `expires_at` < current time but `refresh_token` exists, try refreshing first:
+When `expires_at` < current time but `refresh_token` exists, **auto-refresh using Cognito API** (preferred over OAuth token endpoint):
 
-```bash
-ENV=$(cat ~/.fpr/auth.json | node -e "process.stdin.on('data',d=>console.log(JSON.parse(d).env||'stg'))")
-REFRESH_TOKEN=$(cat ~/.fpr/auth.json | node -e "process.stdin.on('data',d=>console.log(JSON.parse(d).refresh_token))")
+```python
+import json, os, urllib.request, time
 
-# stg: TOKEN_URL=https://internal-id.ath.staging-traveloka.com/oauth2/token CLIENT_ID=38taf824vlbfba3lta3eitcuhi
-# prod: TOKEN_URL=https://internal-id.ath.traveloka.com/oauth2/token CLIENT_ID=i01t804ups4dme8p1kfoat8jb
+AUTH_FILE = os.path.expanduser("~/.fpr/auth.json")
+COGNITO_URL = "https://cognito-idp.ap-southeast-1.amazonaws.com/"
+CLIENT_IDS = {
+    "stg": "38taf824vlbfba3lta3eitcuhi",
+    "prod": "i01t804ups4dme8p1kfoat8jb"
+}
 
-curl -s -X POST "$TOKEN_URL" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "grant_type=refresh_token&client_id=$CLIENT_ID&refresh_token=$REFRESH_TOKEN"
+with open(AUTH_FILE) as f:
+    auth = json.load(f)
+
+def refresh_env(env_name):
+    env = auth["environments"].get(env_name)
+    if not env or not env.get("refresh_token"):
+        return False
+    if env.get("expires_at", 0) > int(time.time() * 1000):
+        return True  # still valid
+    body = json.dumps({
+        "AuthFlow": "REFRESH_TOKEN_AUTH",
+        "ClientId": CLIENT_IDS[env_name],
+        "AuthParameters": {"REFRESH_TOKEN": env["refresh_token"]}
+    }).encode()
+    req = urllib.request.Request(COGNITO_URL, data=body, headers={
+        "Content-Type": "application/x-amz-json-1.1",
+        "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth"
+    })
+    try:
+        resp = urllib.request.urlopen(req, timeout=10)
+        tokens = json.loads(resp.read())["AuthenticationResult"]
+        env["id_token"] = tokens["IdToken"]
+        env["access_token"] = tokens["AccessToken"]
+        env["expires_at"] = int(time.time() * 1000) + (tokens["ExpiresIn"] * 1000)
+        with open(AUTH_FILE, "w") as f:
+            json.dump(auth, f, indent=2)
+        return True
+    except Exception:
+        return False
+
+# Usage: refresh_env("prod") or refresh_env("stg")
 ```
 
-If refresh succeeds → update `~/.fpr/auth.json`.
+**Agent behavior:**
+1. Before any MCP call, check `expires_at` for the target environment
+2. If expired → run the refresh script above (silent, no user interaction)
+3. If refresh fails (refresh_token also expired, ~30 days) → run PKCE login
+
 If refresh fails (400/401) → run PKCE login again.

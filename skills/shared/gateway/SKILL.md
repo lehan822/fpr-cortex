@@ -69,8 +69,10 @@ Every request uses **two tokens**:
 
 1. `~/.fpr/auth.json` does not exist → run PKCE login (see `references/pkce-login.md`)
 2. `expires_at` > now → use tokens directly
-3. `expires_at` < now + `refresh_token` exists → try refresh (see `references/pkce-login.md`)
+3. `expires_at` < now + `refresh_token` exists → **auto-refresh via Cognito API** (silent, no browser needed — see `references/pkce-login.md`)
 4. refresh fails → run PKCE login again
+
+> **IMPORTANT:** Always attempt auto-refresh before asking the user to re-login. Refresh is silent and takes <2 seconds. Only fall back to PKCE login if refresh_token itself is expired (~30 days).
 
 ### M2M Token (AgentCore Only)
 
