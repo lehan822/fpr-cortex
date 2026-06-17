@@ -62,7 +62,7 @@
 | `revalidate_upsell_fare` | Revalidate upsell fare | supply |
 | `search_cache_by_id` | Search Cache by Search ID | demand |
 | `search_cache_content` | Search Fare Cache by Route | demand |
-| `search_promo_labels` | Search Promo Labels | demand |
+| `search_promo_labels` | Search/list promo label configs | demand |
 | `search_regular_fare` | Search regular fare | supply, supply-search |
 | `search_special_fare` | Special fare search | supply |
 | `search_upsell_fare` | Upsell fare search | supply |
