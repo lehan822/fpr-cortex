@@ -68,21 +68,47 @@ jobs:
             echo "name=${{ env.PROD_BUCKET }}" >> $GITHUB_OUTPUT
           fi
 
+      - name: Set gateway URL
+        id: gateway-url
+        run: |
+          if [[ "${{ steps.env.outputs.env }}" == "stg" ]]; then
+            echo "url=https://tz0pqimy4l.execute-api.ap-southeast-1.amazonaws.com/stg" >> $GITHUB_OUTPUT
+          else
+            echo "url=https://w73edrxlij.execute-api.ap-southeast-1.amazonaws.com/prd" >> $GITHUB_OUTPUT
+          fi
+
       - name: Upload schemas to S3
         run: |
           echo "Deploying to ${{ steps.env.outputs.env }} → s3://${{ steps.bucket.outputs.name }}/schemas/"
+          GATEWAY_URL="${{ steps.gateway-url.outputs.url }}"
+
           for domain in pricing supply demand config; do
             if [ -f "infra/schemas/$domain/$domain.json" ]; then
-              aws s3 cp "infra/schemas/$domain/$domain.json" \
+              # Replace server URL to match target environment
+              python3 -c "
+          import json, sys
+          with open('infra/schemas/$domain/$domain.json') as f:
+              spec = json.load(f)
+          spec['servers'] = [{'url': '$GATEWAY_URL', 'description': '${{ steps.env.outputs.env }}'}]
+          json.dump(spec, sys.stdout, indent=2)
+          " > /tmp/$domain.json
+              aws s3 cp "/tmp/$domain.json" \
                 "s3://${{ steps.bucket.outputs.name }}/schemas/$domain.json"
-              echo "  ✅ $domain.json uploaded"
+              echo "  ✅ $domain.json uploaded (server: $GATEWAY_URL)"
             fi
           done
-          # Keep fprtool-full.json as fallback
+
           if [ -f "infra/schemas/fprtool-full.json" ]; then
-            aws s3 cp infra/schemas/fprtool-full.json \
+            python3 -c "
+          import json, sys
+          with open('infra/schemas/fprtool-full.json') as f:
+              spec = json.load(f)
+          spec['servers'] = [{'url': '$GATEWAY_URL', 'description': '${{ steps.env.outputs.env }}'}]
+          json.dump(spec, sys.stdout, indent=2)
+          " > /tmp/fprtool-full.json
+            aws s3 cp /tmp/fprtool-full.json \
               "s3://${{ steps.bucket.outputs.name }}/schemas/fprtool-full.json"
-            echo "  ✅ fprtool-full.json uploaded"
+            echo "  ✅ fprtool-full.json uploaded (server: $GATEWAY_URL)"
           fi
 
       - name: Verify upload
