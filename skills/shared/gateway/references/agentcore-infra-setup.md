@@ -200,8 +200,12 @@ When tools change (new endpoints, modified params):
 # 3. Upload to S3
 aws s3 cp fprtool-full.json s3://<bucket>/schemas/fprtool-full.json
 
-# 4. Sync target (forces re-read of schema)
-aws bedrock-agentcore-control synchronize-gateway-targets --gateway-identifier <gateway-id>
+# 4. Reload target from the same S3 URI (forces re-read of schema)
+aws bedrock-agentcore-control update-gateway-target \
+  --gateway-identifier <gateway-id> \
+  --target-id <target-id> \
+  --name <target-name> \
+  --target-configuration '{"mcp":{"openApiSchema":{"s3":{"uri":"s3://<bucket>/schemas/fprtool-full.json"}}}}'
 ```
 
 ## AWS Roles Required

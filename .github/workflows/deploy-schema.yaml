@@ -27,6 +27,12 @@ jobs:
     env:
       STG_BUCKET: bedrock-agentcore-runtime-354767975881-ap-southeast-1-a1beixhzs
       PROD_BUCKET: bedrock-agentcore-runtime-348767535692-ap-southeast-1-837werwc9
+      STG_GATEWAY_ID: fpr-cortex-sg-ruypqkcdov
+      STG_TARGET_ID: Q8YCABWZIN
+      STG_TARGET_NAME: fprtool-fpr
+      PROD_GATEWAY_ID: fpr-mcp-gateway-ghntgmtwjb
+      PROD_TARGET_ID: JZ3LSR9SUC
+      PROD_TARGET_NAME: fprtool-prod
 
     steps:
       - uses: actions/checkout@v4
@@ -77,6 +83,21 @@ jobs:
             echo "url=https://w73edrxlij.execute-api.ap-southeast-1.amazonaws.com/prd" >> $GITHUB_OUTPUT
           fi
 
+      - name: Set AgentCore target
+        id: target
+        run: |
+          if [[ "${{ steps.env.outputs.env }}" == "stg" ]]; then
+            echo "gateway=${{ env.STG_GATEWAY_ID }}" >> $GITHUB_OUTPUT
+            echo "target_id=${{ env.STG_TARGET_ID }}" >> $GITHUB_OUTPUT
+            echo "target_name=${{ env.STG_TARGET_NAME }}" >> $GITHUB_OUTPUT
+            echo "description=FPR Tools API - 64 operations (pricing, supply, demand, config)" >> $GITHUB_OUTPUT
+          else
+            echo "gateway=${{ env.PROD_GATEWAY_ID }}" >> $GITHUB_OUTPUT
+            echo "target_id=${{ env.PROD_TARGET_ID }}" >> $GITHUB_OUTPUT
+            echo "target_name=${{ env.PROD_TARGET_NAME }}" >> $GITHUB_OUTPUT
+            echo "description=" >> $GITHUB_OUTPUT
+          fi
+
       - name: Upload schemas to S3
         run: |
           echo "Deploying to ${{ steps.env.outputs.env }} → s3://${{ steps.bucket.outputs.name }}/schemas/"
@@ -114,6 +135,41 @@ jobs:
       - name: Verify upload
         run: |
           aws s3 ls "s3://${{ steps.bucket.outputs.name }}/schemas/"
+
+      - name: Reload AgentCore target from S3
+        run: |
+          TARGET_CONFIG="{\"mcp\":{\"openApiSchema\":{\"s3\":{\"uri\":\"s3://${{ steps.bucket.outputs.name }}/schemas/fprtool-full.json\"}}}}"
+
+          if [[ -n "${{ steps.target.outputs.description }}" ]]; then
+            aws bedrock-agentcore-control update-gateway-target \
+              --gateway-identifier "${{ steps.target.outputs.gateway }}" \
+              --target-id "${{ steps.target.outputs.target_id }}" \
+              --name "${{ steps.target.outputs.target_name }}" \
+              --description "${{ steps.target.outputs.description }}" \
+              --target-configuration "$TARGET_CONFIG"
+          else
+            aws bedrock-agentcore-control update-gateway-target \
+              --gateway-identifier "${{ steps.target.outputs.gateway }}" \
+              --target-id "${{ steps.target.outputs.target_id }}" \
+              --name "${{ steps.target.outputs.target_name }}" \
+              --target-configuration "$TARGET_CONFIG"
+          fi
+
+      - name: Wait for AgentCore target ready
+        run: |
+          for i in {1..30}; do
+            STATUS=$(aws bedrock-agentcore-control get-gateway-target \
+              --gateway-identifier "${{ steps.target.outputs.gateway }}" \
+              --target-id "${{ steps.target.outputs.target_id }}" \
+              --query status --output text)
+            echo "Target status: $STATUS"
+            if [[ "$STATUS" == "READY" ]]; then
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Target did not become READY in time"
+          exit 1
 
       - name: Post-deploy smoke test (tool existence)
         if: steps.env.outputs.env == 'stg'
