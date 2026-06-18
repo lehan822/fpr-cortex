@@ -30,7 +30,7 @@ install_skill() {
   rmdir "${dest}/references" 2>/dev/null || true
 }
 
-install_skill "fpr-shared"      "skills/shared/auth"       pkce-login.md gateway-protocol.md
+install_skill "fpr-shared"      "skills/shared/gateway"    pkce-login.md gateway-protocol.md agentcore-infra-setup.md
 install_skill "fpr-skill-maker" "skills/shared/skill-maker" template.md validation-rules.md
 install_skill "fpr-pricing"     "skills/domain/pricing"    budget-operations.md commission-operations.md parameter-standards.md
 install_skill "fpr-supply"      "skills/domain/supply"     fare-check-workflow.md provider-operations.md
