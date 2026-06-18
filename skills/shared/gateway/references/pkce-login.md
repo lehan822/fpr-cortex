@@ -67,10 +67,20 @@ const server = http.createServer(async (req, res) => {
     let d=''; tr.on('data',c=>d+=c); tr.on('end',()=>{
       if(tr.statusCode!==200){console.error('❌ token exchange failed:',d);process.exit(1);}
       const t=JSON.parse(d);
+      let auth = {};
+      try { auth = JSON.parse(fs.readFileSync(AUTH_FILE)); } catch(e) {}
+      if (!auth.environments) auth.environments = {};
+      const envName = process.env.FPR_ENV || 'stg';
+      auth.active = envName;
+      auth.environments[envName] = {
+        id_token: t.id_token,
+        access_token: t.access_token,
+        refresh_token: t.refresh_token,
+        expires_at: Date.now() + (t.expires_in * 1000),
+        obtained_at: new Date().toISOString()
+      };
       fs.mkdirSync(path.dirname(AUTH_FILE),{recursive:true});
-      fs.writeFileSync(AUTH_FILE,JSON.stringify({env:process.env.FPR_ENV||'stg',
-        id_token:t.id_token, access_token:t.access_token, refresh_token:t.refresh_token,
-        expires_at:Date.now()+(t.expires_in*1000), obtained_at:new Date().toISOString()},null,2));
+      fs.writeFileSync(AUTH_FILE, JSON.stringify(auth, null, 2));
       res.writeHead(200,{'Content-Type':'text/html'}).end(
         '<h2>✅ Login successful!</h2><p>You can close this tab.</p>');
       console.log('✅ Login successful. Token saved to ~/.fpr/auth.json');
@@ -90,16 +100,17 @@ setTimeout(()=>{console.error('⏰ Timeout');process.exit(1);},120000);
 ## Reading Tokens
 
 ```bash
-# Check whether expired
+# Check whether expired (prod example)
 node -e "const a=JSON.parse(require('fs').readFileSync(process.env.HOME+'/.fpr/auth.json'));
-  if(a.expires_at<Date.now()){console.log('EXPIRED');process.exit(1);}
+  const env=a.environments.prod;
+  if(!env||env.expires_at<Date.now()){console.log('EXPIRED');process.exit(1);}
   console.log('OK');"
 
-# access_token (Gateway auth header)
-node -e "console.log(JSON.parse(require('fs').readFileSync(process.env.HOME+'/.fpr/auth.json')).access_token)"
+# access_token (Gateway auth header, prod example)
+node -e "console.log(JSON.parse(require('fs').readFileSync(process.env.HOME+'/.fpr/auth.json')).environments.prod.access_token)"
 
-# id_token (user identity in body)
-node -e "console.log(JSON.parse(require('fs').readFileSync(process.env.HOME+'/.fpr/auth.json')).id_token)"
+# id_token (user identity in body, prod example)
+node -e "console.log(JSON.parse(require('fs').readFileSync(process.env.HOME+'/.fpr/auth.json')).environments.prod.id_token)"
 ```
 
 ## Token Refresh
