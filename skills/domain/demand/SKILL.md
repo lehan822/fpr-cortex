@@ -1,7 +1,7 @@
 ---
 name: fpr-demand
 description: "Booking lookup, user profiles, fare cache, search simulation, promo labels, MongoDB queries. Use for demand-side debugging — bookings, search results, user segments."
-version: "2.2.0"
+version: "2.4.0"
 category: domain
 domain: demand
 prerequisites:
@@ -51,7 +51,8 @@ tools:
 | `search_cache_content` | Fare cache by route | origin, destination, departureDate |
 | `search_cache_by_id` | Specific cache entry | searchId |
 | `list_mongo_collections` | Available MongoDB collections | database |
-| `search_promo_labels` | Active promo labels | route, airline |
+| `search_promo_labels` | Active promo labels | filter on promoLabelId |
+| `get_promo_label_detail` | Single promo label detail | exact entryId |
 | `get_promo_label_data` | Promo label supporting data | labelId |
 | `simulate_search` | Simulate end-to-end flight search | origin, destination, departureDate, pax |
 
@@ -66,6 +67,7 @@ tools:
 | "winner", "winning fare" | `get_winner_details` or `search_winner` |
 | "user profile", "personalization" | `search_user_profile` |
 | "promo label", "promotion tag" | `search_promo_labels` |
+| "promo label detail", "specific promo config" | `get_promo_label_detail` |
 | "mongo query", "raw query" | `simple_crud_query` |
 
 ## Search Simulation Notes
@@ -85,6 +87,53 @@ Returns: ranked fares with applied pricing, provider info, and promo labels.
 | departureDate | "tomorrow", "next Monday" | `"YYYY-MM-DD"` |
 | pax | "2 adults", "1a1c" | `{ adult: 2, child: 0, infant: 0 }` |
 | bookingId / pnr | string | as-is |
+
+## Promo Label Search (Filter Syntax)
+
+`search_promo_labels` uses the CRUD `getEntryList` API. Prefer filtering on `promoLabelId`:
+
+```json
+{
+  "data": {
+    "entityType": "flightPromoLabel",
+    "search": {
+      "entriesCount": 20,
+      "offset": 0,
+      "sort": {"fieldName": "lastUpdate", "type": "DESCENDING"},
+      "filter": [
+        {"fieldName": "promoLabelId", "type": "CONTAINS", "arguments": {"value": "FLYOVERSEA"}}
+      ]
+    }
+  }
+}
+```
+
+**Working filters:**
+- `promoLabelId CONTAINS 'XX'` — search by keyword in label ID (airline code, campaign text)
+- `promoLabelId EQUAL 'exact-id'` — exact match
+
+**Important:** `searchQuery` is **not reliable** for promo label lookup. Use `filter` on `promoLabelId` instead.
+
+## Promo Label Detail Lookup
+
+`get_promo_label_detail` requires the **full exact entryId** from the search result.
+
+```json
+{
+  "data": {
+    "entityType": "flightPromoLabel",
+    "entryId": "ID_MarketingBanner_NurtureCoupon1_FLYOVERSEA"
+  }
+}
+```
+
+Do **not** pass partial keys like `FLYOVERSEA` directly to `get_promo_label_detail` — that returns empty `{}`.
+
+**Recommended flow (promo config from screenshot):**
+1. Extract a visible keyword from screenshot (airline code, campaign text, destination clue)
+2. Call `search_promo_labels` with `promoLabelId CONTAINS <keyword>`
+3. Pick the best matching full `promoLabelId`
+4. Call `get_promo_label_detail` with that exact full ID
 
 ## Disambiguation
 
