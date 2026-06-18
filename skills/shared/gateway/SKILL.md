@@ -44,6 +44,23 @@ All tools are called via MCP Gateway. Tool name format:
 
 ## Authentication
 
+## Auth Gate — MUST run before any local MCP call
+
+For **every local agent call** (Copilot CLI / Cursor / Claude Code), treat auth as a blocking precondition:
+
+1. Determine target environment (`prod` by default, `stg` only if explicitly requested)
+2. Read `~/.fpr/auth.json` for that environment
+3. If token is valid → continue
+4. If token is expired → try refresh immediately
+5. If refresh fails → start PKCE login flow immediately
+6. Only after a valid token exists may you call MCP / shell / curl / Python
+
+**Do not** probe the gateway first and only check auth after a 401/403.  
+**Do not** let domain skills call MCP directly before this check passes.  
+**Do not** stop at "auth.json missing" or "token expired" as a blocker message — continue into refresh / PKCE flow.
+
+> For local usage, missing or expired auth is **not** a terminal blocker. The agent should resolve it first, then continue the original task.
+
 ### Local Agent (Copilot CLI / Cursor / Claude Code)
 
 Every request uses **two tokens**:

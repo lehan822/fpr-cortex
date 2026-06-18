@@ -169,9 +169,11 @@ def refresh_env(env_name):
 # Usage: refresh_env("prod") or refresh_env("stg")
 ```
 
-**Agent behavior:**
-1. Before any MCP call, check `expires_at` for the target environment
-2. If expired → run the refresh script above (silent, no user interaction)
-3. If refresh fails (refresh_token also expired, ~30 days) → run PKCE login
+**Agent behavior (MANDATORY):**
+1. Before any local MCP call, check `expires_at` for the target environment
+2. If expired → run the refresh script above immediately (silent, no user interaction)
+3. If refresh fails (refresh_token also expired, ~30 days) → start PKCE login immediately
+4. After login succeeds, resume the original MCP task automatically
 
-If refresh fails (400/401) → run PKCE login again.
+**Do not** stop at "missing auth.json" / "token expired" and ask the user what to do next.  
+Resolve auth first, then continue the original request.
