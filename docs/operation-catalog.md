@@ -8,68 +8,68 @@
 | operationId | Description | Domain |
 |---|---|---|
 | `check_fare` | Check fare | supply |
-| `check_tiered_incentive_progress` | Check Tiered Incentive Progress for a Booking | pricing |
-| `convert_currency` | Convert Currency | config |
+| `check_tiered_incentive_progress` | Check incentive progress for a booking | pricing |
+| `convert_currency` | Convert currency | config |
 | `get_activity_log` | Get Activity/Audit Log | config, pricing |
-| `get_airline_ids` | List All Airline IDs | config |
-| `get_airline_route_history` | Get airline route history | supply |
-| `get_airline_route_history_filtered` | Get airline route history filtered | supply |
-| `get_airline_routes` | Get airline routes | supply |
-| `get_arbitration_modes` | Get arbitration modes | supply |
-| `get_booking_log` | Get Booking Log | demand |
+| `get_airline_ids` | List all airline IDs | config |
+| `get_airline_route_history` | Airline route history | supply |
+| `get_airline_route_history_filtered` | Airline route history filtered | supply |
+| `get_airline_routes` | Airline routes | supply |
+| `get_arbitration_modes` | Arbitration modes | supply |
+| `get_booking_log` | Booking log | demand |
 | `get_budget_balance` | Get Budget Balance | pricing |
-| `get_budget_levels` | Get Budget Level Types | pricing |
-| `get_budget_user_balance` | Get User-Level Budget Balance | pricing |
-| `get_countries` | List All Countries | config |
-| `get_decompressed_object` | Get decompressed object | config |
+| `get_budget_levels` | Budget level types | pricing |
+| `get_budget_user_balance` | User-level budget balance | pricing |
+| `get_countries` | List all countries | config |
+| `get_decompressed_object` | Decompress S3/stored object | config |
 | `get_demand_experiment_contextid` | Experiment context ID | demand |
 | `get_demand_experiment_variant` | Experiment variant namespace | demand |
-| `get_fare_check_result` | Get fare check result | supply |
+| `get_fare_check_result` | Fare check result | supply |
 | `get_feature_flags` | Get Feature Flags | config |
 | `get_flag_applications` | List Flag Applications | config |
 | `get_flag_configuration` | Get Flag Configuration Detail | config |
-| `get_flight_info` | Get Booking Flight Info | demand |
-| `get_flight_info_json` | Get Booking Flight Info (JSON) | demand |
-| `get_inventory_detail` | Get inventory detail | supply |
-| `get_inventory_types` | Get inventory types | supply |
+| `get_flight_info` | Booking flight info | demand |
+| `get_flight_info_json` | Booking flight info (JSON) | demand |
+| `get_inventory_detail` | Inventory detail | supply |
+| `get_inventory_types` | Inventory types | supply |
 | `get_promo_label_data` | Get Promo Label Supporting Data | demand |
-| `get_promo_label_detail` | Get single promo label by ID | demand |
-| `get_provider_source_histories` | Get provider source histories | supply, supply-search |
-| `get_provider_source_latest_version` | Get provider source latest version | supply, supply-search |
-| `get_provider_sourcing` | Get provider sourcing | supply, supply-search |
-| `get_special_fare_config` | Get special fare config | supply |
-| `get_winner_details` | Get Winner Details | demand |
-| `list_active_budgets` | List Active Budgets | pricing |
+| `get_promo_label_detail` | Get single promo label full config by promoLabelId | demand |
+| `get_provider_source_histories` | Sourcing change history | supply, supply-search |
+| `get_provider_source_latest_version` | Latest sourcing version | supply, supply-search |
+| `get_provider_sourcing` | Provider sourcing config | supply, supply-search |
+| `get_special_fare_config` | Special fare config | supply |
+| `get_winner_details` | Winner details | demand |
+| `list_active_budgets` | List active budgets | pricing |
 | `list_mongo_collections` | List MongoDB Collections | demand |
 | `load_autopilot_rules` | Load Autopilot Pricing Rules | pricing |
-| `load_baseline_pricing_rules` | Load Baseline Pricing Rules | pricing |
-| `load_bundling_pricing_rules` | Load Bundling Pricing Rules | pricing |
-| `load_commission_incentive_profiles` | Load Commission Incentive Profiles | pricing |
-| `load_commission_incentive_rules` | Load Commission Incentive Rules | pricing |
-| `load_condition_groups` | Load Condition Groups | config, pricing |
-| `load_fare_adjuster_by_airport_tax` | Load fare adjuster by airport tax | pricing, supply |
-| `load_fare_adjuster_by_base_fare` | Load fare adjuster by base fare | pricing, supply |
-| `load_issuance_fee_rules` | Load Ticket Issuance Fee Rules | pricing |
+| `load_baseline_pricing_rules` | Base markup/margin rules | pricing |
+| `load_bundling_pricing_rules` | Bundle pricing (flight+hotel) | pricing |
+| `load_commission_incentive_profiles` | Commission profile list | pricing |
+| `load_commission_incentive_rules` | Commission rates | pricing |
+| `load_condition_groups` | Reusable filter condition groups | config, pricing |
+| `load_fare_adjuster_by_airport_tax` | Fare adjuster by airport tax | pricing, supply |
+| `load_fare_adjuster_by_base_fare` | Fare adjuster by base fare | pricing, supply |
+| `load_issuance_fee_rules` | Ticket issuance fees | pricing |
 | `load_price_cut_modifier_rules` | Load Price Cut / Promo Modifier Rules | pricing |
 | `load_price_prediction_rules` | Load Price Prediction Rules | pricing |
-| `load_pricing_profiles` | Load Pricing Profile Names | pricing |
-| `load_profiling_config` | Load Profiling Configuration | demand |
-| `load_tiered_incentive_rules` | Load Tiered Incentive Rules | pricing |
-| `load_trx_fee_rules` | Load Transaction Fee Rules | pricing |
-| `read_pricing_provider` | Read pricing provider | pricing, supply |
+| `load_pricing_profiles` | Pricing profile names | pricing |
+| `load_profiling_config` | Profiling configuration | demand |
+| `load_tiered_incentive_rules` | Volume-based incentive tiers | pricing |
+| `load_trx_fee_rules` | Transaction/service fee | pricing |
+| `read_pricing_provider` | Pricing provider config | pricing, supply |
 | `revalidate_regular_fare` | Revalidate regular fare | supply |
 | `revalidate_special_fare` | Revalidate special fare | supply |
 | `revalidate_upsell_fare` | Revalidate upsell fare | supply |
 | `search_cache_by_id` | Search Cache by Search ID | demand |
 | `search_cache_content` | Search Fare Cache by Route | demand |
 | `search_promo_labels` | Search/list promo label configs | demand |
-| `search_regular_fare` | Search regular fare | supply, supply-search |
+| `search_regular_fare` | Search regular fares | supply, supply-search |
 | `search_special_fare` | Special fare search | supply |
 | `search_upsell_fare` | Upsell fare search | supply |
-| `search_user_profile` | Search User Profile | demand |
-| `search_winner` | Search Winners | demand |
+| `search_user_profile` | Search user profile | demand |
+| `search_winner` | Search winners | demand |
 | `simple_crud_query` | MongoDB CRUD Query | demand |
-| `simulate_search` | Simulate Flight Search | demand, supply |
+| `simulate_search` | Simulate full user search | demand, supply |
 | `update_autopilot_rules` | Update autopilot pricing rules (create/modify rules with conditions and adjustme | pricing |
 
 ## Summary
