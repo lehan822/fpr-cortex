@@ -180,8 +180,8 @@ demand:
     description: Search/list promo label configs
 
   - id: get_promo_label_detail
-    path: crud/getEntryDetail(flightPromoLabel)
-    description: Get single promo label by ID
+    path: flight-promo-label/get-promo-label-info
+    description: Get single promo label full config by promoLabelId
 
   - id: get_promo_label_data
     path: flight-promo-label/get-promo-label-supporting-data

@@ -116,18 +116,18 @@ Returns: ranked fares with applied pricing, provider info, and promo labels.
 
 ## Promo Label Detail Lookup
 
-`get_promo_label_detail` requires the **full exact entryId** from the search result.
+`get_promo_label_detail` uses the dedicated promo-label info API and requires the **full exact promoLabelId** from the search result.
 
 ```json
 {
   "data": {
-    "entityType": "flightPromoLabel",
-    "entryId": "ID_MarketingBanner_NurtureCoupon1_FLYOVERSEA"
+    "promoLabelId": "ID_MarketingBanner_NurtureCoupon1_FLYOVERSEA"
   }
 }
 ```
 
 Do **not** pass partial keys like `FLYOVERSEA` directly to `get_promo_label_detail` — that returns empty `{}`.
+This endpoint returns the **full nested promo config** (`conditionList`, promo pages, banners, copy config, etc.), unlike the CRUD detail path which only returned summary fields.
 
 **Recommended flow (promo config from screenshot):**
 1. Extract a visible keyword from screenshot (airline code, campaign text, destination clue)

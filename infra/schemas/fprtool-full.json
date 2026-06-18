@@ -114,87 +114,6 @@
         ]
       }
     },
-    "/api/v1/baseline-pricing-rule/load-rules": {
-      "post": {
-        "operationId": "load_baseline_pricing_rules",
-        "summary": "Load Baseline Pricing Rules",
-        "description": "Retrieve baseline markup/margin rules that define the base price adjustment for flights. These are the foundational pricing rules before any dynamic or promotional adjustments. Use when someone asks about 'baseline markup', 'base margin', 'default pricing rules', or 'how much markup do we add'.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "profileGroup": {
-                        "type": "string",
-                        "enum": [
-                          "TRAVELOKA",
-                          "AFFILIATE",
-                          "CORPORATE"
-                        ],
-                        "description": "Profile group. Defaults to TRAVELOKA."
-                      },
-                      "originCountry": {
-                        "type": "string",
-                        "description": "Origin country code (ISO 2-letter)"
-                      },
-                      "destinationCountry": {
-                        "type": "string",
-                        "description": "Destination country code (ISO 2-letter)"
-                      },
-                      "airlineId": {
-                        "type": "string",
-                        "description": "IATA airline code, e.g. GA, SQ, QZ"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Baseline pricing rules"
-          }
-        },
-        "tags": [
-          "pricing"
-        ]
-      }
-    },
     "/api/v2/pricing/budget/balance": {
       "post": {
         "operationId": "get_budget_balance",
@@ -255,278 +174,6 @@
         "responses": {
           "200": {
             "description": "Budget balance details"
-          }
-        },
-        "tags": [
-          "pricing"
-        ]
-      }
-    },
-    "/api/v2/pricing/budget/activelist": {
-      "post": {
-        "operationId": "list_active_budgets",
-        "summary": "List Active Budgets",
-        "description": "List all currently active pricing budgets filtered by currency. Shows budget names, levels, and allocation details. Use when someone asks 'what budgets are active', 'show all budgets for IDR', or 'budget list'.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "currency"
-                ],
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "currency": {
-                        "type": "string",
-                        "description": "Currency code: IDR, THB, VND, SGD, MYR"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "List of active budgets"
-          }
-        },
-        "tags": [
-          "pricing"
-        ]
-      }
-    },
-    "/api/v2/pricing/budget/budget-level-list": {
-      "post": {
-        "operationId": "get_budget_levels",
-        "summary": "Get Budget Level Types",
-        "description": "List all budget level types available in the system (e.g. DAILY, WEEKLY, MONTHLY levels). Use when someone asks 'what budget levels exist' or 'budget level types'.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Budget level types"
-          }
-        },
-        "tags": [
-          "pricing"
-        ]
-      }
-    },
-    "/api/v2/pricing/budget/user/balance": {
-      "post": {
-        "operationId": "get_budget_user_balance",
-        "summary": "Get User-Level Budget Balance",
-        "description": "Check budget balance at the individual user level. Shows per-user budget consumption and remaining allocation. Use when someone asks about a specific user's budget or 'user budget balance'.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "currency"
-                ],
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "currency": {
-                        "type": "string",
-                        "description": "Currency code: IDR, THB, VND, SGD, MYR"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "User budget balance"
-          }
-        },
-        "tags": [
-          "pricing"
-        ]
-      }
-    },
-    "/api/v1/bundling-pricing-rule/load-rules": {
-      "post": {
-        "operationId": "load_bundling_pricing_rules",
-        "summary": "Load Bundling Pricing Rules",
-        "description": "Retrieve bundling pricing rules that define how bundled products (flight + hotel, flight + insurance) are priced. Use when someone asks about 'bundle pricing', 'bundling rules', or 'package deal pricing config'.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "profileGroup": {
-                        "type": "string",
-                        "enum": [
-                          "TRAVELOKA",
-                          "AFFILIATE",
-                          "CORPORATE"
-                        ]
-                      },
-                      "originCountry": {
-                        "type": "string",
-                        "description": "Origin country code"
-                      },
-                      "destinationCountry": {
-                        "type": "string",
-                        "description": "Destination country code"
-                      },
-                      "airlineId": {
-                        "type": "string",
-                        "description": "IATA airline code"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Bundling pricing rules"
           }
         },
         "tags": [
@@ -685,1694 +332,6 @@
         },
         "tags": [
           "pricing"
-        ]
-      }
-    },
-    "/api/v1/trx-fee/load-rules": {
-      "post": {
-        "operationId": "load_trx_fee_rules",
-        "summary": "Load Transaction Fee Rules",
-        "description": "Retrieve transaction/service fee rules. These define additional fees charged on top of the base fare (e.g. booking fee, service charge). Use when someone asks about 'transaction fees', 'service fees', 'booking charges', or 'trx fee config'.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "profileGroup": {
-                        "type": "string",
-                        "enum": [
-                          "TRAVELOKA",
-                          "AFFILIATE",
-                          "CORPORATE"
-                        ]
-                      },
-                      "originCountry": {
-                        "type": "string"
-                      },
-                      "destinationCountry": {
-                        "type": "string"
-                      },
-                      "airlineId": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Transaction fee rules"
-          }
-        },
-        "tags": [
-          "pricing"
-        ]
-      }
-    },
-    "/api/v1/commission-incentive-rule-data/load-rules": {
-      "post": {
-        "operationId": "load_commission_incentive_rules",
-        "summary": "Load Commission Incentive Rules",
-        "description": "Retrieve commission rate rules for airline partners. Defines how much commission Traveloka receives per ticket from each airline. Use when someone asks about 'commission rates', 'airline commission', 'incentive rules for SQ', or 'partner commission config'.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "profileGroup": {
-                        "type": "string",
-                        "enum": [
-                          "TRAVELOKA",
-                          "AFFILIATE",
-                          "CORPORATE"
-                        ]
-                      },
-                      "airlineId": {
-                        "type": "string",
-                        "description": "IATA airline code to filter commission rules, e.g. GA, SQ, QZ"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Commission incentive rules"
-          }
-        },
-        "tags": [
-          "pricing"
-        ]
-      }
-    },
-    "/api/v1/commission-incentive/load-profiles": {
-      "post": {
-        "operationId": "load_commission_incentive_profiles",
-        "summary": "Load Commission Incentive Profiles",
-        "description": "List all available commission incentive profile names. Profiles group commission rules together. Use when someone asks 'what commission profiles exist' or needs to know profile names before querying specific rules.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Commission profile list"
-          }
-        },
-        "tags": [
-          "pricing"
-        ]
-      }
-    },
-    "/api/v1/tiered-incentive-rule-data/load-rules": {
-      "post": {
-        "operationId": "load_tiered_incentive_rules",
-        "summary": "Load Tiered Incentive Rules",
-        "description": "Retrieve volume-based tiered incentive rules. These define bonus commission tiers based on booking volume (e.g. sell 100+ tickets = extra 2% commission). Use when someone asks about 'tiered incentives', 'volume bonuses', 'tier-based commission', or 'incentive tiers for a brand'.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "profileGroup": {
-                        "type": "string",
-                        "enum": [
-                          "TRAVELOKA",
-                          "AFFILIATE",
-                          "CORPORATE"
-                        ]
-                      },
-                      "brandId": {
-                        "type": "string",
-                        "description": "Brand ID: TRAVELOKA, TIKET, etc."
-                      },
-                      "airlineId": {
-                        "type": "string",
-                        "description": "IATA airline code"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Tiered incentive rules"
-          }
-        },
-        "tags": [
-          "pricing"
-        ]
-      }
-    },
-    "/api/v1/tiered-incentive-progress/check-booking-pnr": {
-      "post": {
-        "operationId": "check_tiered_incentive_progress",
-        "summary": "Check Tiered Incentive Progress for a Booking",
-        "description": "Check the tiered incentive progress for a specific booking by its PNR code. Shows which incentive tier the booking falls into and how much bonus was earned. Use when someone asks 'check incentive for PNR ABC123', 'tiered progress for a booking', or 'did this booking qualify for bonus commission'.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "pnr"
-                ],
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "pnr": {
-                        "type": "string",
-                        "description": "Booking PNR code (e.g. ABC123)"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Incentive progress details"
-          }
-        },
-        "tags": [
-          "pricing"
-        ]
-      }
-    },
-    "/api/v1/issuance-fee-rule-data/load-rules": {
-      "post": {
-        "operationId": "load_issuance_fee_rules",
-        "summary": "Load Ticket Issuance Fee Rules",
-        "description": "Retrieve ticket issuance fee rules. These define fees charged for issuing airline tickets through different providers. Use when someone asks about 'issuance fees', 'ticketing fees', 'ticket issuance charges', or 'issuance fee config'.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "profileGroup": {
-                        "type": "string",
-                        "enum": [
-                          "TRAVELOKA",
-                          "AFFILIATE",
-                          "CORPORATE"
-                        ]
-                      },
-                      "originCountry": {
-                        "type": "string"
-                      },
-                      "destinationCountry": {
-                        "type": "string"
-                      },
-                      "airlineId": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Issuance fee rules"
-          }
-        },
-        "tags": [
-          "pricing"
-        ]
-      }
-    },
-    "/api/v1/pricing-profile/load-profileNames": {
-      "post": {
-        "operationId": "load_pricing_profiles",
-        "summary": "Load Pricing Profile Names",
-        "description": "List all available pricing profile names. Pricing profiles group pricing rules by business context (e.g. default, promo, enterprise). Use when someone asks 'what pricing profiles exist' or needs profile names for further queries.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "List of pricing profile names"
-          }
-        },
-        "tags": [
-          "pricing"
-        ]
-      }
-    },
-    "/tool/load_fare_adjuster_by_base_fare": {
-      "post": {
-        "operationId": "load_fare_adjuster_by_base_fare",
-        "summary": "Load fare adjuster by base fare",
-        "description": "Load fare adjuster by base fare",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "flightProviderId": {
-                        "type": "string",
-                        "description": "Flight provider ID"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                },
-                "required": [
-                  "flightProviderId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "tags": [
-          "supply"
-        ]
-      }
-    },
-    "/tool/load_fare_adjuster_by_airport_tax": {
-      "post": {
-        "operationId": "load_fare_adjuster_by_airport_tax",
-        "summary": "Load fare adjuster by airport tax",
-        "description": "Load fare adjuster by airport tax",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "flightProviderId": {
-                        "type": "string",
-                        "description": "Flight provider ID"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                },
-                "required": [
-                  "flightProviderId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "tags": [
-          "supply"
-        ]
-      }
-    },
-    "/tool/read_pricing_provider": {
-      "post": {
-        "operationId": "read_pricing_provider",
-        "summary": "Read pricing provider",
-        "description": "Read pricing provider",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "tags": [
-          "supply"
-        ]
-      }
-    },
-    "/tool/check_fare": {
-      "post": {
-        "operationId": "check_fare",
-        "summary": "Check fare",
-        "description": "Check fare",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "origin": {
-                        "type": "string",
-                        "description": "Origin"
-                      },
-                      "destination": {
-                        "type": "string",
-                        "description": "Destination"
-                      },
-                      "departureDate": {
-                        "type": "string",
-                        "description": "Departure date"
-                      },
-                      "airline": {
-                        "type": "string",
-                        "description": "Airline"
-                      },
-                      "provider": {
-                        "type": "string",
-                        "description": "Provider"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                },
-                "required": [
-                  "origin",
-                  "destination"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "tags": [
-          "supply"
-        ]
-      }
-    },
-    "/tool/get_fare_check_result": {
-      "post": {
-        "operationId": "get_fare_check_result",
-        "summary": "Get fare check result",
-        "description": "Get fare check result",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "fareCheckingId": {
-                        "type": "string",
-                        "description": "Fare checking ID"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                },
-                "required": [
-                  "fareCheckingId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "tags": [
-          "supply"
-        ]
-      }
-    },
-    "/tool/get_special_fare_config": {
-      "post": {
-        "operationId": "get_special_fare_config",
-        "summary": "Get special fare config",
-        "description": "Get special fare config",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "configId": {
-                        "type": "string",
-                        "description": "Config ID"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                },
-                "required": [
-                  "configId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "tags": [
-          "supply"
-        ]
-      }
-    },
-    "/tool/search_regular_fare": {
-      "post": {
-        "operationId": "search_regular_fare",
-        "summary": "Search regular fare",
-        "description": "Search regular fare",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "origin": {
-                        "type": "string",
-                        "description": "Origin"
-                      },
-                      "destination": {
-                        "type": "string",
-                        "description": "Destination"
-                      },
-                      "departureDate": {
-                        "type": "string",
-                        "description": "Departure date"
-                      },
-                      "airline": {
-                        "type": "string",
-                        "description": "Airline"
-                      },
-                      "provider": {
-                        "type": "string",
-                        "description": "Provider"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                },
-                "required": [
-                  "origin",
-                  "destination",
-                  "departureDate"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "tags": [
-          "supply"
-        ]
-      }
-    },
-    "/tool/get_airline_routes": {
-      "post": {
-        "operationId": "get_airline_routes",
-        "summary": "Get airline routes",
-        "description": "Get airline routes",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "airlineId": {
-                        "type": "string",
-                        "description": "Airline ID"
-                      },
-                      "originCountry": {
-                        "type": "string",
-                        "description": "Origin country"
-                      },
-                      "destinationCountry": {
-                        "type": "string",
-                        "description": "Destination country"
-                      },
-                      "originAirport": {
-                        "type": "string",
-                        "description": "Origin airport"
-                      },
-                      "destinationAirport": {
-                        "type": "string",
-                        "description": "Destination airport"
-                      },
-                      "inventoryType": {
-                        "type": "string",
-                        "description": "Inventory type"
-                      },
-                      "defaultProvider": {
-                        "type": "string",
-                        "description": "Default provider"
-                      },
-                      "defaultFulfillment": {
-                        "type": "string",
-                        "description": "Default fulfillment"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "tags": [
-          "supply"
-        ]
-      }
-    },
-    "/tool/get_airline_route_history": {
-      "post": {
-        "operationId": "get_airline_route_history",
-        "summary": "Get airline route history",
-        "description": "Get airline route history",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "airlineId": {
-                        "type": "string",
-                        "description": "Airline ID"
-                      },
-                      "originCountry": {
-                        "type": "string",
-                        "description": "Origin country"
-                      },
-                      "destinationCountry": {
-                        "type": "string",
-                        "description": "Destination country"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "tags": [
-          "supply"
-        ]
-      }
-    },
-    "/tool/get_airline_route_history_filtered": {
-      "post": {
-        "operationId": "get_airline_route_history_filtered",
-        "summary": "Get airline route history filtered",
-        "description": "Get airline route history filtered",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "airlineId": {
-                        "type": "string",
-                        "description": "Airline ID"
-                      },
-                      "originCountry": {
-                        "type": "string",
-                        "description": "Origin country"
-                      },
-                      "destinationCountry": {
-                        "type": "string",
-                        "description": "Destination country"
-                      },
-                      "month": {
-                        "type": "string",
-                        "description": "Month"
-                      },
-                      "year": {
-                        "type": "string",
-                        "description": "Year"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "tags": [
-          "supply"
-        ]
-      }
-    },
-    "/tool/get_provider_sourcing": {
-      "post": {
-        "operationId": "get_provider_sourcing",
-        "summary": "Get provider sourcing",
-        "description": "Get provider sourcing",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "airlineId": {
-                        "type": "string",
-                        "description": "Airline ID"
-                      },
-                      "inventoryType": {
-                        "type": "string",
-                        "description": "Inventory type"
-                      },
-                      "agentId": {
-                        "type": "string",
-                        "description": "Agent ID"
-                      },
-                      "locale": {
-                        "type": "string",
-                        "description": "Locale"
-                      },
-                      "originCountry": {
-                        "type": "string",
-                        "description": "Origin country"
-                      },
-                      "destinationCountry": {
-                        "type": "string",
-                        "description": "Destination country"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "tags": [
-          "supply"
-        ]
-      }
-    },
-    "/tool/get_provider_source_histories": {
-      "post": {
-        "operationId": "get_provider_source_histories",
-        "summary": "Get provider source histories",
-        "description": "Get provider source histories",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "airlineId": {
-                        "type": "string",
-                        "description": "Airline ID"
-                      },
-                      "inventoryType": {
-                        "type": "string",
-                        "description": "Inventory type"
-                      },
-                      "agentId": {
-                        "type": "string",
-                        "description": "Agent ID"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "tags": [
-          "supply"
-        ]
-      }
-    },
-    "/tool/get_provider_source_latest_version": {
-      "post": {
-        "operationId": "get_provider_source_latest_version",
-        "summary": "Get provider source latest version",
-        "description": "Get provider source latest version",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "tags": [
-          "supply"
-        ]
-      }
-    },
-    "/tool/get_arbitration_modes": {
-      "post": {
-        "operationId": "get_arbitration_modes",
-        "summary": "Get arbitration modes",
-        "description": "Get arbitration modes",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "tags": [
-          "supply"
-        ]
-      }
-    },
-    "/tool/get_inventory_types": {
-      "post": {
-        "operationId": "get_inventory_types",
-        "summary": "Get inventory types",
-        "description": "Get inventory types",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "tags": [
-          "supply"
-        ]
-      }
-    },
-    "/tool/get_inventory_detail": {
-      "post": {
-        "operationId": "get_inventory_detail",
-        "summary": "Get inventory detail",
-        "description": "Get inventory detail",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "inventoryIdentifier": {
-                        "type": "string",
-                        "description": "Inventory identifier"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                },
-                "required": [
-                  "inventoryIdentifier"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "tags": [
-          "supply"
-        ]
-      }
-    },
-    "/tool/get_decompressed_object": {
-      "post": {
-        "operationId": "get_decompressed_object",
-        "summary": "Get decompressed object",
-        "description": "Get decompressed object",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "compressedObject": {
-                        "type": "string",
-                        "description": "Compressed object"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                },
-                "required": [
-                  "compressedObject"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        },
-        "tags": [
-          "supply"
         ]
       }
     },
@@ -2565,63 +524,6 @@
         ]
       }
     },
-    "/api/v1/condition-group/load": {
-      "post": {
-        "operationId": "load_condition_groups",
-        "summary": "Load Condition Groups",
-        "description": "Load reusable filter condition groups. Condition groups define sets of criteria (routes, airlines, dates) that can be shared across pricing rules. Use when someone asks about 'condition groups', 'filter conditions', 'reusable conditions', or 'what conditions are defined'. Keywords: condition groups, filter criteria, reusable filters.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Condition groups loaded successfully"
-          }
-        },
-        "tags": [
-          "config"
-        ]
-      }
-    },
     "/api/v2/activity-log/getLogs": {
       "post": {
         "operationId": "get_activity_log",
@@ -2697,641 +599,6 @@
         },
         "tags": [
           "config"
-        ]
-      }
-    },
-    "/api/airline-ids": {
-      "post": {
-        "operationId": "get_airline_ids",
-        "summary": "List All Airline IDs",
-        "description": "List all supported airline IDs in the system. Returns IATA codes and airline names. Use when someone asks 'what airlines are supported', 'list airlines', 'airline codes', or needs to look up an airline code. Keywords: airline codes, IATA codes, supported airlines.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Airline IDs retrieved successfully"
-          }
-        },
-        "tags": [
-          "config"
-        ]
-      }
-    },
-    "/api/countries": {
-      "post": {
-        "operationId": "get_countries",
-        "summary": "List All Countries",
-        "description": "List all supported countries in the system. Returns country codes and names. Use when someone asks 'what countries are supported', 'list countries', 'country codes', or needs to verify a country code. Keywords: country codes, supported countries, country list.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Countries list retrieved successfully"
-          }
-        },
-        "tags": [
-          "config"
-        ]
-      }
-    },
-    "/api/v2/currency-value/convert": {
-      "post": {
-        "operationId": "convert_currency",
-        "summary": "Convert Currency",
-        "description": "Convert an amount between currencies using FPR's internal exchange rates. Use when someone asks to 'convert IDR to USD', 'what is 1000 THB in IDR', 'currency conversion', or needs to compare amounts across markets. Keywords: currency conversion, exchange rate, amount conversion.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "fromCurrency",
-                  "toCurrency",
-                  "amount"
-                ],
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "fromCurrency": {
-                        "type": "string",
-                        "description": "Source currency code, e.g. IDR, THB, VND, USD"
-                      },
-                      "toCurrency": {
-                        "type": "string",
-                        "description": "Target currency code"
-                      },
-                      "amount": {
-                        "type": "number",
-                        "description": "Amount to convert"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Currency conversion completed successfully"
-          }
-        },
-        "tags": [
-          "config"
-        ]
-      }
-    },
-    "/api/v1/profiling/search-profile": {
-      "post": {
-        "operationId": "search_user_profile",
-        "summary": "Search User Profile",
-        "description": "Search user profiles and segmentation data. Returns user segment assignments and profile attributes. Use when someone asks about 'user segment', 'user profile', 'what segment is this user in', or 'customer profiling'. Keywords: user segmentation, profile lookup, customer segment.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "User profile and segmentation data retrieved successfully"
-          }
-        },
-        "tags": [
-          "demand"
-        ]
-      }
-    },
-    "/api/v1/profiling/get-config": {
-      "post": {
-        "operationId": "load_profiling_config",
-        "summary": "Load Profiling Configuration",
-        "description": "Load user profiling configuration for a specific country. Shows how users are segmented and what criteria are used. Use when someone asks about 'profiling setup', 'segmentation config', or 'how are users categorized'. Keywords: segmentation rules, profile criteria, country configuration.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "profileGroup"
-                ],
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "profileGroup": {
-                        "type": "string",
-                        "description": "Country-based profile group code, e.g. ID (Indonesia), TH (Thailand), VN (Vietnam)"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Profiling configuration loaded successfully"
-          }
-        },
-        "tags": [
-          "demand"
-        ]
-      }
-    },
-    "/api/v2/booking-details/get-flight-info": {
-      "post": {
-        "operationId": "get_flight_info",
-        "summary": "Get Booking Flight Info",
-        "description": "Retrieve flight booking details by booking ID. Returns flight segments, pricing breakdown, passenger info, and booking status. Use when someone asks about 'booking details', 'booking ID 12345', 'what's in this booking', or 'flight info for booking'. Keywords: booking lookup, flight segments, booking status.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "bookingId"
-                ],
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "bookingId": {
-                        "type": "integer",
-                        "description": "Booking ID (numeric)"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Flight booking information retrieved successfully"
-          }
-        },
-        "tags": [
-          "demand"
-        ]
-      }
-    },
-    "/api/v2/booking-details/get-flight-info-json": {
-      "post": {
-        "operationId": "get_flight_info_json",
-        "summary": "Get Booking Flight Info (JSON)",
-        "description": "Retrieve flight booking details as raw JSON format. Same data as get_flight_info but in machine-readable JSON structure. Use when you need structured booking data for analysis or comparison. Keywords: booking JSON, structured data, machine-readable.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "bookingId"
-                ],
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "bookingId": {
-                        "type": "integer",
-                        "description": "Booking ID (numeric)"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Flight booking information in JSON format retrieved successfully"
-          }
-        },
-        "tags": [
-          "demand"
-        ]
-      }
-    },
-    "/api/v2/booking-log/get-object-content": {
-      "post": {
-        "operationId": "get_booking_log",
-        "summary": "Get Booking Log",
-        "description": "Retrieve booking log content from S3 storage. Shows detailed booking event logs for debugging and audit purposes. Use when someone asks about 'booking log', 'booking events', 'what happened during booking', or needs to trace a booking issue. Keywords: booking events, S3 logs, booking audit trail.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "date": {
-                        "type": "string",
-                        "description": "Date for log lookup, e.g. 2024-01-15"
-                      },
-                      "path": {
-                        "type": "string",
-                        "description": "S3 path to specific log object"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Booking log content retrieved successfully"
-          }
-        },
-        "tags": [
-          "demand"
-        ]
-      }
-    },
-    "/api/v2/winner/get": {
-      "post": {
-        "operationId": "get_winner_details",
-        "summary": "Get Winner Details",
-        "description": "Retrieve winner details by winner code. Winners are the selected fare/provider combination for a booking. Use when someone asks about 'winner code', 'which provider won', or 'winning fare details'. Keywords: winner code, provider selection, fare winner.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "winnerCode"
-                ],
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "winnerCode": {
-                        "type": "string",
-                        "description": "Winner code identifier"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Winner details retrieved successfully"
-          }
-        },
-        "tags": [
-          "demand"
-        ]
-      }
-    },
-    "/api/v2/winner/search-by-spec": {
-      "post": {
-        "operationId": "search_winner",
-        "summary": "Search Winners",
-        "description": "Search winners by specification and conditions. Find which fares/providers won for specific routes or criteria. Use when someone asks 'who wins on this route', 'winner search', or 'fare winner analysis'. Keywords: winner search, provider analysis, route winners.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Winner search results retrieved successfully"
-          }
-        },
-        "tags": [
-          "demand"
         ]
       }
     },
@@ -3650,81 +917,6 @@
         "responses": {
           "200": {
             "description": "Promo label supporting data retrieved successfully"
-          }
-        },
-        "tags": [
-          "demand"
-        ]
-      }
-    },
-    "/api/v1/search-simulation/traveloka-initial": {
-      "post": {
-        "operationId": "simulate_search",
-        "summary": "Simulate Flight Search",
-        "description": "Run a simulated flight search and return results. Mimics a real user search to test pricing, availability, and display. Use when someone asks to 'simulate a search', 'test search results', 'what would a user see for JKT-SIN', or 'run a search simulation'. Keywords: search simulation, test search, search results.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "origin": {
-                        "type": "string",
-                        "description": "Origin airport code"
-                      },
-                      "destination": {
-                        "type": "string",
-                        "description": "Destination airport code"
-                      },
-                      "departureDate": {
-                        "type": "string",
-                        "description": "Departure date YYYY-MM-DD"
-                      },
-                      "paxCount": {
-                        "type": "integer",
-                        "description": "Number of passengers"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Flight search simulation completed successfully"
           }
         },
         "tags": [
@@ -4095,11 +1287,11 @@
         }
       }
     },
-    "/api/v2/crud/getEntryDetail#get_promo_label_detail": {
+    "/api/v2/flight-promo-label/get-promo-label-info": {
       "post": {
         "operationId": "get_promo_label_detail",
-        "summary": "Get single promo label by ID",
-        "description": "Get single flightPromoLabel entry by ID. POST /api/v2/crud/getEntryDetail",
+        "summary": "Get single promo label full config by promoLabelId",
+        "description": "Get full promo label configuration by promoLabelId. Returns nested config such as conditionList, promo pages, banners, copy config, histories, and conflict data. POST /api/v2/flight-promo-label/get-promo-label-info",
         "tags": [
           "demand"
         ],
@@ -4118,19 +1310,12 @@
                   "data": {
                     "type": "object",
                     "required": [
-                      "entityType",
-                      "entryId"
+                      "promoLabelId"
                     ],
                     "properties": {
-                      "entityType": {
+                      "promoLabelId": {
                         "type": "string",
-                        "enum": [
-                          "flightPromoLabel"
-                        ]
-                      },
-                      "entryId": {
-                        "type": "string",
-                        "description": "Entry identifier"
+                        "description": "Full exact promoLabelId, e.g. ID_FeatureBanner_NurtureCoupon2_FLYOVERSEA"
                       }
                     }
                   },
@@ -4160,7 +1345,7 @@
         },
         "responses": {
           "200": {
-            "description": "Entry detail",
+            "description": "Full promo label detail",
             "content": {
               "application/json": {
                 "schema": {
@@ -4380,6 +1565,1318 @@
                       }
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/baseline-pricing-rule/load-rules": {
+      "post": {
+        "operationId": "load_baseline_pricing_rules",
+        "summary": "Base markup/margin rules",
+        "tags": [
+          "pricing"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/bundling-pricing-rule/load-rules": {
+      "post": {
+        "operationId": "load_bundling_pricing_rules",
+        "summary": "Bundle pricing (flight+hotel)",
+        "tags": [
+          "pricing"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/trx-fee/load-rules": {
+      "post": {
+        "operationId": "load_trx_fee_rules",
+        "summary": "Transaction/service fee",
+        "tags": [
+          "pricing"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/issuance-fee-rule-data/load-rules": {
+      "post": {
+        "operationId": "load_issuance_fee_rules",
+        "summary": "Ticket issuance fees",
+        "tags": [
+          "pricing"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/pricing-profile/load-profileNames": {
+      "post": {
+        "operationId": "load_pricing_profiles",
+        "summary": "Pricing profile names",
+        "tags": [
+          "pricing"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/condition-group/load": {
+      "post": {
+        "operationId": "load_condition_groups",
+        "summary": "Reusable filter condition groups",
+        "tags": [
+          "pricing"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/load_fare_adjuster_by_airport_tax": {
+      "post": {
+        "operationId": "load_fare_adjuster_by_airport_tax",
+        "summary": "Fare adjuster by airport tax",
+        "tags": [
+          "pricing"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/load_fare_adjuster_by_base_fare": {
+      "post": {
+        "operationId": "load_fare_adjuster_by_base_fare",
+        "summary": "Fare adjuster by base fare",
+        "tags": [
+          "pricing"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/read_pricing_provider": {
+      "post": {
+        "operationId": "read_pricing_provider",
+        "summary": "Pricing provider config",
+        "tags": [
+          "pricing"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/commission-incentive-rule-data/load-rules": {
+      "post": {
+        "operationId": "load_commission_incentive_rules",
+        "summary": "Commission rates",
+        "tags": [
+          "pricing"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/commission-incentive/load-profiles": {
+      "post": {
+        "operationId": "load_commission_incentive_profiles",
+        "summary": "Commission profile list",
+        "tags": [
+          "pricing"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/tiered-incentive-rule-data/load-rules": {
+      "post": {
+        "operationId": "load_tiered_incentive_rules",
+        "summary": "Volume-based incentive tiers",
+        "tags": [
+          "pricing"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/tiered-incentive-progress/check-booking-pnr": {
+      "post": {
+        "operationId": "check_tiered_incentive_progress",
+        "summary": "Check incentive progress for a booking",
+        "tags": [
+          "pricing"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/pricing/budget/user-balance": {
+      "post": {
+        "operationId": "get_budget_user_balance",
+        "summary": "User-level budget balance",
+        "tags": [
+          "pricing"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/pricing/budget/list-active": {
+      "post": {
+        "operationId": "list_active_budgets",
+        "summary": "List active budgets",
+        "tags": [
+          "pricing"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/pricing/budget/levels": {
+      "post": {
+        "operationId": "get_budget_levels",
+        "summary": "Budget level types",
+        "tags": [
+          "pricing"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply-search-tool/search-regular-fare": {
+      "post": {
+        "operationId": "search_regular_fare",
+        "summary": "Search regular fares",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/search-simulation/traveloka-initial": {
+      "post": {
+        "operationId": "simulate_search",
+        "summary": "Simulate full user search",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/provider-source/v2/get-provider-sourcing": {
+      "post": {
+        "operationId": "get_provider_sourcing",
+        "summary": "Provider sourcing config",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/get_provider_source_histories": {
+      "post": {
+        "operationId": "get_provider_source_histories",
+        "summary": "Sourcing change history",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/get_provider_source_latest_version": {
+      "post": {
+        "operationId": "get_provider_source_latest_version",
+        "summary": "Latest sourcing version",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply/airline-route/load": {
+      "post": {
+        "operationId": "get_airline_routes",
+        "summary": "Airline routes",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply/airline-route/get-history": {
+      "post": {
+        "operationId": "get_airline_route_history",
+        "summary": "Airline route history",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply/airline-route/get-history-filtered": {
+      "post": {
+        "operationId": "get_airline_route_history_filtered",
+        "summary": "Airline route history filtered",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply/arbitration/get-modes": {
+      "post": {
+        "operationId": "get_arbitration_modes",
+        "summary": "Arbitration modes",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply/inventory/get-detail": {
+      "post": {
+        "operationId": "get_inventory_detail",
+        "summary": "Inventory detail",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply/inventory/get-types": {
+      "post": {
+        "operationId": "get_inventory_types",
+        "summary": "Inventory types",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply/special-fare/get-config": {
+      "post": {
+        "operationId": "get_special_fare_config",
+        "summary": "Special fare config",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply/fare-check/check": {
+      "post": {
+        "operationId": "check_fare",
+        "summary": "Check fare",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply/fare-check/get-result": {
+      "post": {
+        "operationId": "get_fare_check_result",
+        "summary": "Fare check result",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/demand/winner/search": {
+      "post": {
+        "operationId": "search_winner",
+        "summary": "Search winners",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/demand/winner/get-winner-details": {
+      "post": {
+        "operationId": "get_winner_details",
+        "summary": "Winner details",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/demand/booking/get-booking-log": {
+      "post": {
+        "operationId": "get_booking_log",
+        "summary": "Booking log",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/demand/booking/get-flight-info": {
+      "post": {
+        "operationId": "get_flight_info",
+        "summary": "Booking flight info",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/demand/booking/get-flight-info-json": {
+      "post": {
+        "operationId": "get_flight_info_json",
+        "summary": "Booking flight info (JSON)",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/demand/user-profile/search": {
+      "post": {
+        "operationId": "search_user_profile",
+        "summary": "Search user profile",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/demand/profiling/load-config": {
+      "post": {
+        "operationId": "load_profiling_config",
+        "summary": "Profiling configuration",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/get_decompressed_object": {
+      "post": {
+        "operationId": "get_decompressed_object",
+        "summary": "Decompress S3/stored object",
+        "tags": [
+          "config"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/convert-currency": {
+      "post": {
+        "operationId": "convert_currency",
+        "summary": "Convert currency",
+        "tags": [
+          "config"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/get-airline-ids": {
+      "post": {
+        "operationId": "get_airline_ids",
+        "summary": "List all airline IDs",
+        "tags": [
+          "config"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/get-countries": {
+      "post": {
+        "operationId": "get_countries",
+        "summary": "List all countries",
+        "tags": [
+          "config"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
                 }
               }
             }

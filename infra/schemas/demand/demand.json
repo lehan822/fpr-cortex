@@ -172,12 +172,11 @@
         }
       }
     },
-    "/api/v2/crud/getEntryDetail": {},
-    "/api/v2/crud/getEntryDetail#get_promo_label_detail": {
+    "/api/v2/flight-promo-label/get-promo-label-info": {
       "post": {
         "operationId": "get_promo_label_detail",
-        "summary": "Get single promo label by ID",
-        "description": "Get single flightPromoLabel entry by ID. POST /api/v2/crud/getEntryDetail",
+        "summary": "Get single promo label full config by promoLabelId",
+        "description": "Get full promo label configuration by promoLabelId. Returns nested config such as conditionList, promo pages, banners, copy config, histories, and conflict data. POST /api/v2/flight-promo-label/get-promo-label-info",
         "tags": [
           "demand"
         ],
@@ -196,19 +195,12 @@
                   "data": {
                     "type": "object",
                     "required": [
-                      "entityType",
-                      "entryId"
+                      "promoLabelId"
                     ],
                     "properties": {
-                      "entityType": {
+                      "promoLabelId": {
                         "type": "string",
-                        "enum": [
-                          "flightPromoLabel"
-                        ]
-                      },
-                      "entryId": {
-                        "type": "string",
-                        "description": "Entry identifier"
+                        "description": "Full exact promoLabelId, e.g. ID_FeatureBanner_NurtureCoupon2_FLYOVERSEA"
                       }
                     }
                   },
@@ -238,7 +230,7 @@
         },
         "responses": {
           "200": {
-            "description": "Entry detail",
+            "description": "Full promo label detail",
             "content": {
               "application/json": {
                 "schema": {
@@ -636,449 +628,228 @@
         ]
       }
     },
-    "/api/v2/winner/search-by-spec": {
+    "/api/v2/demand/winner/search": {
       "post": {
         "operationId": "search_winner",
-        "summary": "Search Winners",
-        "description": "Search winners by specification and conditions. Find which fares/providers won for specific routes or criteria. Use when someone asks 'who wins on this route', 'winner search', or 'fare winner analysis'. Keywords: winner search, provider analysis, route winners.",
+        "summary": "Search winners",
+        "tags": [
+          "demand"
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
+                "description": "TODO: scan backend for schema"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Winner search results retrieved successfully"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
-        },
-        "tags": [
-          "demand"
-        ]
+        }
       }
     },
-    "/api/v2/winner/get": {
+    "/api/v2/demand/winner/get-winner-details": {
       "post": {
         "operationId": "get_winner_details",
-        "summary": "Get Winner Details",
-        "description": "Retrieve winner details by winner code. Winners are the selected fare/provider combination for a booking. Use when someone asks about 'winner code', 'which provider won', or 'winning fare details'. Keywords: winner code, provider selection, fare winner.",
+        "summary": "Winner details",
+        "tags": [
+          "demand"
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "winnerCode"
-                ],
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "winnerCode": {
-                        "type": "string",
-                        "description": "Winner code identifier"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
+                "description": "TODO: scan backend for schema"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Winner details retrieved successfully"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
-        },
-        "tags": [
-          "demand"
-        ]
+        }
       }
     },
-    "/api/v2/booking-log/get-object-content": {
+    "/api/v2/demand/booking/get-booking-log": {
       "post": {
         "operationId": "get_booking_log",
-        "summary": "Get Booking Log",
-        "description": "Retrieve booking log content from S3 storage. Shows detailed booking event logs for debugging and audit purposes. Use when someone asks about 'booking log', 'booking events', 'what happened during booking', or needs to trace a booking issue. Keywords: booking events, S3 logs, booking audit trail.",
+        "summary": "Booking log",
+        "tags": [
+          "demand"
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "date": {
-                        "type": "string",
-                        "description": "Date for log lookup, e.g. 2024-01-15"
-                      },
-                      "path": {
-                        "type": "string",
-                        "description": "S3 path to specific log object"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
+                "description": "TODO: scan backend for schema"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Booking log content retrieved successfully"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
-        },
-        "tags": [
-          "demand"
-        ]
+        }
       }
     },
-    "/api/v2/booking-details/get-flight-info": {
+    "/api/v2/demand/booking/get-flight-info": {
       "post": {
         "operationId": "get_flight_info",
-        "summary": "Get Booking Flight Info",
-        "description": "Retrieve flight booking details by booking ID. Returns flight segments, pricing breakdown, passenger info, and booking status. Use when someone asks about 'booking details', 'booking ID 12345', 'what's in this booking', or 'flight info for booking'. Keywords: booking lookup, flight segments, booking status.",
+        "summary": "Booking flight info",
+        "tags": [
+          "demand"
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "bookingId"
-                ],
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "bookingId": {
-                        "type": "integer",
-                        "description": "Booking ID (numeric)"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
+                "description": "TODO: scan backend for schema"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Flight booking information retrieved successfully"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
-        },
-        "tags": [
-          "demand"
-        ]
+        }
       }
     },
-    "/api/v2/booking-details/get-flight-info-json": {
+    "/api/v2/demand/booking/get-flight-info-json": {
       "post": {
         "operationId": "get_flight_info_json",
-        "summary": "Get Booking Flight Info (JSON)",
-        "description": "Retrieve flight booking details as raw JSON format. Same data as get_flight_info but in machine-readable JSON structure. Use when you need structured booking data for analysis or comparison. Keywords: booking JSON, structured data, machine-readable.",
+        "summary": "Booking flight info (JSON)",
+        "tags": [
+          "demand"
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "bookingId"
-                ],
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "bookingId": {
-                        "type": "integer",
-                        "description": "Booking ID (numeric)"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
+                "description": "TODO: scan backend for schema"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Flight booking information in JSON format retrieved successfully"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
-        },
-        "tags": [
-          "demand"
-        ]
+        }
       }
     },
-    "/api/v1/profiling/search-profile": {
+    "/api/v2/demand/user-profile/search": {
       "post": {
         "operationId": "search_user_profile",
-        "summary": "Search User Profile",
-        "description": "Search user profiles and segmentation data. Returns user segment assignments and profile attributes. Use when someone asks about 'user segment', 'user profile', 'what segment is this user in', or 'customer profiling'. Keywords: user segmentation, profile lookup, customer segment.",
+        "summary": "Search user profile",
+        "tags": [
+          "demand"
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
+                "description": "TODO: scan backend for schema"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "User profile and segmentation data retrieved successfully"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
-        },
-        "tags": [
-          "demand"
-        ]
+        }
       }
     },
-    "/api/v1/profiling/get-config": {
+    "/api/v2/demand/profiling/load-config": {
       "post": {
         "operationId": "load_profiling_config",
-        "summary": "Load Profiling Configuration",
-        "description": "Load user profiling configuration for a specific country. Shows how users are segmented and what criteria are used. Use when someone asks about 'profiling setup', 'segmentation config', or 'how are users categorized'. Keywords: segmentation rules, profile criteria, country configuration.",
+        "summary": "Profiling configuration",
+        "tags": [
+          "demand"
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "profileGroup"
-                ],
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "profileGroup": {
-                        "type": "string",
-                        "description": "Country-based profile group code, e.g. ID (Indonesia), TH (Thailand), VN (Vietnam)"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
+                "description": "TODO: scan backend for schema"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Profiling configuration loaded successfully"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
-        },
-        "tags": [
-          "demand"
-        ]
+        }
       }
     }
   },

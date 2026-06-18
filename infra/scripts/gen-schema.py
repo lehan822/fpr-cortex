@@ -319,8 +319,9 @@ def generate_schemas(config, backend_path, full_spec):
             else:
                 # Standard API — look up in full spec first
                 existing_path, existing_op = find_standard_op_in_spec(full_spec, op_id)
+                desired_path = f'/api/v2/{path}'
 
-                if existing_op:
+                if existing_op and existing_path == desired_path:
                     # Use existing schema from fprtool-full.json
                     operation = existing_op.copy()
                     operation['tags'] = [domain]
@@ -329,7 +330,6 @@ def generate_schemas(config, backend_path, full_spec):
                     spec['paths'][existing_path]['post'] = operation
                 else:
                     # Generate minimal placeholder
-                    api_path = f'/api/v2/{path}'
                     operation = {
                         'operationId': op_id,
                         'summary': desc,
@@ -349,9 +349,9 @@ def generate_schemas(config, backend_path, full_spec):
                             }
                         }
                     }
-                    if api_path not in spec['paths']:
-                        spec['paths'][api_path] = {}
-                    spec['paths'][api_path]['post'] = operation
+                    if desired_path not in spec['paths']:
+                        spec['paths'][desired_path] = {}
+                    spec['paths'][desired_path]['post'] = operation
 
         domain_specs[domain] = spec
 
