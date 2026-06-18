@@ -35,7 +35,7 @@ const url = require('url');
 const AUTHORIZE_URL = '<from table above>';
 const TOKEN_URL = '<from table above>';
 const CLIENT_ID = '<from table above>';
-const PORT = 18999;
+const PORT = 18999; // Fixed redirect port; must match Cognito callback registration
 const REDIRECT_URI = `http://localhost:${PORT}/callback`;
 const AUTH_FILE = path.join(process.env.HOME, '.fpr', 'auth.json');
 
@@ -88,6 +88,15 @@ const server = http.createServer(async (req, res) => {
     });
   });
   r.write(body); r.end();
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`❌ Port ${PORT} is already in use. PKCE login requires the fixed callback URI http://localhost:${PORT}/callback.`);
+    console.error('Please free the port and retry. Do NOT switch to another port, or Cognito will reject the redirect URI.');
+    process.exit(1);
+  }
+  throw err;
 });
 
 server.listen(PORT, () => {
