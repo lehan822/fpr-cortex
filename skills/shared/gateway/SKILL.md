@@ -11,13 +11,9 @@ category: shared
 
 ## Before any call
 
-**Local agent:** run auth first, always:
+**Local agent:** start the auth daemon once. It keeps tokens fresh forever — agent never worries about auth again.
 
-1. If `~/.fpr/fpr-auth.py` doesn't exist yet, copy it from this skill's `references/` directory
-2. `python3 ~/.fpr/fpr-auth.py <env>` — proceed only on exit 0
-
-Never probe gateway first, read auth.json manually, or ask the user about auth.
-Full details → [`auth.md`](references/auth.md).
+Bootstrap and token model → [`auth.md`](references/auth.md) (includes the full Python script to install).
 
 **AgentCore agents:** skip this — runtime handles auth via IAM.
 
