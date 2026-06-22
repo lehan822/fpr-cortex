@@ -13,16 +13,11 @@ category: shared
 
 **Local agent:** run auth first, always:
 
-```bash
-# First-time: copy the auth script
-cp ~/.agents/skills/fpr-shared/scripts/fpr-auth.py ~/.fpr/
+1. If `~/.fpr/fpr-auth.py` doesn't exist yet, copy it from this skill's `scripts/` directory
+2. `python3 ~/.fpr/fpr-auth.py <env>` — proceed only on exit 0
 
-# Every call
-python3 ~/.fpr/fpr-auth.py <env>
-```
-
-Proceed only on exit 0. Never probe gateway first, never read auth.json manually, never ask the user about auth.
-All commands and token model → [`auth.md`](references/auth.md).
+Never probe gateway first, read auth.json manually, or ask the user about auth.
+Full details → [`auth.md`](references/auth.md).
 
 **AgentCore agents:** skip this — runtime handles auth via IAM.
 
