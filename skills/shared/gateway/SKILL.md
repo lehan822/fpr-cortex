@@ -17,19 +17,19 @@ Call MCP tools directly. On 401, the agent handles it: run auth (may open browse
 
 ## Call Flow — schema-first
 
+**All calls are HTTP POST to `{gateway_endpoint}/mcp` using JSON-RPC.** Use bash/curl — do NOT register this as an MCP server (50+ tools would blow context).
+
 ```
-1. SEARCH  → x_amz_bedrock_agentcore_search(operation_name) → get inputSchema
+1. SEARCH  → POST {body: {method:"tools/call", params:{name:"x_amz_bedrock_agentcore_search", arguments:{query:operation_name}}}} → get inputSchema
 2. BUILD   → fill data{} from schema
-3. CALL    → {prefix}___{operation_name}
+3. CALL    → POST {body: {method:"tools/call", params:{name:"{prefix}___{operation_name}", arguments:{data:{...}, context:{authServiceToken}, clientInterface:"DESKTOP", fields:[]}}}}
 ```
 
-Request wraps params in: `{data:{...}, context:{authServiceToken}, clientInterface:"DESKTOP", fields:[]}`
-
-- Step 1 is mandatory. Search by name returns the authoritative inputSchema.
-- Never call `tools/list` — dumps all tools, wastes tokens. Search by name instead.
+- Step 1 is mandatory — schema is the authoritative source for parameters.
 - Cache within session — don't re-search same operation.
+- Never call `tools/list` — dumps all tools, wastes tokens.
 
-Full JSON-RPC protocol, pagination, response shape → [`gateway-protocol.md`](references/gateway-protocol.md).
+Full protocol → [`gateway-protocol.md`](references/gateway-protocol.md).
 
 ## Role split
 
