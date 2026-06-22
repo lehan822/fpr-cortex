@@ -42,6 +42,4 @@ Internally the default command does: valid → exit 0 / expired → Cognito sile
 
 **AgentCore agent** (for reference): user id_token passed in from caller → `context.authServiceToken`; M2M token auto-managed by runtime IAM role (never ask user for client_id/secret).
 
-## PKCE login details
-
-Browser login flow, when triggered, and environment URLs → see [`pkce-login.md`](pkce-login.md).
+PKCE login is handled automatically by `fpr-auth.py` — run it, it opens the browser when needed.
