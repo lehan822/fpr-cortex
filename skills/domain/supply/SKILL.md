@@ -25,9 +25,7 @@ tool: simulate_search               data: {origin: "CGK", destination: "DPS", de
 **CRITICAL — before the matching operation, you MUST Read the file(s) below. None are optional:**
 
 1. **Local MCP only** → read **fpr-shared** first — auth, tool name prefix, request envelope (**all operations**)
-2. **Running fare check** → MUST read [`fare-check-workflow.md`](references/fare-check-workflow.md) (async 2-step operation)
-3. **Querying provider config** → MUST read [`provider-operations.md`](references/provider-operations.md)
-4. **Unsure about parameters** → MUST read [`parameter-standards.md`](references/parameter-standards.md) (airlineId IATA format, origin/destination codes)
+2. **Unsure about parameters** → MUST read [`parameter-standards.md`](references/parameter-standards.md) (airlineId IATA format, origin/destination codes)
 
 **Executing an operation without reading its required reference will cause parameter errors.**
 
@@ -81,18 +79,10 @@ tool: simulate_search               data: {origin: "CGK", destination: "DPS", de
 | "winner", "selected fare" | `search_winner` |
 | "arbitration", "fare arbitration" | `get_arbitration_modes` |
 
-## Gotchas (top traps — full rules in references)
+## Gotchas (top traps)
 
-- **Fare check is async** — must call `check_fare` first, then poll `get_fare_check_result`; see [fare-check-workflow.md](references/fare-check-workflow.md)
+- **Fare check is async** — call `check_fare` first, then poll `get_fare_check_result`
 - **Parameter normalization** — airlineId must be IATA 2-letter uppercase (`"GA"` not `"garuda"`); see [parameter-standards.md](references/parameter-standards.md)
-
-## Fare Check Workflow
-
-Fare check is a 2-step async operation:
-1. Call `check_fare` → returns `fareCheckId`
-2. Poll `get_fare_check_result` with `fareCheckId` (may need 2-3 retries, 5s interval)
-
-See [fare-check-workflow.md](references/fare-check-workflow.md) for full details.
 
 ## Disambiguation
 
