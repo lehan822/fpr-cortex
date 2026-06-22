@@ -1,9 +1,11 @@
 ---
 name: fpr-pricing
-description: "Pricing rules (autopilot, baseline, commission, budget). Use when querying flight pricing configuration, markup/margin rules, budget balances, or airline commission rates. NOT for fare adjuster (→ fpr-supply), feature flags (→ fpr-config), or booking data (→ fpr-demand)."
-metadata:
-  requires:
-    skills: ["fpr-shared"]
+version: 2.6.0
+description: "Pricing rules, autopilot rules, budgets, commissions, incentives, baseline markup, bundling, transaction fees. Use for price adjustments, margin settings, and revenue management."
+category: domain
+prerequisites:
+  local: [fpr-shared]
+  agentcore: []
 ---
 
 # FPR Pricing
@@ -11,11 +13,10 @@ metadata:
 > **⚠️ Local MCP tools. All tools are prefixed and authed via fpr-shared — read it first (see Prerequisites).**
 
 ```
-# Common examples — profileName is ALWAYS "DEFAULT" for B2C (never the country code)
-tool: load_autopilot_rules   data: {profileGroup: "TRAVELOKA", profileType: "DEFAULT", productType: "STANDALONE", profileName: "DEFAULT", currency: "THB"}  # Thailand B2C
-tool: load_autopilot_rules   data: {profileGroup: "TRAVELOKA", profileType: "DEFAULT", productType: "STANDALONE", profileName: "DEFAULT", currency: "SGD"}  # Singapore B2C
-tool: get_budget_balance     data: {currency: "THB"}
-tool: load_commission_incentive_rules   data: {airlineId: "GA", fulfillmentId: "amadeus"}
+# Common examples
+tool: load_autopilot_rules               data: {profileGroup: "TRAVELOKA", profileType: "DEFAULT", productType: "STANDALONE", profileName: "DEFAULT", currency: "THB"}
+tool: get_budget_balance                 data: {currency: "THB"}
+tool: load_commission_incentive_rules    data: {airlineId: "GA", fulfillmentId: "amadeus"}
 ```
 
 ## Prerequisites — Read Before Executing
@@ -32,25 +33,28 @@ tool: load_commission_incentive_rules   data: {airlineId: "GA", fulfillmentId: "
 
 ## Operations
 
-| Operation | Description | Key Parameters | Ref |
-|-----------|-------------|----------------|-----|
-| `load_autopilot_rules` | Automated pricing rules by profile+currency | profileGroup, profileType, productType, profileName, currency | [autopilot](references/autopilot-operations.md) |
-| `update_autopilot_rules` | Update/create autopilot rules (conditions + adjustments) ⚠️ complex — load schema via search | autopilotToolData, version, notes | [autopilot](references/autopilot-operations.md) |
-| `load_baseline_pricing_rules` | Base markup/margin rules (route-based, NOT 5-field) | profileGroup, originCountry, destinationCountry, airlineId | [autopilot](references/autopilot-operations.md) |
-| `load_bundling_pricing_rules` | Bundle pricing (flight+hotel) | profileGroup, profileType, productType, profileName, currency | [autopilot](references/autopilot-operations.md) |
-| `load_price_prediction_rules` | Anchor fare / dynamic pricing rules | profileGroup | [params](references/parameter-standards.md) |
-| `load_price_cut_modifier_rules` | Price cut / promo modifiers | profileGroup | [params](references/parameter-standards.md) |
-| `load_trx_fee_rules` | Transaction/service fee rules | profileGroup | [params](references/parameter-standards.md) |
-| `load_pricing_profiles` | Pricing profile names | profileGroup | [params](references/parameter-standards.md) |
-| `load_issuance_fee_rules` | Ticket issuance fees | fulfillmentId | [params](references/parameter-standards.md) |
-| `get_budget_balance` | Budget remaining/used by currency | currency | [budget](references/budget-operations.md) |
-| `list_active_budgets` | Active budgets by currency and level | currency | [budget](references/budget-operations.md) |
-| `get_budget_levels` | Budget level types | — | [budget](references/budget-operations.md) |
-| `get_budget_user_balance` | User-level budget balance | currency | [budget](references/budget-operations.md) |
-| `load_commission_incentive_rules` | Commission rates for airline partners | airlineId, fulfillmentId | [commission](references/commission-operations.md) |
-| `load_commission_incentive_profiles` | Commission profile list | — | [commission](references/commission-operations.md) |
-| `load_tiered_incentive_rules` | Volume-based incentive tiers | brandId | [commission](references/commission-operations.md) |
-| `check_tiered_incentive_progress` | PNR incentive progress check | pnr | [commission](references/commission-operations.md) |
+| Operation | Description | Key Parameters |
+|-----------|-------------|----------------|
+| **Pricing Rules** |||
+| `load_autopilot_rules` | Automated pricing rules by profile+currency | profileGroup, profileType, productType, profileName, currency |
+| `update_autopilot_rules` | Update/create autopilot rules (conditions + adjustments) ⚠️ complex | autopilotToolData, version, notes |
+| `load_baseline_pricing_rules` | Base markup/margin rules (route-based) | profileGroup, originCountry, destinationCountry, airlineId |
+| `load_bundling_pricing_rules` | Bundle pricing (flight+hotel) | profileGroup, profileType, productType, profileName, currency |
+| `load_price_prediction_rules` | Anchor fare / dynamic pricing rules | profileGroup |
+| `load_price_cut_modifier_rules` | Price cut / promo modifiers | profileGroup |
+| `load_trx_fee_rules` | Transaction/service fee rules | profileGroup |
+| `load_pricing_profiles` | Pricing profile names | profileGroup |
+| `load_issuance_fee_rules` | Ticket issuance fees | fulfillmentId |
+| **Budget Management** |||
+| `get_budget_balance` | Budget remaining/used by currency | currency |
+| `list_active_budgets` | Active budgets by currency and level | currency |
+| `get_budget_levels` | Budget level types | — |
+| `get_budget_user_balance` | User-level budget balance | currency |
+| **Commission & Incentives** |||
+| `load_commission_incentive_rules` | Commission rates for airline partners | airlineId, fulfillmentId |
+| `load_commission_incentive_profiles` | Commission profile list | — |
+| `load_tiered_incentive_rules` | Volume-based incentive tiers | brandId |
+| `check_tiered_incentive_progress` | PNR incentive progress check | pnr |
 
 ## Routing Guide
 
@@ -61,8 +65,8 @@ tool: load_commission_incentive_rules   data: {airlineId: "GA", fulfillmentId: "
 | "commission", "airline commission rate" | `load_commission_incentive_rules` |
 | "flash sale", "promo", "discount" | `load_price_cut_modifier_rules` |
 | "bundle", "package", "flight+hotel" | `load_bundling_pricing_rules` |
-| "autopilot", "automated pricing", "查看 autopilot" | `load_autopilot_rules` |
-| "update autopilot", "修改 autopilot", "add rule", "改规则" | `update_autopilot_rules` |
+| "autopilot", "automated pricing" | `load_autopilot_rules` |
+| "update autopilot", "修改 autopilot" | `update_autopilot_rules` |
 | "service fee", "transaction fee" | `load_trx_fee_rules` |
 | "issuance fee", "ticketing fee" | `load_issuance_fee_rules` |
 | "incentive progress", "PNR check" | `check_tiered_incentive_progress` |
@@ -72,6 +76,8 @@ tool: load_commission_incentive_rules   data: {airlineId: "GA", fulfillmentId: "
 ## Gotchas (top traps — full rules in references)
 
 - **Parameter normalization & enums** (profileGroup is an enum not a country; ISO currency; IATA airline; commission needs airlineId + fulfillmentId) → [parameter-standards.md](references/parameter-standards.md)
+- **Autopilot uses 5-field S3 key** (`profileGroup.profileType.productType.profileName.currency`); misordered fields → 500 error → [autopilot-operations.md](references/autopilot-operations.md)
+- **Baseline is route-based** (profileGroup + originCountry + destinationCountry + airlineId); NOT the 5-field key → [autopilot-operations.md](references/autopilot-operations.md)
 
 ## Workflows
 
@@ -90,7 +96,7 @@ tool: load_commission_incentive_rules   data: {airlineId: "GA", fulfillmentId: "
 2. `load_tiered_incentive_rules` with brandId — check volume tiers
 3. `check_tiered_incentive_progress` with pnr — verify specific booking
 
-### Update Rules (any rule type) ⚠️
+### Update Rules ⚠️
 
 **All update operations MUST follow this safety flow:**
 
@@ -104,5 +110,5 @@ tool: load_commission_incentive_rules   data: {airlineId: "GA", fulfillmentId: "
 ## Disambiguation
 
 - "fare adjuster" → **fpr-supply** (not pricing)
-- "feature flag" → **fpr-config** (not pricing)
+- "feature flag" → **fpr-sysinteg** (not pricing)
 - "search cache", "booking detail" → **fpr-demand** (not pricing)

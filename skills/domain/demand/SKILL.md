@@ -1,142 +1,90 @@
 ---
 name: fpr-demand
-description: "Booking lookup, user profiles, fare cache, search simulation, promo labels, MongoDB queries. Use for demand-side debugging — bookings, search results, user segments."
-version: "2.4.0"
+version: 2.6.0
+description: "Demand-side tools: booking lookup, fare cache, demand experiments, MongoDB queries. Use for demand-side debugging — bookings, search results, user experiments."
 category: domain
-domain: demand
 prerequisites:
   local: [fpr-shared]
   agentcore: []
-tools:
-  - get_booking_log
-  - get_demand_experiment_contextid
-  - get_demand_experiment_variant
-  - get_flight_info
-  - get_flight_info_json
-  - get_promo_label_data
-  - get_promo_label_detail
-  - get_winner_details
-  - list_mongo_collections
-  - load_profiling_config
-  - search_cache_by_id
-  - search_cache_content
-  - search_promo_labels
-  - search_user_profile
-  - search_winner
-  - simple_crud_query
 ---
 
 # FPR Demand
 
+> **⚠️ Local MCP tools. All tools are prefixed and authed via fpr-shared — read it first (see Prerequisites).**
+
+```
+# Common examples
+tool: get_flight_info                  data: {bookingId: 123456789}
+tool: search_cache_content             data: {origin: "CGK", destination: "DPS"}
+tool: get_booking_log                  data: {path: "/123456789/"}
+```
+
 ## Prerequisites — Read Before Executing
 
-1. **Local MCP only** → read **fpr-shared** first (auth, tool name prefix, request envelope)
-2. **Running search simulation** → MUST read [`search-simulation.md`](references/search-simulation.md) (full pipeline parameters)
-3. **Querying bookings** → MUST read [`booking-operations.md`](references/booking-operations.md) (bookingId vs PNR distinction)
+**CRITICAL — before the matching operation, you MUST Read the file(s) below. None are optional:**
 
-**Executing operations without reading the required references will lead to parameter or workflow errors.**
+1. **Local MCP only** → read **fpr-shared** first — auth, tool name prefix, request envelope (**all operations**)
+2. **Querying bookings** → MUST read [`booking-operations.md`](references/booking-operations.md) (bookingId vs PNR distinction)
+3. **Price inconsistency oncall** → MUST read [`price-inconsistency-playbook.md`](references/price-inconsistency-playbook.md) (end-to-end investigation workflow)
+
+**Executing an operation without reading its required reference will cause parameter errors.**
 
 ## Operations
 
 | Operation | Description | Key Parameters |
 |-----------|-------------|----------------|
-| `search_user_profile` | Lookup user personalization profile | userId |
-| `load_profiling_config` | User profiling configuration | profileType |
+| **Fare Cache** |||
+| `search_cache_content` | Fare cache by route | origin, destination |
+| `search_cache_by_id` | Specific cache entry | searchId |
+| **Demand Experiments** |||
+| `get_demand_experiment_variant` | Get experiment variant | namespace, userId |
+| `get_demand_experiment_contextid` | Get experiment context by ID | contextId |
+| **MongoDB Operations** |||
+| `list_mongo_collections` | Available MongoDB collections | database |
+| `simple_crud_query` | MongoDB ad-hoc query | collection, query, database |
+| **Booking Details** |||
 | `get_flight_info` | Booking flight details (formatted) | bookingId or pnr |
 | `get_flight_info_json` | Booking flight details (raw JSON) | bookingId or pnr |
-| `get_booking_log` | Booking event log / timeline | bookingId |
-| `get_winner_details` | Search winner (selected fare) | searchId, winnerId |
-| `search_winner` | Find winners by route/date | origin, destination, departureDate |
-| `simple_crud_query` | MongoDB ad-hoc query | collection, query, database |
-| `search_cache_content` | Fare cache by route | origin, destination, departureDate |
-| `search_cache_by_id` | Specific cache entry | searchId |
-| `list_mongo_collections` | Available MongoDB collections | database |
-| `search_promo_labels` | Active promo labels | filter on promoLabelId |
-| `get_promo_label_detail` | Single promo label detail | exact entryId |
-| `get_promo_label_data` | Promo label supporting data | labelId |
-| `simulate_search` | Simulate end-to-end flight search | origin, destination, departureDate, pax |
+| `get_booking_log` | Booking event log / timeline | path: `/<bookingId>/` |
+| **Promo Labels (Write)** |||
+| `create_promo_label` | Create promo label (write) | promoLabelData |
+| `update_promo_label` | Update promo label (write) | promoLabelId, promoLabelData |
+| **Booking Operations (Write)** |||
+| `update_passenger_detail` | Update passenger details (write) | bookingId, passengerData |
+| `mark_issued_send_eticket` | Mark issued and send e-ticket (write) | bookingId |
+| `resend_eticket` | Resend e-ticket (write) | bookingId |
 
 ## Routing Guide
 
 | User Intent | → Operation |
 |-------------|-------------|
-| "search simulation", "test search" | `simulate_search` |
 | "booking detail", "PNR lookup" | `get_flight_info` |
 | "booking log", "booking history" | `get_booking_log` |
 | "fare cache", "cached fares" | `search_cache_content` |
-| "winner", "winning fare" | `get_winner_details` or `search_winner` |
-| "user profile", "personalization" | `search_user_profile` |
-| "promo label", "promotion tag" | `search_promo_labels` |
-| "promo label detail", "specific promo config" | `get_promo_label_detail` |
+| "experiment variant", "A/B test" | `get_demand_experiment_variant` |
 | "mongo query", "raw query" | `simple_crud_query` |
 
-## Search Simulation Notes
+## Gotchas (top traps — full rules in references)
 
-`simulate_search` runs the full search pipeline end-to-end. Useful for:
-- Debugging "why does this route show no results"
-- Verifying price changes take effect
-- Testing promo label visibility
+- **bookingId MUST be integer** — not string; `123456789` not `"123456789"`
+- **PNR vs bookingId** — PNR is airline reference (string), bookingId is Traveloka internal (integer); see [booking-operations.md](references/booking-operations.md)
+- **Price inconsistency oncall** — follow the full playbook in [price-inconsistency-playbook.md](references/price-inconsistency-playbook.md)
 
-Returns: ranked fares with applied pricing, provider info, and promo labels.
+## Oncall Scenarios
 
-## Parameter Normalization
-
-| Parameter | Accepts | Normalized To |
-|-----------|---------|--------------|
-| origin/destination | "Jakarta", "CGK", "cgk" | `"CGK"` |
-| departureDate | "tomorrow", "next Monday" | `"YYYY-MM-DD"` |
-| pax | "2 adults", "1a1c" | `{ adult: 2, child: 0, infant: 0 }` |
-| bookingId / pnr | string | as-is |
-
-## Promo Label Search (Filter Syntax)
-
-`search_promo_labels` uses the CRUD `getEntryList` API. Prefer filtering on `promoLabelId`:
-
-```json
-{
-  "data": {
-    "entityType": "flightPromoLabel",
-    "search": {
-      "entriesCount": 20,
-      "offset": 0,
-      "sort": {"fieldName": "lastUpdate", "type": "DESCENDING"},
-      "filter": [
-        {"fieldName": "promoLabelId", "type": "CONTAINS", "arguments": {"value": "FLYOVERSEA"}}
-      ]
-    }
-  }
-}
-```
-
-**Working filters:**
-- `promoLabelId CONTAINS 'XX'` — search by keyword in label ID (airline code, campaign text)
-- `promoLabelId EQUAL 'exact-id'` — exact match
-
-**Important:** `searchQuery` is **not reliable** for promo label lookup. Use `filter` on `promoLabelId` instead.
-
-## Promo Label Detail Lookup
-
-`get_promo_label_detail` uses the dedicated promo-label info API and requires the **full exact promoLabelId** from the search result.
-
-```json
-{
-  "data": {
-    "promoLabelId": "ID_MarketingBanner_NurtureCoupon1_FLYOVERSEA"
-  }
-}
-```
-
-Do **not** pass partial keys like `FLYOVERSEA` directly to `get_promo_label_detail` — that returns empty `{}`.
-This endpoint returns the **full nested promo config** (`conditionList`, promo pages, banners, copy config, etc.), unlike the CRUD detail path which only returned summary fields.
-
-**Recommended flow (promo config from screenshot):**
-1. Extract a visible keyword from screenshot (airline code, campaign text, destination clue)
-2. Call `search_promo_labels` with `promoLabelId CONTAINS <keyword>`
-3. Pick the best matching full `promoLabelId`
-4. Call `get_promo_label_detail` with that exact full ID
+| User Intent | → Workflow |
+|-------------|------------|
+| "price jump at booking", "price inconsistency" | See [price-inconsistency-playbook.md](references/price-inconsistency-playbook.md) |
+| "why did subclass change" | `get_booking_log` → Datadog fprbopi funnel |
+| "stale supply data", "old cache" | Check `supplyCacheTimestamp` in fprbopi logs |
 
 ## Disambiguation
 
 - "markup", "commission", "budget" → **fpr-pricing** (not demand)
-- "fare adjuster", "provider config" → **fpr-supply** (not demand)
-- "feature flag", "country list" → **fpr-config** (not demand)
+- "fare adjuster", "provider config", "provider sourcing" → **fpr-supply** (not demand)
+- "feature flag", "country list" → **fpr-sysinteg** (not demand)
+- "simulate search" → **fpr-supply** (not demand)
+
+## Note
+
+`simulate_search` has been moved to **fpr-supply** as it's a supply-side operation that simulates the search pipeline.
