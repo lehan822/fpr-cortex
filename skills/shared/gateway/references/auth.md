@@ -19,7 +19,7 @@ Proceed only on exit code 0. This single command handles: valid token → silent
 
 ## One-time bootstrap
 
-If `~/.fpr/fpr-auth.py` doesn't exist yet, copy it from this skill's `scripts/` directory. The agent handles this automatically — no manual steps needed.
+If `~/.fpr/fpr-auth.py` doesn't exist yet, copy it from this skill's `references/` directory. The agent handles this automatically — no manual steps needed.
 
 ## Script commands
 

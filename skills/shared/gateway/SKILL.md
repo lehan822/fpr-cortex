@@ -13,7 +13,7 @@ category: shared
 
 **Local agent:** run auth first, always:
 
-1. If `~/.fpr/fpr-auth.py` doesn't exist yet, copy it from this skill's `scripts/` directory
+1. If `~/.fpr/fpr-auth.py` doesn't exist yet, copy it from this skill's `references/` directory
 2. `python3 ~/.fpr/fpr-auth.py <env>` — proceed only on exit 0
 
 Never probe gateway first, read auth.json manually, or ask the user about auth.
