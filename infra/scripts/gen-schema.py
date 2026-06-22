@@ -274,6 +274,83 @@ def find_standard_op_in_spec(full_spec, op_id):
     return None, None
 
 
+def scan_standard_api_params(backend_path, api_path):
+    """Scan Java source for a standard API endpoint and extract request body parameters.
+
+    Looks for @PostMapping or @RequestMapping annotations with matching path,
+    finds the @RequestBody parameter class, and extracts its fields.
+    """
+    if not backend_path or not os.path.isdir(backend_path):
+        return None
+
+    path_suffix = api_path.lstrip('/').replace('/api/v2/', '').replace('/', '/')
+
+    for root, dirs, files in os.walk(backend_path):
+        if '/test/' in root or '/target/' in root:
+            continue
+        for fname in files:
+            if not fname.endswith('.java'):
+                continue
+            fpath = os.path.join(root, fname)
+            with open(fpath, encoding='utf-8', errors='ignore') as f:
+                src = f.read()
+
+            # Find @PostMapping or @RequestMapping with matching path
+            if path_suffix not in src or 'class ' not in src:
+                continue
+
+            # Look for mapping annotation with this path
+            mapping_patterns = [
+                rf'@PostMapping\s*\(\s*["\']/?{re.escape(path_suffix)}["\']',
+                rf'@RequestMapping\s*\([^)]*["\']/?{re.escape(path_suffix)}["\']',
+            ]
+            found_mapping = any(re.search(p, src) for p in mapping_patterns)
+            if not found_mapping:
+                continue
+
+            # Find the @RequestBody parameter class
+            body_match = re.search(r'@RequestBody\s+(\w+)', src)
+            if not body_match:
+                continue
+
+            dto_class = body_match.group(1)
+            return _extract_dto_fields(backend_path, dto_class)
+
+    return None
+
+
+def _extract_dto_fields(backend_path, dto_class):
+    """Find a DTO class and extract its field names."""
+    for root, dirs, files in os.walk(backend_path):
+        if '/test/' in root or '/target/' in root:
+            continue
+        for fname in files:
+            if fname == f'{dto_class}.java':
+                fpath = os.path.join(root, fname)
+                with open(fpath, encoding='utf-8', errors='ignore') as f:
+                    src = f.read()
+                fields = re.findall(r'private\s+(\w+(?:<[^>]+>)?)\s+(\w+)\s*;', src)
+                return [
+                    {'name': name, 'type': _java_to_json_type(jtype)}
+                    for jtype, name in fields
+                    if not name.startswith('_')  # skip internal fields
+                ]
+    return None
+
+
+def _java_to_json_type(jtype):
+    """Convert Java type to JSON schema type."""
+    mapping = {
+        'String': 'string', 'int': 'integer', 'Integer': 'integer',
+        'long': 'integer', 'Long': 'integer', 'double': 'number',
+        'Double': 'number', 'boolean': 'boolean', 'Boolean': 'boolean',
+        'BigDecimal': 'number', 'List': 'array', 'Map': 'object',
+    }
+    # Handle generic types like List<String>
+    base = jtype.split('<')[0]
+    return mapping.get(base, 'string')
+
+
 def generate_schemas(config, backend_path, full_spec):
     """Generate per-domain OpenAPI specs."""
     domain_specs = {}
@@ -324,31 +401,90 @@ def generate_schemas(config, backend_path, full_spec):
                 if existing_op and existing_path == desired_path:
                     # Use existing schema from fprtool-full.json
                     operation = existing_op.copy()
+                    # If schema is empty/weak, try scanning Java source for enrichment
+                    schema = operation.get('requestBody', {}).get('content', {}).get(
+                        'application/json', {}).get('schema', {})
+                    props = schema.get('properties', {})
+                    if not props:
+                        scanned = scan_standard_api_params(backend_path, desired_path)
+                        if scanned:
+                            schema['type'] = 'object'
+                            schema['required'] = ['data', 'context', 'clientInterface']
+                            schema['properties'] = {
+                                'data': {
+                                    'type': 'object',
+                                    'required': [f['name'] for f in scanned],
+                                    'properties': {f['name']: {'type': f['type']} for f in scanned}
+                                },
+                                'context': {
+                                    'type': 'object',
+                                    'properties': {'authServiceToken': {'type': 'string'}}
+                                },
+                                'fields': {'type': 'array', 'items': {'type': 'string'}},
+                                'clientInterface': {'type': 'string'}
+                            }
+                            operation['requestBody']['content']['application/json']['schema'] = schema
+
                     operation['tags'] = [domain]
                     if existing_path not in spec['paths']:
                         spec['paths'][existing_path] = {}
                     spec['paths'][existing_path]['post'] = operation
                 else:
-                    # Generate minimal placeholder
-                    operation = {
-                        'operationId': op_id,
-                        'summary': desc,
-                        'tags': [domain],
-                        'requestBody': {
-                            'required': True,
-                            'content': {
-                                'application/json': {
-                                    'schema': {'type': 'object', 'description': 'TODO: scan backend for schema'}
-                                }
-                            }
-                        },
-                        'responses': {
-                            '200': {
-                                'description': 'Success',
-                                'content': {'application/json': {'schema': {'type': 'object'}}}
+                    # Try scanning Java source before falling back to placeholder
+                    scanned = scan_standard_api_params(backend_path, desired_path)
+                    if scanned:
+                        schema = {
+                            'type': 'object',
+                            'required': ['data', 'context', 'clientInterface'],
+                            'properties': {
+                                'data': {
+                                    'type': 'object',
+                                    'required': [f['name'] for f in scanned],
+                                    'properties': {f['name']: {'type': f['type']} for f in scanned}
+                                },
+                                'context': {
+                                    'type': 'object',
+                                    'properties': {'authServiceToken': {'type': 'string'}}
+                                },
+                                'fields': {'type': 'array', 'items': {'type': 'string'}},
+                                'clientInterface': {'type': 'string'}
                             }
                         }
-                    }
+                        operation = {
+                            'operationId': op_id,
+                            'summary': desc,
+                            'tags': [domain],
+                            'requestBody': {
+                                'required': True,
+                                'content': {'application/json': {'schema': schema}}
+                            },
+                            'responses': {
+                                '200': {
+                                    'description': 'Success',
+                                    'content': {'application/json': {'schema': {'type': 'object'}}}
+                                }
+                            }
+                        }
+                    else:
+                        operation = {
+                            'operationId': op_id,
+                            'summary': desc,
+                            'tags': [domain],
+                            'requestBody': {
+                                'required': True,
+                                'content': {
+                                    'application/json': {
+                                        'schema': {'type': 'object', 'description': 'TODO: scan backend for schema'}
+                                    }
+                                }
+                            },
+                            'responses': {
+                                '200': {
+                                    'description': 'Success',
+                                    'content': {'application/json': {'schema': {'type': 'object'}}}
+                                }
+                            }
+                        }
                     if desired_path not in spec['paths']:
                         spec['paths'][desired_path] = {}
                     spec['paths'][desired_path]['post'] = operation

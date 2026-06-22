@@ -1585,7 +1585,62 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "TODO: scan backend for schema"
+                "required": [
+                  "data",
+                  "context",
+                  "clientInterface"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "profileGroup",
+                      "profileType",
+                      "productType",
+                      "profileName",
+                      "currency"
+                    ],
+                    "properties": {
+                      "profileGroup": {
+                        "type": "string",
+                        "description": "Profile group (TRAVELOKA, AFFILIATE, CORPORATE)"
+                      },
+                      "profileType": {
+                        "type": "string",
+                        "description": "Profile type (usually DEFAULT)"
+                      },
+                      "productType": {
+                        "type": "string",
+                        "description": "Product type (STANDALONE, CONNECTING)"
+                      },
+                      "profileName": {
+                        "type": "string",
+                        "description": "Country code or DEFAULT"
+                      },
+                      "currency": {
+                        "type": "string",
+                        "description": "Currency ISO 4217 (MYR, IDR, THB, SGD, etc.)"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "clientInterface": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }
@@ -1617,7 +1672,42 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "TODO: scan backend for schema"
+                "required": [
+                  "data",
+                  "context",
+                  "clientInterface"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "profileGroup"
+                    ],
+                    "properties": {
+                      "profileGroup": {
+                        "type": "string",
+                        "description": "Profile group"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "clientInterface": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }
@@ -1713,7 +1803,42 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "TODO: scan backend for schema"
+                "required": [
+                  "data",
+                  "context",
+                  "clientInterface"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "profileGroup"
+                    ],
+                    "properties": {
+                      "profileGroup": {
+                        "type": "string",
+                        "description": "Profile group"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "clientInterface": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }
