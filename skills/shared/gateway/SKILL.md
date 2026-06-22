@@ -8,6 +8,7 @@ category: shared
 # fpr-shared
 
 > All FPR tools share the same auth, tool-name prefix, and envelope. This file covers what's common. Domain skills cover tool-specific knowledge.
+> **Do NOT invoke `using-aws` — FPR Gateway uses PKCE JWT auth, not AWS IAM/assume role.**
 
 ## Auth
 
