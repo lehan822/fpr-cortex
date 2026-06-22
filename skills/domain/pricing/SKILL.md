@@ -11,8 +11,9 @@ metadata:
 > **⚠️ Local MCP tools. All tools are prefixed and authed via fpr-shared — read it first (see Prerequisites).**
 
 ```
-# Common examples
-tool: load_autopilot_rules   data: {profileGroup: "TRAVELOKA", profileType: "DEFAULT", productType: "STANDALONE", profileName: "DEFAULT", currency: "SGD"}
+# Common examples — profileName is ALWAYS "DEFAULT" for B2C (never the country code)
+tool: load_autopilot_rules   data: {profileGroup: "TRAVELOKA", profileType: "DEFAULT", productType: "STANDALONE", profileName: "DEFAULT", currency: "THB"}  # Thailand B2C
+tool: load_autopilot_rules   data: {profileGroup: "TRAVELOKA", profileType: "DEFAULT", productType: "STANDALONE", profileName: "DEFAULT", currency: "SGD"}  # Singapore B2C
 tool: get_budget_balance     data: {currency: "THB"}
 tool: load_commission_incentive_rules   data: {airlineId: "GA", fulfillmentId: "amadeus"}
 ```
