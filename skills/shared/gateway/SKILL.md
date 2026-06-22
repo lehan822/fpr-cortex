@@ -19,26 +19,30 @@ Call MCP tools directly. On 401, the agent handles it: run auth (may open browse
 
 **All calls are HTTP POST to `{gateway_endpoint}/mcp` using JSON-RPC.** Use bash/curl — do NOT register as MCP server.
 
-Step 1 — SEARCH (bare args, no envelope):
+```
+0. SELECT  → domain skill routes user intent to operation_name
+1. SEARCH  → x_amz_bedrock_agentcore_search(operation_name) → get inputSchema
+2. BUILD   → inputSchema.properties → data keys, normalized
+3. CALL    → {prefix}___{operation_name} with data in envelope
+```
+
+Step 1 — SEARCH (bare args, **no envelope**):
 
 ```
 curl -s -H "Authorization: Bearer <access_token>" \
-  -d '{"jsonrpc":"2.0","method":"tools/call","id":"1","params":{"name":"x_amz_bedrock_agentcore_search","arguments":{"query":"<operation_name>"}}}' \
+  -d '{"jsonrpc":"2.0","method":"tools/call","id":"1","params":{"name":"x_amz_bedrock_agentcore_search","arguments":{"query":"<from step 0>"}}}' \
   {gateway_endpoint}/mcp
 ```
 
-Step 2 — BUILD: extract `inputSchema.properties.*` from the search response. Each property name becomes a key in `data`, normalized per domain skill rules (ISO currency, uppercase enums, etc.). Cache schema within session — don't re-search.
+Step 2 — BUILD: each `inputSchema.properties` key → a key in `data`. Normalize values per domain skill rules. Cache schema.
 
-Step 3 — CALL: Step 2's `data` goes into the envelope:
+Step 3 — CALL (with envelope):
 
 ```
 curl -s -H "Authorization: Bearer <access_token>" \
-  -d '{"jsonrpc":"2.0","method":"tools/call","id":"1","params":{"name":"{prefix}___{operation_name}","arguments":{"data":{<from step 2>},"context":{"authServiceToken":"<id_token>"},"clientInterface":"DESKTOP","fields":[]}}}' \
+  -d '{"jsonrpc":"2.0","method":"tools/call","id":"1","params":{"name":"{prefix}___<from step 0>","arguments":{"data":{<from step 2>},"context":{"authServiceToken":"<id_token>"},"clientInterface":"DESKTOP","fields":[]}}}' \
   {gateway_endpoint}/mcp
 ```
-
-- Step 1 has **no data/context/fields envelope** — search is a native gateway tool, only fprtool tools need the envelope.
-- `access_token` and `id_token` come from `~/.fpr/auth.json` (daemon keeps fresh).
 
 Full protocol → [`gateway-protocol.md`](references/gateway-protocol.md).
 
