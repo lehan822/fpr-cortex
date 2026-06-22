@@ -12,7 +12,7 @@ category: shared
 
 ## Auth
 
-Call MCP tools directly. On 401:
+Call MCP tools directly. On 401 or 403:
 
 ```bash
 python3 ~/.fpr/fpr-auth.py <env>          # refresh token (opens browser if needed)
@@ -20,8 +20,18 @@ python3 ~/.fpr/fpr-auth.py daemon <env>   # start background daemon
 # then retry the original call
 ```
 
+**Two different tokens — never mix them up:**
+
+```bash
+ACCESS_TOKEN=$(python3 -c "import json; print(json.load(open('$HOME/.fpr/auth.json'))['environments']['prod']['access_token'])")
+ID_TOKEN=$(python3 -c "import json; print(json.load(open('$HOME/.fpr/auth.json'))['environments']['prod']['id_token'])")
+# ACCESS_TOKEN → Authorization: Bearer header
+# ID_TOKEN     → arguments.context.authServiceToken in request body
+# fpr-auth.py token prints ACCESS_TOKEN only — do NOT use it for authServiceToken
+```
+
 If `~/.fpr/fpr-auth.py` doesn't exist: extract it from [`auth.md`](references/auth.md) → write to `~/.fpr/fpr-auth.py`.
-Never switch env (prod→stg) to work around a 401 — fix the token, retry same env.
+Never switch env (prod→stg) to work around a 401/403 — fix the token, retry same env.
 
 **AgentCore:** skip this — IAM handles it.
 
