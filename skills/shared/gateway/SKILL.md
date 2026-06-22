@@ -27,13 +27,13 @@ curl -s -H "Authorization: Bearer <access_token>" \
   {gateway_endpoint}/mcp
 ```
 
-Step 2 — BUILD from the returned `inputSchema`. Cache within session.
+Step 2 — BUILD: extract `inputSchema.properties.*` from the search response. Each property name becomes a key in `data`, normalized per domain skill rules (ISO currency, uppercase enums, etc.). Cache schema within session — don't re-search.
 
-Step 3 — CALL (with envelope):
+Step 3 — CALL: Step 2's `data` goes into the envelope:
 
 ```
 curl -s -H "Authorization: Bearer <access_token>" \
-  -d '{"jsonrpc":"2.0","method":"tools/call","id":"1","params":{"name":"{prefix}___{operation_name}","arguments":{"data":{...},"context":{"authServiceToken":"<id_token>"},"clientInterface":"DESKTOP","fields":[]}}}' \
+  -d '{"jsonrpc":"2.0","method":"tools/call","id":"1","params":{"name":"{prefix}___{operation_name}","arguments":{"data":{<from step 2>},"context":{"authServiceToken":"<id_token>"},"clientInterface":"DESKTOP","fields":[]}}}' \
   {gateway_endpoint}/mcp
 ```
 
