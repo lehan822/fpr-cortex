@@ -56,10 +56,8 @@ Then follow the recovery table below.
 
 **Recovery:**
 ```
-python3 ~/.fpr/fpr-auth.py refresh <env>    # silent Cognito refresh
-→ success → retry original MCP call
-→ failure → python3 ~/.fpr/fpr-auth.py login <env>   # PKCE browser login
-           → retry original MCP call
+python3 ~/.fpr/fpr-auth.py <env>    # daemon keeps fresh; this returns instantly
+→ retry original MCP call
 ```
 
 ### 400 — Parameter Validation Error

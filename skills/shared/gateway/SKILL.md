@@ -9,13 +9,11 @@ category: shared
 
 > All FPR tools share the same auth, tool-name prefix, and envelope. This file covers what's common. Domain skills cover tool-specific knowledge.
 
-## Before any call
+## Auth
 
-**Local agent:** start the auth daemon once. It keeps tokens fresh forever — agent never worries about auth again.
+Call MCP tools directly. On 401, the agent handles it: run auth (may open browser) → start daemon → retry. Daemon keeps token fresh — no more 401s.
 
-Bootstrap and token model → [`auth.md`](references/auth.md) (includes the full Python script to install).
-
-**AgentCore agents:** skip this — runtime handles auth via IAM.
+**AgentCore:** skip this — IAM handles it. Bootstrap → [`auth.md`](references/auth.md).
 
 ## Call Flow — schema-first
 
