@@ -71,7 +71,7 @@ curl -s -X POST "{gateway_endpoint}/mcp" \
 ## Example — Query GA Commission Rules (staging)
 
 ```bash
-curl -s -X POST "https://fpr-cortex-sg-ruypqkcdov.gateway.bedrock-agentcore.ap-southeast-1.amazonaws.com/mcp" \
+curl -s -X POST "https://fpr-lehan-jwt-gw-z6tsij9aib.gateway.bedrock-agentcore.ap-southeast-1.amazonaws.com/mcp" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -H "Authorization: Bearer $(cat ~/.fpr/auth.json | node -e \"process.stdin.on('data',d=>console.log(JSON.parse(d).access_token))\")" \

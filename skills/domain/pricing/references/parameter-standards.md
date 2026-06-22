@@ -1,27 +1,40 @@
-# Parameter Standards
+# Pricing Parameter Standards
 
-## Common Parameters
+Normalize user input to these canonical forms before calling any tool.
 
-| Parameter | Format | Examples | Notes |
-|-----------|--------|----------|-------|
-| profileGroup | Enum | TRAVELOKA, AFFILIATE, CORPORATE | ⚠️ NOT a country code |
-| originCountry | ISO 3166-1 alpha-2 | TH, ID, VN | Use for country filtering |
-| airlineId | IATA 2-letter | GA, QZ, VJ, TG | |
-| currency | ISO 4217 | IDR, THB, VND, MYR, SGD, AUD | |
-| fulfillmentId | Internal ID | (varies) | |
+## Normalization table
 
-### Important Distinctions
+| Parameter | Accepts | Normalized To |
+|-----------|---------|---------------|
+| `profileGroup` | "traveloka", "affiliate", "corporate" | `"TRAVELOKA"` / `"AFFILIATE"` / `"CORPORATE"` |
+| `profileType` | "default" | `"DEFAULT"` |
+| `productType` | "standalone", "connecting" | `"STANDALONE"` / `"CONNECTING"` |
+| `profileName` | "default", country code like "SG" | `"DEFAULT"` or `"SG"` etc. |
+| `currency` | "rupiah", "idr", "sgd" | `"IDR"` / `"SGD"` (ISO 4217 uppercase) |
+| `originCountry` | "Thailand", "TH", "th" | `"TH"` |
+| `airlineId` | "Garuda", "garuda" | `"GA"` (IATA 2-letter, uppercase) |
+| `fulfillmentId` | "amadeus", "Amadeus" | `"amadeus"` (lowercase channel id) |
 
-- **profileGroup** is an enum (`TRAVELOKA` / `AFFILIATE` / `CORPORATE`), NOT a country code
-- Use **originCountry** for country-based filtering (e.g., "TH" for Thailand rules)
-- These two fields are commonly confused — always double-check
+## Key distinctions (common mistakes)
 
-## Incomplete Parameters Strategy
+- **`profileGroup` is an enum, NOT a country code.** Only `TRAVELOKA` / `AFFILIATE` / `CORPORATE`.
+- **`profileGroup` vs `originCountry`:** profileGroup is the business segment; originCountry is the market.
+  They are different fields — never swap them.
+- **`profileName` vs `originCountry`:** profileName may *contain* a country code (e.g. `"SG"`) but is a
+  separate concept from the `originCountry` filter. For the 5-field S3-key tools, only `profileName`
+  participates in the key.
+- **`currency` must be ISO 4217 uppercase** — `"THB"`, not `"thb"` or `"Baht"`.
+- **`airlineId` must be IATA 2-letter uppercase** — `"GA"`, not `"Garuda"`.
 
-When a user's request doesn't include all required parameters:
+## Tools that take only `profileGroup`
+These do NOT use the 5-field S3 key — just pass `profileGroup`:
+`load_price_prediction_rules`, `load_price_cut_modifier_rules`, `load_trx_fee_rules`, `load_pricing_profiles`.
 
-1. **Use sensible defaults** where safe:
-   - `profileGroup` → `TRAVELOKA` (most common)
-   - Environment → `staging` (safer for exploration)
-2. **State your assumption** to the user: "Using profileGroup=TRAVELOKA, staging env"
-3. **Ask the user** if a parameter has no safe default and multiple valid options
+## Reference codes
+
+**Airlines:** GA=Garuda, JT=Lion Air, QZ=AirAsia ID, ID=Batik Air, SQ=Singapore Airlines,
+TG=Thai Airways, VJ=VietJet, QG=Citilink, TR=Scoot, AK=AirAsia
+
+**Profile Groups:** TRAVELOKA (default B2C), AFFILIATE (B2B partners), CORPORATE (corporate accounts)
+
+**Countries:** ID=Indonesia, TH=Thailand, VN=Vietnam, MY=Malaysia, SG=Singapore, PH=Philippines, AU=Australia

@@ -7,262 +7,106 @@ category: shared
 
 # fpr-shared — MCP Gateway Calling Convention
 
+> Shared layer for ALL FPR tools: how to authenticate, build the request envelope, and call the Gateway.
+> It does NOT know about specific tools or their parameters — that's each domain skill's job.
+
+```bash
+# Every local call: auth gate → then tools/call
+python3 ~/.fpr/fpr-auth.py refresh <env>
+curl -s -X POST "{gateway_endpoint}/mcp" \
+  -H "Authorization: Bearer {access_token}" -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"tools/call","id":"1",
+       "params":{"name":"{tool_prefix}___{operation_name}",
+                 "arguments":{"data":{...},"context":{"authServiceToken":"{id_token}"},"clientInterface":"DESKTOP","fields":[]}}}'
+```
+
+## Prerequisites — Read Before Executing
+
+**CRITICAL — read the file for your situation. None optional:**
+
+1. **Any local MCP call** → MUST read [`auth.md`](references/auth.md) (auth gate, token model, bootstrap)
+2. **Picking env / endpoints / prefixes** → MUST read [`environment.md`](references/environment.md)
+3. **Building the JSON-RPC request, pagination, response shape** → MUST read [`gateway-protocol.md`](references/gateway-protocol.md)
+4. **Any error after a call** → MUST read [`error-classification.md`](references/error-classification.md)
+5. **AgentCore deploy/infra** → read [`agentcore-infra-setup.md`](../../../docs/agentcore-infra-setup.md)
+
 ## Agent Type Detection
 
 | Signal | Agent Type | Auth |
 |--------|-----------|------|
-| Running in Copilot CLI / Cursor / Claude Code | **Local** | PKCE tokens from `~/.fpr/auth.json` |
-| Running on AgentCore (ECS/Lambda), has IAM role | **AgentCore** | M2M token auto-managed by runtime |
+| Copilot CLI / Cursor / Claude Code | **Local** | PKCE tokens via `fpr-auth.py` → [`auth.md`](references/auth.md) |
+| AgentCore (ECS/Lambda), has IAM role | **AgentCore** | M2M token auto-managed by runtime |
 
-## Quick Reference
+## Call Flow — schema-first (always)
 
-| What | Where |
-|------|-------|
-| PKCE login flow + script (local only) | `references/pkce-login.md` |
-| Gateway protocol (MCP JSON-RPC) | `references/gateway-protocol.md` |
-| AgentCore infra setup guide | `references/agentcore-infra-setup.md` |
-
-## Tool Invocation
-
-All tools are called via MCP Gateway. Tool name format:
+**Every tool call follows the same 3 steps. No exceptions, no "direct call" shortcut.**
 
 ```
-{target_prefix}___{operation_name}
+1. SEARCH schema   → x_amz_bedrock_agentcore_search(operation_name)  → get inputSchema
+2. BUILD request   → fill arguments.data{} from the schema; wrap in envelope
+3. CALL            → auth gate, then tools/call with {tool_prefix}___{operation_name}
 ```
 
-| Environment | Target Prefix | Example |
-|-------------|--------------|---------|
-| stg (all agents) | `fprtool-fpr` | `fprtool-fpr___load_autopilot_rules` |
-| prod | `fprtool-prod` | `fprtool-prod___load_autopilot_rules` |
+- **Step 1 is mandatory.** Searching by exact tool name has ~100% hit rate and returns the authoritative `inputSchema`. The schema — not any skill file — is the source of truth for parameters.
+- **Never call `tools/list`** — it dumps all 60+ tool schemas (~5000 tokens). Always search by name (~900 tokens, top-3).
+- **Cache within a session** — once you've searched an operation's schema, reuse it; don't re-search.
 
-> The `operation_name` is the same across environments. Only the prefix differs based on which Gateway target you connect to.
-
-## Request Format (Local MCP)
-
-- **Params:** wrapped in `data:{}` envelope with `context.authServiceToken`, `clientInterface`, `fields`
-- **Auth:** dual token (id_token + access_token from PKCE login)
-
-## Authentication
-
-## Auth Gate — MUST run before any local MCP call
-
-For **every local agent call** (Copilot CLI / Cursor / Claude Code), treat auth as a blocking precondition:
-
-1. Determine target environment (`prod` by default, `stg` only if explicitly requested)
-2. Read `~/.fpr/auth.json` for that environment
-3. If token is valid → continue
-4. If token is expired → try refresh immediately
-5. If refresh fails → start PKCE login flow immediately
-6. Only after a valid token exists may you call MCP / shell / curl / Python
-
-**Do not** probe the gateway first and only check auth after a 401/403.  
-**Do not** let domain skills call MCP directly before this check passes.  
-**Do not** stop at "auth.json missing" or "token expired" as a blocker message — continue into refresh / PKCE flow.
-
-> For local usage, missing or expired auth is **not** a terminal blocker. The agent should resolve it first, then continue the original task.
-
-### Local Agent (Copilot CLI / Cursor / Claude Code)
-
-Every request uses **two tokens**:
-
-| Token | Owner | Stored In |
-|-------|--------|--------|
-| User id_token | **User** | `~/.fpr/auth.json` → `body.context.authServiceToken` |
-| access_token | **User** | `~/.fpr/auth.json` → `Authorization` header |
-
-### AgentCore Agent (ECS / Lambda)
-
-| Token | Owner | Source |
-|-------|--------|--------|
-| User id_token | **End user** | Passed in from caller (Lark bot / Web) → `body.context.authServiceToken` |
-| M2M token | **AgentCore runtime** | Auto-managed by IAM role, transparent to agent code |
-
-**AgentCore agents do NOT run PKCE login.** The runtime handles Gateway auth via IAM/SigV4. Agent code only needs to:
-1. Receive user's `id_token` from the upstream caller
-2. Pass it through in `context.authServiceToken`
-3. Call the gateway endpoint (from env var `GATEWAY_ENDPOINT`)
-
-### Token Check Order (Local Agent Only)
-
-1. `~/.fpr/auth.json` does not exist → run PKCE login (see `references/pkce-login.md`)
-2. `expires_at` > now → use tokens directly
-3. `expires_at` < now + `refresh_token` exists → **auto-refresh via Cognito API** (silent, no browser needed — see `references/pkce-login.md`)
-4. refresh fails → run PKCE login again
-
-> **IMPORTANT:** Always attempt auto-refresh before asking the user to re-login. Refresh is silent and takes <2 seconds. Only fall back to PKCE login if refresh_token itself is expired (~30 days).
-
-### M2M Token (AgentCore Only)
-
-- Preconfigured by AgentCore runtime IAM role
-- Automatically obtained and refreshed; transparent to agent code
-- **Never ask the user for client_id or client_secret**
-- Agent code simply calls the gateway — runtime handles auth headers
-
-## Environment Configuration
-
-| Environment | Gateway Endpoint | Backend | PKCE Client ID (local) |
-|-------------|-----------------|---------|-----------|
-| stg (sstg) | `https://fpr-cortex-sg-ruypqkcdov.gateway.bedrock-agentcore.ap-southeast-1.amazonaws.com` | `tool-api.fpr.staging-traveloka.com` | `38taf824vlbfba3lta3eitcuhi` |
-| prod | `https://fpr-mcp-gateway-ghntgmtwjb.gateway.bedrock-agentcore.ap-southeast-1.amazonaws.com` | `tool-api.fpr.traveloka.com` | `i01t804ups4dme8p1kfoat8jb` |
-
-> fstg (flight staging, dev) is NOT connected to Gateway — use direct curl for dev testing.
-
-### AgentCore Agent Environment Resolution
-
-Agent determines environment from deployment config:
-
-```python
-# Agent code reads from env var (set at deploy time)
-GATEWAY_ENDPOINT = os.environ["GATEWAY_ENDPOINT"]
-# stg deploy → stg gateway URL
-# prod deploy → prod gateway URL
-```
-
-No login, no token management — just call the endpoint.
-
-## Tool Selection & Schema Loading
-
-### Flow
-
-1. **Skill selects tool** — Read domain skill routing guide → determine which operation to call
-2. **Search loads schema** — Call `x_amz_bedrock_agentcore_search` with the **tool name** → get inputSchema (field names, types, enums)
-3. **Fill parameters** — Combine skill knowledge (gotchas, normalization) + schema (exact fields) → build request
-4. **Call tool** via `tools/call`
-
-### Role Split
+### Role split
 
 | Component | Responsibility |
-|-----------|---------------|
-| **Skill routing guide** | Tool selection: user intent → operation name |
-| **Skill param notes** | Domain knowledge: gotchas, enums, normalization, workflows |
-| **Semantic Search** | Schema loader: fetch inputSchema for the selected tool |
+|-----------|----------------|
+| **Domain skill routing** | User intent → which `operation_name` |
+| **Domain skill notes** | Business knowledge schema can't give: enums, normalization, gotchas |
+| **Semantic search (this layer)** | Schema loader: authoritative `inputSchema` for the selected tool |
+| **fpr-shared (this file)** | Auth, envelope, tool-name prefix, error handling — common to all tools |
 
-### Why This Order
-
-- Skill routing is **deterministic** (51 tools, covers 100% of gateway)
-- Search is **probabilistic** (returns top-N, may miss niche tools)
-- Search is reliable as a **schema loader** when queried by exact tool name (100% hit rate)
-- For complex operations (update/create with nested fields), schema is essential — skill cannot document all fields
-
-### Search Request (Schema Loading)
-
-After skill selects the tool, load its schema:
+### Search request
 
 ```json
-{
-  "jsonrpc": "2.0",
-  "method": "tools/call",
-  "id": "1",
-  "params": {
-    "name": "x_amz_bedrock_agentcore_search",
-    "arguments": {"query": "<selected_tool_name>"}
-  }
-}
+{"jsonrpc":"2.0","method":"tools/call","id":"1",
+ "params":{"name":"x_amz_bedrock_agentcore_search","arguments":{"query":"<operation_name>"}}}
 ```
 
-From the response, find the matching tool in the top 3 results and use its `inputSchema` to fill parameters.
+Use the matching top-3 result's `inputSchema` to fill parameters. Full protocol → [`gateway-protocol.md`](references/gateway-protocol.md).
 
-### When to Skip Search
+## Request Envelope
 
-For **simple GET operations** where the skill already documents all required fields (e.g. `load_autopilot_rules` → `originCountry, profileGroup, airlineId`), you may call directly without search. Use search when:
-- The operation has many/nested fields (update, create operations)
-- You're unsure about exact field names or structure
-- The first call failed due to missing/wrong parameters (fallback)
+Tool name: `{tool_prefix}___{operation_name}` (prefix per env → [`environment.md`](references/environment.md)).
 
-## Gateway — How to Call Tools
+Arguments are wrapped:
 
-⚠️ Tool names use target prefix: `fprtool-fpr___<operationId>`
+| Field | Value |
+|-------|-------|
+| `data` | the operation's params (filled from schema) |
+| `context.authServiceToken` | user id_token (local: from `auth.json`; AgentCore: passed from caller) |
+| `clientInterface` | `"DESKTOP"` |
+| `fields` | `[]` unless schema says otherwise |
 
-```bash
-curl -s -X POST "{gateway_endpoint}/mcp" \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer {access_token}" \
-  -d '{
-    "jsonrpc": "2.0",
-    "method": "tools/call",
-    "id": "1",
-    "params": {
-      "name": "fprtool-fpr___<operationId>",
-      "arguments": {
-        "data": { ... },
-        "context": { "authServiceToken": "<id_token>" },
-        "clientInterface": "DESKTOP",
-        "fields": []
-      }
-    }
-  }'
-```
+## Auth Gate
 
-For full protocol details (pagination, tool discovery, response format), see `references/gateway-protocol.md`.
-
-## Environment Routing
-
-**Default: prod.** Unless user explicitly says "staging" / "stg" / "测试环境", always use prod gateway.
-
-### Auth File: `~/.fpr/auth.json`
-
-Single file stores tokens for ALL environments:
-
-```json
-{
-  "active": "prod",
-  "environments": {
-    "prod": {
-      "id_token": "...",
-      "access_token": "...",
-      "refresh_token": "...",
-      "expires_at": 1781264126688,
-      "gateway": "https://fpr-mcp-gateway-ghntgmtwjb.gateway.bedrock-agentcore.ap-southeast-1.amazonaws.com",
-      "tool_prefix": "fprtool-prod"
-    },
-    "stg": {
-      "id_token": "...",
-      "access_token": "...",
-      "refresh_token": "...",
-      "expires_at": 1781255897391,
-      "gateway": "https://fpr-cortex-sg-ruypqkcdov.gateway.bedrock-agentcore.ap-southeast-1.amazonaws.com",
-      "tool_prefix": "fprtool-fpr"
-    }
-  }
-}
-```
-
-### Token Resolution
-
-1. Determine env from user intent (default: `prod`)
-2. Read `environments[env]`
-3. If `expires_at` < now → try refresh, else PKCE login for that env
-4. Use `gateway` and `tool_prefix` from selected env
-5. `active` field tracks last-used env (informational only)
-
-### Switching Environments
-
-No re-login needed if both tokens are valid. Just read from the correct env key.
-
-```bash
-# Read prod token
-node -e "const a=JSON.parse(require('fs').readFileSync(process.env.HOME+'/.fpr/auth.json'));console.log(a.environments.prod.access_token)"
-
-# Read stg token  
-node -e "const a=JSON.parse(require('fs').readFileSync(process.env.HOME+'/.fpr/auth.json'));console.log(a.environments.stg.access_token)"
-```
+Before any local call: `python3 ~/.fpr/fpr-auth.py refresh <env>` → proceed on exit 0 only.
+All commands, token model, bootstrap → [`auth.md`](references/auth.md). AgentCore skips this (runtime handles it).
 
 ## Error Handling
 
-| HTTP Code | Meaning | Agent Action |
-|-----------|---------|-------------|
-| 401 | User token expired | Run PKCE login again |
-| 403 | Insufficient permissions | Inform user: contact FPR team |
-| 404 | Operation not found | Check operation name (needs `fprtool-fpr___` prefix) |
-| 429 | Rate limited | Retry with backoff (5s, 10s, 20s) |
-| 500 | Backend error | Report error, suggest retry |
+After **every** `tools/call`, extract the real error from the response (don't pass through bare HTTP codes).
+
+| HTTP | Detect | Action | Retries |
+|------|--------|--------|---------|
+| 401 | "Unauthorized", "ExpiredToken" | `fpr-auth.py refresh` → retry | 1 |
+| 400 | "validation", "ArrayIndexOutOfBounds" | re-search schema → rebuild → retry | 1 |
+| 429 / 503 | "Rate exceeded", "temporarily" | backoff 1s→3s→9s | 3 |
+| 403 | "Forbidden" | report to user, no retry | 0 |
+| 500 | "Internal Server Error" | report to user, no retry | 0 |
+
+Retry silently for 401/400/429/503; never for 403/500. Full decision tree & where to find error text → [`error-classification.md`](references/error-classification.md).
 
 ## Version Check
 
-**Current: 2.6.0** — On first load, check:
+**Current: 2.9.0** — on first load:
 
 ```bash
 curl -sf https://raw.githubusercontent.com/lehan822/fpr-cortex/main/VERSION
 ```
 
-If remote > 2.5.0, inform user: "Run `npx skills update -g` to update."
+If remote is newer, tell the user: "Run `npx skills update -g` to update."
