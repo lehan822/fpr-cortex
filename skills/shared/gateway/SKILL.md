@@ -11,9 +11,18 @@ category: shared
 
 ## Auth
 
-Call MCP tools directly. On 401, the agent handles it: run auth (may open browser) → start daemon → retry. Daemon keeps token fresh — no more 401s.
+Call MCP tools directly. On 401:
 
-**AgentCore:** skip this — IAM handles it. Bootstrap → [`auth.md`](references/auth.md).
+```bash
+python3 ~/.fpr/fpr-auth.py <env>          # refresh token (opens browser if needed)
+python3 ~/.fpr/fpr-auth.py daemon <env>   # start background daemon
+# then retry the original call
+```
+
+If `~/.fpr/fpr-auth.py` doesn't exist: extract it from [`auth.md`](references/auth.md) → write to `~/.fpr/fpr-auth.py`.
+Never switch env (prod→stg) to work around a 401 — fix the token, retry same env.
+
+**AgentCore:** skip this — IAM handles it.
 
 ## Call Flow — schema-first
 
