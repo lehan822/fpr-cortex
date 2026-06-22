@@ -7,13 +7,12 @@
 Call MCP tools directly. On 401, the agent handles it automatically:
 
 1. `python3 ~/.fpr/fpr-auth.py <env>` — checks token, silent refresh if expired, opens browser if needed
-2. If browser login was triggered → `python3 ~/.fpr/fpr-auth.py daemon <env>` — starts background daemon
-3. Daemon keeps token fresh — no more 401s going forward
-4. Retry the original MCP call
+2. `python3 ~/.fpr/fpr-auth.py daemon <env>` — starts background daemon (refreshes token in background, no more 401s going forward)
+3. Retry the original MCP call
 
 ## Bootstrap
 
-If `~/.fpr/fpr-auth.py` doesn't exist, copy it from this skill's `references/` directory. The agent handles this automatically.
+If `~/.fpr/fpr-auth.py` doesn't exist, extract the Python script from the `## Script` section below and write it there. The agent handles this automatically.
 
 ## Commands
 

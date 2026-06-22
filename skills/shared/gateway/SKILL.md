@@ -26,7 +26,7 @@ Call MCP tools directly. On 401, the agent handles it: run auth (may open browse
 Request wraps params in: `{data:{...}, context:{authServiceToken}, clientInterface:"DESKTOP", fields:[]}`
 
 - Step 1 is mandatory. Search by name returns the authoritative inputSchema.
-- Never call `tools/list` — 60+ tools, wastes tokens.
+- Never call `tools/list` — dumps all tools, wastes tokens. Search by name instead.
 - Cache within session — don't re-search same operation.
 
 Full JSON-RPC protocol, pagination, response shape → [`gateway-protocol.md`](references/gateway-protocol.md).
@@ -46,7 +46,7 @@ Full JSON-RPC protocol, pagination, response shape → [`gateway-protocol.md`](r
 | prod | `fprtool-prod` | `https://fpr-mcp-gateway-ghntgmtwjb.gateway.bedrock-agentcore.ap-southeast-1.amazonaws.com` |
 | stg | `fprtool-fpr` | `https://fpr-cortex-sg-ruypqkcdov.gateway.bedrock-agentcore.ap-southeast-1.amazonaws.com` |
 
-`operation_name` is identical across envs. Only the prefix differs.
+`operation_name` is identical across envs. Only the prefix differs. Default prod — use stg only when user explicitly says "staging" / "stg" / "测试环境".
 
 ## Error Handling
 
