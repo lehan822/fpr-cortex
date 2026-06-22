@@ -8,7 +8,7 @@
 Before **any** MCP call, run:
 
 ```bash
-python3 ~/.fpr/fpr-auth.py refresh <env>
+python3 ~/.fpr/fpr-auth.py <env>
 ```
 
 Proceed only on exit code 0. This single command handles: valid token → silent refresh → browser login fallback.
@@ -29,12 +29,11 @@ ls ~/.fpr/fpr-auth.py 2>/dev/null || cp ~/.agents/skills/fpr-shared/scripts/fpr-
 
 | Command | Purpose |
 |---------|---------|
-| `python3 ~/.fpr/fpr-auth.py refresh <env>` | Refresh + fallback to login if needed (**use this**) |
-| `python3 ~/.fpr/fpr-auth.py check <env>` | Check if token is valid |
-| `python3 ~/.fpr/fpr-auth.py login <env>` | Force PKCE browser login |
-| `python3 ~/.fpr/fpr-auth.py token <env>` | Print access_token for scripts |
+| `python3 ~/.fpr/fpr-auth.py <env>` | Refresh + fallback to login if needed (**use this**) |
+| `python3 ~/.fpr/fpr-auth.py daemon <env>` | Start background auto-refresh daemon |
+| `python3 ~/.fpr/fpr-auth.py daemon-stop` | Stop the daemon |
 
-Internally `refresh` does: valid → exit 0 / expired → Cognito silent refresh → exit 0 / refresh fails → browser PKCE login → exit 0 / all fail → exit 2 (ask user to retry).
+Internally the default command does: valid → exit 0 / expired → Cognito silent refresh → exit 0 / refresh fails → browser PKCE login → exit 0 / all fail → exit 2.
 
 ## Token model
 

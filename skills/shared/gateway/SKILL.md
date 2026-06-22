@@ -18,7 +18,7 @@ category: shared
 cp ~/.agents/skills/fpr-shared/scripts/fpr-auth.py ~/.fpr/
 
 # Every call
-python3 ~/.fpr/fpr-auth.py refresh <env>
+python3 ~/.fpr/fpr-auth.py <env>
 ```
 
 Proceed only on exit 0. Never probe gateway first, never read auth.json manually, never ask the user about auth.
@@ -63,7 +63,7 @@ Full JSON-RPC protocol, pagination, response shape → [`gateway-protocol.md`](r
 
 | Code | Action | Retry |
 |------|--------|-------|
-| 401 | `fpr-auth.py refresh` → retry | 1 |
+| 401 | re-auth → retry | 1 |
 | 400 | re-search schema → retry | 1 |
 | 429 / 503 | backoff 1s → 3s → 9s | 3 |
 | 403 / 500 | report to user | 0 |
