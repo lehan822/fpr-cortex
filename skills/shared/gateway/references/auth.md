@@ -29,6 +29,12 @@ If `~/.fpr/fpr-auth.py` doesn't exist, extract the Python script from the `## Sc
 | id_token | `context.authServiceToken` |
 | access_token | `Authorization: Bearer` |
 
+```bash
+# Read both from auth.json (do NOT use fpr-auth.py token — that only prints access_token)
+ACCESS_TOKEN=$(python3 -c "import json; print(json.load(open('$HOME/.fpr/auth.json'))['environments']['<env>']['access_token'])")
+ID_TOKEN=$(python3 -c "import json; print(json.load(open('$HOME/.fpr/auth.json'))['environments']['<env>']['id_token'])")
+```
+
 ## Script
 
 The agent writes this to `~/.fpr/fpr-auth.py` on first use:
