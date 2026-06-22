@@ -17,17 +17,28 @@ Call MCP tools directly. On 401, the agent handles it: run auth (may open browse
 
 ## Call Flow — schema-first
 
-**All calls are HTTP POST to `{gateway_endpoint}/mcp` using JSON-RPC.** Use bash/curl — do NOT register this as an MCP server (50+ tools would blow context).
+**All calls are HTTP POST to `{gateway_endpoint}/mcp` using JSON-RPC.** Use bash/curl — do NOT register as MCP server.
+
+Step 1 — SEARCH (bare args, no envelope):
 
 ```
-1. SEARCH  → POST {body: {method:"tools/call", params:{name:"x_amz_bedrock_agentcore_search", arguments:{query:operation_name}}}} → get inputSchema
-2. BUILD   → fill data{} from schema
-3. CALL    → POST {body: {method:"tools/call", params:{name:"{prefix}___{operation_name}", arguments:{data:{...}, context:{authServiceToken}, clientInterface:"DESKTOP", fields:[]}}}}
+curl -s -H "Authorization: Bearer <access_token>" \
+  -d '{"jsonrpc":"2.0","method":"tools/call","id":"1","params":{"name":"x_amz_bedrock_agentcore_search","arguments":{"query":"<operation_name>"}}}' \
+  {gateway_endpoint}/mcp
 ```
 
-- Step 1 is mandatory — schema is the authoritative source for parameters.
-- Cache within session — don't re-search same operation.
-- Never call `tools/list` — dumps all tools, wastes tokens.
+Step 2 — BUILD from the returned `inputSchema`. Cache within session.
+
+Step 3 — CALL (with envelope):
+
+```
+curl -s -H "Authorization: Bearer <access_token>" \
+  -d '{"jsonrpc":"2.0","method":"tools/call","id":"1","params":{"name":"{prefix}___{operation_name}","arguments":{"data":{...},"context":{"authServiceToken":"<id_token>"},"clientInterface":"DESKTOP","fields":[]}}}' \
+  {gateway_endpoint}/mcp
+```
+
+- Step 1 has **no data/context/fields envelope** — search is a native gateway tool, only fprtool tools need the envelope.
+- `access_token` and `id_token` come from `~/.fpr/auth.json` (daemon keeps fresh).
 
 Full protocol → [`gateway-protocol.md`](references/gateway-protocol.md).
 
