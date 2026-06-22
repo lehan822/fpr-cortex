@@ -364,9 +364,9 @@ def generate_schemas(config, backend_path, full_spec):
                 'description': f'Auto-generated from exposed-ops.yaml — {domain} domain.'
             },
             'servers': [
-                {'url': 'https://tool-api.fpr.traveloka.com', 'description': 'Production'},
+                {'url': 'https://api-tool.fpr.traveloka.com', 'description': 'Production'},
                 {'url': 'https://tool-flight-api.fpr.staging-traveloka.com', 'description': 'Flight Staging'},
-                {'url': 'https://tool-api.fpr.staging-traveloka.com', 'description': 'Shared Staging'}
+                {'url': 'https://api-tool.fpr.traveloka.com', 'description': 'Shared Staging'}
             ],
             'paths': {},
             'components': {'schemas': {}}
