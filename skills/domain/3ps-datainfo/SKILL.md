@@ -25,6 +25,7 @@ tool: decrypt_flight_id                    data: {flightId: "xxx"}
 **CRITICAL — before the matching operation, you MUST Read the file(s) below. None are optional:**
 
 1. **Local MCP only** → read **fpr-shared** first — auth, tool name prefix, request envelope (**all operations**)
+2. **Unsure about parameters** → MUST read [`parameter-standards.md`](references/parameter-standards.md) (airlineId IATA format, destinationId type)
 
 **Executing an operation without reading its required reference will cause parameter errors.**
 
@@ -67,9 +68,9 @@ tool: decrypt_flight_id                    data: {flightId: "xxx"}
 | "decrypt flight ID", "decode flight ID" | `decrypt_flight_id` |
 | "multi-country", "batch country ops" | `multi_country_crud` |
 
-## Gotchas (top traps)
+## Gotchas (top traps — full rules in references)
 
-- **Parameter normalization** — airlineId must be IATA 2-letter uppercase (`"GA"` not `"garuda"`)
+- **Parameter normalization** — airlineId must be IATA 2-letter uppercase (`"GA"` not `"garuda"`); see [parameter-standards.md](references/parameter-standards.md)
 - **Pronto tags** — destination tags are used for marketing campaign and route segmentation
 - **Flight ID decryption** — used for debugging and tracing flight identifiers across systems
 

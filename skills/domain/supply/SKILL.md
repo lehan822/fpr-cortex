@@ -27,7 +27,7 @@ tool: simulate_search               data: {origin: "CGK", destination: "DPS", de
 1. **Local MCP only** → read **fpr-shared** first — auth, tool name prefix, request envelope (**all operations**)
 2. **Running fare check** → MUST read [`fare-check-workflow.md`](references/fare-check-workflow.md) (async 2-step operation)
 3. **Querying provider config** → MUST read [`provider-operations.md`](references/provider-operations.md)
-4. **Inventory staleness issues** → MUST read [`inventory-staleness.md`](references/inventory-staleness.md) (stale filter logic, supplyCacheTimestamp meaning)
+4. **Unsure about parameters** → MUST read [`parameter-standards.md`](references/parameter-standards.md) (airlineId IATA format, origin/destination codes)
 
 **Executing an operation without reading its required reference will cause parameter errors.**
 
@@ -84,8 +84,7 @@ tool: simulate_search               data: {origin: "CGK", destination: "DPS", de
 ## Gotchas (top traps — full rules in references)
 
 - **Fare check is async** — must call `check_fare` first, then poll `get_fare_check_result`; see [fare-check-workflow.md](references/fare-check-workflow.md)
-- **Inventory staleness filter** — fares older than a threshold may be filtered out; see [inventory-staleness.md](references/inventory-staleness.md)
-- **Parameter normalization** — airlineId must be IATA 2-letter uppercase (`"GA"` not `"garuda"`); see table below
+- **Parameter normalization** — airlineId must be IATA 2-letter uppercase (`"GA"` not `"garuda"`); see [parameter-standards.md](references/parameter-standards.md)
 
 ## Fare Check Workflow
 
@@ -95,18 +94,10 @@ Fare check is a 2-step async operation:
 
 See [fare-check-workflow.md](references/fare-check-workflow.md) for full details.
 
-## Parameter Normalization
-
-| Parameter | Accepts | Normalized To |
-|-----------|---------|--------------|
-| airlineId | "Garuda", "garuda" | `"GA"` |
-| origin/destination | "Jakarta", "CGK", "cgk" | `"CGK"` (IATA 3-letter) |
-| departureDate | "tomorrow", "next Monday" | `"YYYY-MM-DD"` |
-
 ## Disambiguation
 
 - "budget", "commission", "markup" → **fpr-pricing** (not supply)
 - "booking detail", "PNR lookup" → **fpr-demand** (not supply)
 - "feature flag" → **fpr-sysinteg** (not supply)
-- "price inconsistency investigation" → start with **fpr-demand** playbook, then come here for stale filter details
+- "price inconsistency investigation" → **fpr-demand** (booking logs, fare comparison)
 - "airline route history" (reference data) → **fpr-3ps-datainfo**; (provider config) → **fpr-supply**

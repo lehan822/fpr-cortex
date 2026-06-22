@@ -24,6 +24,7 @@ tool: get_activity_log            data: {entityType: "PRICING_RULE", startDate: 
 **CRITICAL — before the matching operation, you MUST Read the file(s) below. None are optional:**
 
 1. **Local MCP only** → read **fpr-shared** first — auth, tool name prefix, request envelope (**all operations**)
+2. **Unsure about parameters** → MUST read [`parameter-standards.md`](references/parameter-standards.md) (appName mapping, entityType enum)
 
 **Executing an operation without reading its required reference will cause parameter errors.**
 
@@ -54,9 +55,9 @@ tool: get_activity_log            data: {entityType: "PRICING_RULE", startDate: 
 | "country list", "supported countries" | `get_countries` |
 | "convert currency", "IDR to VND" | `convert_currency` |
 
-## Gotchas (top traps)
+## Gotchas (top traps — full rules in references)
 
-- **appName mapping** — use `fprbopi` (not `fpr-bopi`, not `FlightBookingPricing`)
+- **appName mapping** — use `fprbopi` (not `fpr-bopi`, not `FlightBookingPricing`); see [parameter-standards.md](references/parameter-standards.md)
 - **Flag state interpretation** — `true` / `false` / percentage rollout
 - **Activity log entityType** — must be one of `PRICING_RULE`, `FEATURE_FLAG`, `CONDITION_GROUP`, `BUDGET`, `PROVIDER`
 
