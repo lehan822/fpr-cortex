@@ -32,11 +32,16 @@ DEFAULT_SCHEMAS = os.path.join(ROOT, 'infra', 'schemas')
 CONFIG_PATH = os.path.join(ROOT, 'infra', 'config', 'exposed-ops.yaml')
 
 TYPE_MAP = {
-    'String': 'string', 'Integer': 'integer', 'int': 'integer', 'long': 'integer',
+    'String': 'string', 'Integer': 'integer', 'Long': 'integer', 'int': 'integer', 'long': 'integer',
     'boolean': 'boolean', 'Boolean': 'boolean', 'Double': 'number', 'double': 'number',
     'Float': 'number', 'BigDecimal': 'number', 'LocalDate': 'string', 'LocalDateTime': 'string',
     'Instant': 'string', 'Date': 'string', 'ZonedDateTime': 'string',
 }
+
+# Types that suggest a complex/nested object (not a primitive)
+PRIMITIVE_TYPES = {'String', 'Integer', 'Long', 'int', 'long', 'boolean', 'Boolean',
+    'Double', 'double', 'Float', 'BigDecimal', 'LocalDate', 'LocalDateTime',
+    'Instant', 'Date', 'ZonedDateTime'}
 
 DTO_FIELD_RE = re.compile(
     r'(@NotNullable|@Nullable)\s*\n'
@@ -117,10 +122,14 @@ def extract_dto_fields(dto_content):
 
         list_match = re.match(r'List<(.+)>', java_type)
         if list_match:
-            inner = TYPE_MAP.get(list_match.group(1), 'string')
-            schema = {'type': 'array', 'items': {'type': inner}}
+            inner = list_match.group(1)
+            if inner in PRIMITIVE_TYPES:
+                inner_schema = {'type': TYPE_MAP.get(inner, 'string')}
+            else:
+                inner_schema = {'type': 'object'}
+            schema = {'type': 'array', 'items': inner_schema}
         else:
-            schema = {'type': TYPE_MAP.get(java_type, 'string')}
+            schema = {'type': TYPE_MAP.get(java_type, 'object' if java_type not in PRIMITIVE_TYPES else 'string')}
 
         fields.append({'name': field_name, 'schema': schema, 'required': required})
     return fields

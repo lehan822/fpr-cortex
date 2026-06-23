@@ -464,10 +464,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "action": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "database": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "collectionName": {
                         "type": "string"
@@ -482,7 +482,7 @@
                         "type": "string"
                       },
                       "valueUpdate": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": [
@@ -548,7 +548,14 @@
               "schema": {
                 "type": "object",
                 "description": "TODO: scan backend for schema",
-                "required": []
+                "required": [],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                  }
+                }
               }
             }
           }
@@ -722,10 +729,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "filter": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": []
@@ -795,10 +802,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "filter": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": []
@@ -868,10 +875,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "filter": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": []

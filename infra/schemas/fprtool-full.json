@@ -501,7 +501,7 @@
                     "description": "Request parameters",
                     "properties": {
                       "featureFlag": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": [
@@ -656,10 +656,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "action": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "database": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "collectionName": {
                         "type": "string"
@@ -674,7 +674,7 @@
                         "type": "string"
                       },
                       "valueUpdate": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": [
@@ -2889,7 +2889,7 @@
                         "type": "string"
                       },
                       "departureDate": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": []
@@ -2962,7 +2962,7 @@
                         "type": "string"
                       },
                       "searchPeriod": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": [
@@ -3035,7 +3035,7 @@
                     "description": "Request parameters",
                     "properties": {
                       "bookingId": {
-                        "type": "string"
+                        "type": "integer"
                       }
                     },
                     "required": [
@@ -3107,7 +3107,7 @@
                     "description": "Request parameters",
                     "properties": {
                       "bookingId": {
-                        "type": "string"
+                        "type": "integer"
                       }
                     },
                     "required": [
@@ -3179,7 +3179,7 @@
                     "description": "Request parameters",
                     "properties": {
                       "date": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "path": {
                         "type": "string"
@@ -3762,6 +3762,122 @@
         }
       }
     },
+    "/api/supply-search-tool/search-regular-fare": {
+      "post": {
+        "operationId": "search_regular_fare",
+        "summary": "Search regular fares",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "tripType": {
+                        "type": "object"
+                      },
+                      "journeys": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        }
+                      },
+                      "numberOfSeats": {
+                        "type": "object"
+                      },
+                      "seatClass": {
+                        "type": "object"
+                      },
+                      "fareType": {
+                        "type": "object"
+                      },
+                      "searchId": {
+                        "type": "string"
+                      },
+                      "agentId": {
+                        "type": "string"
+                      },
+                      "locale": {
+                        "type": "string"
+                      },
+                      "shouldDoPolling": {
+                        "type": "boolean"
+                      },
+                      "shouldTriggerSignal": {
+                        "type": "boolean"
+                      },
+                      "showDebugInfo": {
+                        "type": "boolean"
+                      },
+                      "excludeStale": {
+                        "type": "boolean"
+                      },
+                      "searchSeqNo": {
+                        "type": "object"
+                      }
+                    },
+                    "required": [
+                      "tripType",
+                      "journeys",
+                      "numberOfSeats",
+                      "seatClass",
+                      "fareType",
+                      "excludeStale"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/supply-search-tool/search-special-fare": {
       "post": {
         "operationId": "search_special_fare",
@@ -3785,7 +3901,7 @@
                     "description": "Request parameters",
                     "properties": {
                       "specialFareSpec": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": [
@@ -3857,7 +3973,7 @@
                     "description": "Request parameters",
                     "properties": {
                       "upsellFareSpec": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": [
@@ -3929,10 +4045,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "revalidationJobSpec": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "revalidationSelectionSpec": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": [
@@ -4005,7 +4121,7 @@
                     "description": "Request parameters",
                     "properties": {
                       "revalidateSpecialFareSpec": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": [
@@ -4077,127 +4193,11 @@
                     "description": "Request parameters",
                     "properties": {
                       "revalidateUpsellFareSpec": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": [
                       "revalidateUpsellFareSpec"
-                    ]
-                  },
-                  "context": {
-                    "type": "object",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/supply-search-tool/search-regular-fare": {
-      "post": {
-        "operationId": "search_regular_fare",
-        "summary": "Search regular fares",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "data",
-                  "context"
-                ],
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request parameters",
-                    "properties": {
-                      "tripType": {
-                        "type": "string"
-                      },
-                      "journeys": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "numberOfSeats": {
-                        "type": "string"
-                      },
-                      "seatClass": {
-                        "type": "string"
-                      },
-                      "fareType": {
-                        "type": "string"
-                      },
-                      "searchId": {
-                        "type": "string"
-                      },
-                      "agentId": {
-                        "type": "string"
-                      },
-                      "locale": {
-                        "type": "string"
-                      },
-                      "shouldDoPolling": {
-                        "type": "boolean"
-                      },
-                      "shouldTriggerSignal": {
-                        "type": "boolean"
-                      },
-                      "showDebugInfo": {
-                        "type": "boolean"
-                      },
-                      "excludeStale": {
-                        "type": "boolean"
-                      },
-                      "searchSeqNo": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "tripType",
-                      "journeys",
-                      "numberOfSeats",
-                      "seatClass",
-                      "fareType",
-                      "excludeStale"
                     ]
                   },
                   "context": {
@@ -4265,18 +4265,18 @@
                     "description": "Request parameters",
                     "properties": {
                       "competitorName": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "tripType": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "seatPublishedClass": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "journeys": {
                         "type": "array",
                         "items": {
-                          "type": "string"
+                          "type": "object"
                         }
                       },
                       "selectedFlights": {
@@ -4286,7 +4286,7 @@
                         }
                       },
                       "numSeats": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "agentId": {
                         "type": "string"
@@ -4301,10 +4301,10 @@
                         "type": "string"
                       },
                       "additionalData": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "filter": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "originCode": {
                         "type": "string"
@@ -4411,10 +4411,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "filter": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": []
@@ -4484,10 +4484,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "filter": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "pagination": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": []
@@ -4694,7 +4694,7 @@
                       "providerContexts": {
                         "type": "array",
                         "items": {
-                          "type": "string"
+                          "type": "object"
                         }
                       },
                       "airlineId": {
@@ -4703,7 +4703,7 @@
                       "specs": {
                         "type": "array",
                         "items": {
-                          "type": "string"
+                          "type": "object"
                         }
                       }
                     },
@@ -5115,10 +5115,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "filter": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": []
@@ -5188,10 +5188,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "filter": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": []
@@ -5261,10 +5261,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "filter": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": []
