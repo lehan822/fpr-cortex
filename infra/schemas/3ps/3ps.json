@@ -464,10 +464,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "action": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "database": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "collectionName": {
                         "type": "string"
@@ -482,7 +482,7 @@
                         "type": "string"
                       },
                       "valueUpdate": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": [
@@ -729,10 +729,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "filter": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": []
@@ -802,10 +802,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "filter": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": []
@@ -875,10 +875,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "filter": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": []

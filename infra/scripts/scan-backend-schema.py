@@ -128,8 +128,11 @@ def extract_dto_fields(dto_content):
             else:
                 inner_schema = {'type': 'object'}
             schema = {'type': 'array', 'items': inner_schema}
+        elif java_type in PRIMITIVE_TYPES:
+            schema = {'type': TYPE_MAP.get(java_type, 'string')}
         else:
-            schema = {'type': TYPE_MAP.get(java_type, 'object' if java_type not in PRIMITIVE_TYPES else 'string')}
+            # Unknown type (enum, nested class, etc.) — default to string
+            schema = {'type': 'string'}
 
         fields.append({'name': field_name, 'schema': schema, 'required': required})
     return fields

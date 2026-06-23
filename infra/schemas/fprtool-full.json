@@ -501,7 +501,7 @@
                     "description": "Request parameters",
                     "properties": {
                       "featureFlag": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": [
@@ -656,10 +656,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "action": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "database": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "collectionName": {
                         "type": "string"
@@ -674,7 +674,7 @@
                         "type": "string"
                       },
                       "valueUpdate": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": [
@@ -2889,7 +2889,7 @@
                         "type": "string"
                       },
                       "departureDate": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": []
@@ -2962,7 +2962,7 @@
                         "type": "string"
                       },
                       "searchPeriod": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": [
@@ -3179,7 +3179,7 @@
                     "description": "Request parameters",
                     "properties": {
                       "date": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "path": {
                         "type": "string"
@@ -3785,7 +3785,7 @@
                     "description": "Request parameters",
                     "properties": {
                       "tripType": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "journeys": {
                         "type": "array",
@@ -3794,13 +3794,13 @@
                         }
                       },
                       "numberOfSeats": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "seatClass": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "fareType": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "searchId": {
                         "type": "string"
@@ -3824,7 +3824,7 @@
                         "type": "boolean"
                       },
                       "searchSeqNo": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": [
@@ -3901,7 +3901,7 @@
                     "description": "Request parameters",
                     "properties": {
                       "specialFareSpec": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": [
@@ -3973,7 +3973,7 @@
                     "description": "Request parameters",
                     "properties": {
                       "upsellFareSpec": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": [
@@ -4045,10 +4045,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "revalidationJobSpec": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "revalidationSelectionSpec": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": [
@@ -4121,7 +4121,7 @@
                     "description": "Request parameters",
                     "properties": {
                       "revalidateSpecialFareSpec": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": [
@@ -4193,7 +4193,7 @@
                     "description": "Request parameters",
                     "properties": {
                       "revalidateUpsellFareSpec": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": [
@@ -4265,13 +4265,13 @@
                     "description": "Request parameters",
                     "properties": {
                       "competitorName": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "tripType": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "seatPublishedClass": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "journeys": {
                         "type": "array",
@@ -4286,7 +4286,7 @@
                         }
                       },
                       "numSeats": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "agentId": {
                         "type": "string"
@@ -4301,10 +4301,10 @@
                         "type": "string"
                       },
                       "additionalData": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "filter": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "originCode": {
                         "type": "string"
@@ -4411,10 +4411,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "filter": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": []
@@ -4484,10 +4484,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "filter": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "pagination": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": []
@@ -5115,10 +5115,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "filter": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": []
@@ -5188,10 +5188,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "filter": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": []
@@ -5261,10 +5261,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "filter": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": []

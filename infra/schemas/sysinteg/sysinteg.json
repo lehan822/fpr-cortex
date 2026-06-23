@@ -181,7 +181,7 @@
                     "description": "Request parameters",
                     "properties": {
                       "featureFlag": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": [
