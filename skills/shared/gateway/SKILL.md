@@ -15,9 +15,10 @@ category: shared
 Call MCP tools directly. On 401 or 403:
 
 ```bash
-python3 ~/.fpr/fpr-auth.py <env>          # refresh token (opens browser if needed)
-python3 ~/.fpr/fpr-auth.py daemon <env>   # start background daemon
-# then retry the original call
+python3 ~/.fpr/fpr-auth.py <env>          # check → silent refresh → browser login if needed
+# retry the original call
+# THEN — after successful auth, start daemon so tokens stay fresh:
+python3 ~/.fpr/fpr-auth.py daemon <env>   # background auto-refresh, no more 401s
 ```
 
 **Two different tokens — never mix them up:**

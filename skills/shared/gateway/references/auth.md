@@ -7,14 +7,14 @@
 Call MCP tools directly. On 401, the agent handles it automatically:
 
 1. `python3 ~/.fpr/fpr-auth.py <env>` — checks token, silent refresh if expired, opens browser if needed
-2. `python3 ~/.fpr/fpr-auth.py daemon <env>` — starts background daemon (refreshes token in background, no more 401s going forward)
-3. Retry the original MCP call
+2. Retry the original MCP call
+3. **After successful auth (login or refresh), start the daemon:** `python3 ~/.fpr/fpr-auth.py daemon <env>` — runs in background, refreshes token before expiry, no more 401s going forward. Skip if daemon already running.
 
 ## Bootstrap & Auto-update
 
-If `~/.fpr/fpr-auth.py` doesn't exist, extract the Python script from the `## Script` section below and write it there.
+If `~/.fpr/fpr-auth.py` doesn't exist, extract the Python script from the `## Script` section below and write it there. After writing + login: start the daemon.
 
-**Auto-update:** The script contains a `SCRIPT_VERSION` constant. When auth.md is updated (e.g. bug fixes), bump `SCRIPT_VERSION`. The agent checks: if the local file's `SCRIPT_VERSION` doesn't match the version in auth.md, re-extract and overwrite. This ensures fixes propagate without manual intervention.
+**Auto-update:** The script contains a `SCRIPT_VERSION` constant. When auth.md is updated, bump `SCRIPT_VERSION`. The agent checks: if the local file's version doesn't match, stop the daemon (`python3 ~/.fpr/fpr-auth.py daemon-stop`), re-extract the script, then start the daemon again.
 
 Check current version: `python3 ~/.fpr/fpr-auth.py version`
 
