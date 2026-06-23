@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "FPR Supply API",
+    "title": "FPR 3ps API",
     "version": "2.0.0",
-    "description": "Auto-generated from exposed-ops.yaml \u2014 supply domain."
+    "description": "Auto-generated from exposed-ops.yaml \u2014 3ps domain."
   },
   "servers": [
     {
@@ -20,12 +20,12 @@
     }
   ],
   "paths": {
-    "/api/v2/supply-search-tool/search-regular-fare": {
+    "/api/v2/pronto/get-list-destination": {
       "post": {
-        "operationId": "search_regular_fare",
-        "summary": "Search regular fares",
+        "operationId": "pronto_get_list_destination",
+        "summary": "List tags by destination",
         "tags": [
-          "supply"
+          "3ps"
         ],
         "requestBody": {
           "required": true,
@@ -52,12 +52,12 @@
         }
       }
     },
-    "/api/v2/supply-search-tool/search-special-fare": {
+    "/api/v2/pronto/get-list-tag-name": {
       "post": {
-        "operationId": "search_special_fare",
-        "summary": "Special fare search",
+        "operationId": "pronto_get_list_tag_name",
+        "summary": "List tags by name",
         "tags": [
-          "supply"
+          "3ps"
         ],
         "requestBody": {
           "required": true,
@@ -84,12 +84,12 @@
         }
       }
     },
-    "/api/v2/supply-search-tool/search-upsell-fare": {
+    "/api/v2/pronto/view-destination": {
       "post": {
-        "operationId": "search_upsell_fare",
-        "summary": "Upsell fare search",
+        "operationId": "pronto_view_destination",
+        "summary": "View tag detail by destination",
         "tags": [
-          "supply"
+          "3ps"
         ],
         "requestBody": {
           "required": true,
@@ -116,12 +116,12 @@
         }
       }
     },
-    "/api/v2/supply-search-tool/revalidate-regular-fare": {
+    "/api/v2/pronto/view-tag-name": {
       "post": {
-        "operationId": "revalidate_regular_fare",
-        "summary": "Revalidate regular fare",
+        "operationId": "pronto_view_tag_name",
+        "summary": "View tag detail by name",
         "tags": [
-          "supply"
+          "3ps"
         ],
         "requestBody": {
           "required": true,
@@ -148,12 +148,12 @@
         }
       }
     },
-    "/api/v2/supply-search-tool/revalidate-special-fare": {
+    "/api/v2/pronto/get-static-data": {
       "post": {
-        "operationId": "revalidate_special_fare",
-        "summary": "Revalidate special fare",
+        "operationId": "pronto_get_static_data",
+        "summary": "Tagging static data",
         "tags": [
-          "supply"
+          "3ps"
         ],
         "requestBody": {
           "required": true,
@@ -180,12 +180,12 @@
         }
       }
     },
-    "/api/v2/supply-search-tool/revalidate-upsell-fare": {
+    "/api/v2/preflight/get-airport-list": {
       "post": {
-        "operationId": "revalidate_upsell_fare",
-        "summary": "Revalidate upsell fare",
+        "operationId": "get_airport_list",
+        "summary": "Airport info list",
         "tags": [
-          "supply"
+          "3ps"
         ],
         "requestBody": {
           "required": true,
@@ -212,12 +212,12 @@
         }
       }
     },
-    "/api/v2/search-simulation/traveloka-initial": {
+    "/api/v2/airline-ids": {
       "post": {
-        "operationId": "simulate_search",
-        "summary": "Simulate full user search",
+        "operationId": "get_airline_ids",
+        "summary": "All airline IDs",
         "tags": [
-          "supply"
+          "3ps"
         ],
         "requestBody": {
           "required": true,
@@ -244,12 +244,12 @@
         }
       }
     },
-    "/api/v2/provider-source/v2/get-provider-sourcing": {
+    "/api/v2/countries": {
       "post": {
-        "operationId": "get_provider_sourcing",
-        "summary": "Provider sourcing config",
+        "operationId": "get_countries",
+        "summary": "All countries",
         "tags": [
-          "supply"
+          "3ps"
         ],
         "requestBody": {
           "required": true,
@@ -276,12 +276,12 @@
         }
       }
     },
-    "/api/v2/provider-source/v2/get-histories": {
+    "/api/v2/airline-route/get-all": {
       "post": {
-        "operationId": "get_provider_source_histories",
-        "summary": "Sourcing change history",
+        "operationId": "get_airline_routes",
+        "summary": "All airline routes",
         "tags": [
-          "supply"
+          "3ps"
         ],
         "requestBody": {
           "required": true,
@@ -308,12 +308,12 @@
         }
       }
     },
-    "/api/v2/provider-source/v2/version/get-latest-version": {
+    "/api/v2/airline-route/history": {
       "post": {
-        "operationId": "get_provider_source_latest_version",
-        "summary": "Latest sourcing version",
+        "operationId": "get_airline_route_history",
+        "summary": "Route change history",
         "tags": [
-          "supply"
+          "3ps"
         ],
         "requestBody": {
           "required": true,
@@ -340,300 +340,12 @@
         }
       }
     },
-    "/api/v2/fare-checking/get-enabled-provider": {
+    "/api/v2/airline-route/history-filter": {
       "post": {
-        "operationId": "get_enabled_provider",
-        "summary": "Enabled providers list",
+        "operationId": "get_airline_route_history_filtered",
+        "summary": "Filtered route history",
         "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/fare-checking/submit-fare-checking": {
-      "post": {
-        "operationId": "check_fare",
-        "summary": "Check fare validity",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/fare-checking/get-result": {
-      "post": {
-        "operationId": "get_fare_check_result",
-        "summary": "Fare check result",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/flight/special-fare/get-config-detail": {
-      "post": {
-        "operationId": "get_special_fare_config",
-        "summary": "Special fare configuration",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/supply-metadata-tracking/get-inventory-detail": {
-      "post": {
-        "operationId": "get_inventory_detail",
-        "summary": "Inventory detail",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/provider-source/inventory-type/get-all": {
-      "post": {
-        "operationId": "get_inventory_types",
-        "summary": "Inventory types",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/provider-source/arbitration-mode": {
-      "post": {
-        "operationId": "get_arbitration_modes",
-        "summary": "Arbitration modes",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/winner/get": {
-      "post": {
-        "operationId": "get_winner_details",
-        "summary": "Winner (selected fare/provider)",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/winner/search-by-spec": {
-      "post": {
-        "operationId": "search_winner",
-        "summary": "Search winners by route",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/supply-metadata-tracking": {
-      "post": {
-        "operationId": "search_metadata",
-        "summary": "EFS metadata by searchID",
-        "tags": [
-          "supply"
+          "3ps"
         ],
         "requestBody": {
           "required": true,
@@ -662,10 +374,42 @@
     },
     "/api/v2/simplecrud/simple-crud-query": {
       "post": {
-        "operationId": "top_pick_crud",
-        "summary": "Read/search top pick configs",
+        "operationId": "multi_country_crud",
+        "summary": "Multi-country config CRUD",
         "tags": [
-          "supply"
+          "3ps"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/flight-id/decrypt": {
+      "post": {
+        "operationId": "decrypt_flight_id",
+        "summary": "Decrypt flight ID",
+        "tags": [
+          "3ps"
         ],
         "requestBody": {
           "required": true,

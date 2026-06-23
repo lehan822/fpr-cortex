@@ -397,7 +397,7 @@
           }
         },
         "tags": [
-          "config"
+          "sysinteg"
         ]
       }
     },
@@ -454,7 +454,7 @@
           }
         },
         "tags": [
-          "config"
+          "sysinteg"
         ]
       }
     },
@@ -520,7 +520,7 @@
           }
         },
         "tags": [
-          "config"
+          "sysinteg"
         ]
       }
     },
@@ -598,79 +598,40 @@
           }
         },
         "tags": [
-          "config"
+          "sysinteg"
         ]
       }
     },
     "/api/v2/simplecrud/simple-crud-query": {
       "post": {
-        "operationId": "simple_crud_query",
-        "summary": "MongoDB CRUD Query",
-        "description": "Execute direct MongoDB queries on demand-side collections. Supports GET, UPSERT, and DELETE operations on any demand_booking collection. Use when someone needs to 'query mongo', 'check mongo collection', or run a 'direct database query'. WARNING: UPSERT/DELETE operations modify data. Keywords: MongoDB, direct query, database operation.",
+        "operationId": "multi_country_crud",
+        "summary": "Multi-country config CRUD",
+        "tags": [
+          "3ps"
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "collection": {
-                        "type": "string",
-                        "description": "MongoDB collection name"
-                      },
-                      "operation": {
-                        "type": "string",
-                        "description": "CRUD operation: GET, UPSERT, DELETE"
-                      },
-                      "query": {
-                        "type": "string",
-                        "description": "MongoDB query as JSON string"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
+                "description": "TODO: scan backend for schema"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "MongoDB query executed successfully"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
-        },
-        "tags": [
-          "demand"
-        ]
+        }
       }
     },
     "/api/v2/demand/search-cache/get": {
@@ -1289,9 +1250,8 @@
     },
     "/api/v2/flight-promo-label/get-promo-label-info": {
       "post": {
-        "operationId": "get_promo_label_detail",
-        "summary": "Get single promo label full config by promoLabelId",
-        "description": "Get full promo label configuration by promoLabelId. Returns nested config such as conditionList, promo pages, banners, copy config, histories, and conflict data. POST /api/v2/flight-promo-label/get-promo-label-info",
+        "operationId": "search_promo_labels",
+        "summary": "Read/search promo label configs",
         "tags": [
           "demand"
         ],
@@ -1301,51 +1261,14 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "data",
-                  "context",
-                  "clientInterface"
-                ],
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "required": [
-                      "promoLabelId"
-                    ],
-                    "properties": {
-                      "promoLabelId": {
-                        "type": "string",
-                        "description": "Full exact promoLabelId, e.g. ID_FeatureBanner_NurtureCoupon2_FLYOVERSEA"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "default": []
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "default": "desktop"
-                  }
-                }
+                "description": "TODO: scan backend for schema"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Full promo label detail",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
@@ -1414,157 +1337,6 @@
               "application/json": {
                 "schema": {
                   "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/crud/getEntryList#search_promo_labels": {
-      "post": {
-        "operationId": "search_promo_labels",
-        "summary": "Search/list promo label configs",
-        "description": "List/search flightPromoLabel entries via CRUD framework.\nAvailable filter fields: archived, enabled, end_date, last_update, priority\nRequest goes to POST /api/v2/crud/getEntryList",
-        "tags": [
-          "demand"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "data",
-                  "context",
-                  "clientInterface"
-                ],
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "required": [
-                      "entityType",
-                      "search"
-                    ],
-                    "properties": {
-                      "entityType": {
-                        "type": "string",
-                        "enum": [
-                          "flightPromoLabel"
-                        ],
-                        "description": "Must be \"flightPromoLabel\""
-                      },
-                      "search": {
-                        "type": "object",
-                        "required": [
-                          "entriesCount",
-                          "offset",
-                          "sort",
-                          "filter"
-                        ],
-                        "properties": {
-                          "searchQuery": {
-                            "type": "string",
-                            "description": "Free-text search (optional)",
-                            "default": ""
-                          },
-                          "entriesCount": {
-                            "type": "integer",
-                            "description": "Page size (max entries to return)",
-                            "default": 10
-                          },
-                          "offset": {
-                            "type": "integer",
-                            "description": "Pagination offset",
-                            "default": 0
-                          },
-                          "sort": {
-                            "type": "object",
-                            "properties": {
-                              "fieldName": {
-                                "type": "string",
-                                "description": "Field to sort by"
-                              },
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "ASCENDING",
-                                  "DESCENDING"
-                                ]
-                              }
-                            }
-                          },
-                          "filter": {
-                            "type": "array",
-                            "description": "Filter conditions. Known fields: archived, enabled, end_date, last_update, priority",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "fieldName": {
-                                  "type": "string"
-                                },
-                                "arguments": {
-                                  "type": "object",
-                                  "properties": {
-                                    "value": {}
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "JWT auth token"
-                      }
-                    }
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "default": []
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "default": "desktop"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Entry list result",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "totalEntries": {
-                          "type": "string"
-                        },
-                        "entries": {
-                          "type": "array",
-                          "items": {
-                            "type": "object"
-                          }
-                        }
-                      }
-                    }
-                  }
                 }
               }
             }
@@ -2305,518 +2077,6 @@
         }
       }
     },
-    "/api/v2/get_provider_source_histories": {
-      "post": {
-        "operationId": "get_provider_source_histories",
-        "summary": "Sourcing change history",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/get_provider_source_latest_version": {
-      "post": {
-        "operationId": "get_provider_source_latest_version",
-        "summary": "Latest sourcing version",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/supply/airline-route/load": {
-      "post": {
-        "operationId": "get_airline_routes",
-        "summary": "Airline routes",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/supply/airline-route/get-history": {
-      "post": {
-        "operationId": "get_airline_route_history",
-        "summary": "Airline route history",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/supply/airline-route/get-history-filtered": {
-      "post": {
-        "operationId": "get_airline_route_history_filtered",
-        "summary": "Airline route history filtered",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/supply/arbitration/get-modes": {
-      "post": {
-        "operationId": "get_arbitration_modes",
-        "summary": "Arbitration modes",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/supply/inventory/get-detail": {
-      "post": {
-        "operationId": "get_inventory_detail",
-        "summary": "Inventory detail",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/supply/inventory/get-types": {
-      "post": {
-        "operationId": "get_inventory_types",
-        "summary": "Inventory types",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/supply/special-fare/get-config": {
-      "post": {
-        "operationId": "get_special_fare_config",
-        "summary": "Special fare config",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/supply/fare-check/check": {
-      "post": {
-        "operationId": "check_fare",
-        "summary": "Check fare",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/supply/fare-check/get-result": {
-      "post": {
-        "operationId": "get_fare_check_result",
-        "summary": "Fare check result",
-        "tags": [
-          "supply"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/demand/winner/search": {
-      "post": {
-        "operationId": "search_winner",
-        "summary": "Search winners",
-        "tags": [
-          "demand"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/demand/winner/get-winner-details": {
-      "post": {
-        "operationId": "get_winner_details",
-        "summary": "Winner details",
-        "tags": [
-          "demand"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/demand/booking/get-booking-log": {
-      "post": {
-        "operationId": "get_booking_log",
-        "summary": "Booking log",
-        "tags": [
-          "demand"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/demand/booking/get-flight-info": {
-      "post": {
-        "operationId": "get_flight_info",
-        "summary": "Booking flight info",
-        "tags": [
-          "demand"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/demand/booking/get-flight-info-json": {
-      "post": {
-        "operationId": "get_flight_info_json",
-        "summary": "Booking flight info (JSON)",
-        "tags": [
-          "demand"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "description": "TODO: scan backend for schema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v2/demand/user-profile/search": {
       "post": {
         "operationId": "search_user_profile",
@@ -2886,7 +2146,7 @@
         "operationId": "get_decompressed_object",
         "summary": "Decompress S3/stored object",
         "tags": [
-          "config"
+          "sysinteg"
         ],
         "requestBody": {
           "required": true,
@@ -2945,12 +2205,12 @@
         }
       }
     },
-    "/api/v2/get-airline-ids": {
+    "/api/v2/provider-source/v2/get-histories": {
       "post": {
-        "operationId": "get_airline_ids",
-        "summary": "List all airline IDs",
+        "operationId": "get_provider_source_histories",
+        "summary": "Sourcing change history",
         "tags": [
-          "config"
+          "supply"
         ],
         "requestBody": {
           "required": true,
@@ -2977,12 +2237,812 @@
         }
       }
     },
-    "/api/v2/get-countries": {
+    "/api/v2/provider-source/v2/version/get-latest-version": {
+      "post": {
+        "operationId": "get_provider_source_latest_version",
+        "summary": "Latest sourcing version",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/fare-checking/get-enabled-provider": {
+      "post": {
+        "operationId": "get_enabled_provider",
+        "summary": "Enabled providers list",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/fare-checking/submit-fare-checking": {
+      "post": {
+        "operationId": "check_fare",
+        "summary": "Check fare validity",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/fare-checking/get-result": {
+      "post": {
+        "operationId": "get_fare_check_result",
+        "summary": "Fare check result",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/flight/special-fare/get-config-detail": {
+      "post": {
+        "operationId": "get_special_fare_config",
+        "summary": "Special fare configuration",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply-metadata-tracking/get-inventory-detail": {
+      "post": {
+        "operationId": "get_inventory_detail",
+        "summary": "Inventory detail",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/provider-source/inventory-type/get-all": {
+      "post": {
+        "operationId": "get_inventory_types",
+        "summary": "Inventory types",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/provider-source/arbitration-mode": {
+      "post": {
+        "operationId": "get_arbitration_modes",
+        "summary": "Arbitration modes",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/winner/get": {
+      "post": {
+        "operationId": "get_winner_details",
+        "summary": "Winner (selected fare/provider)",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/winner/search-by-spec": {
+      "post": {
+        "operationId": "search_winner",
+        "summary": "Search winners by route",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply-metadata-tracking": {
+      "post": {
+        "operationId": "search_metadata",
+        "summary": "EFS metadata by searchID",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/booking-details/get-flight-info": {
+      "post": {
+        "operationId": "get_flight_info",
+        "summary": "Booking details by ID",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/booking-details/get-flight-info-json": {
+      "post": {
+        "operationId": "get_flight_info_json",
+        "summary": "Booking JSON (full pricing debug)",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/booking-log/get-object-content": {
+      "post": {
+        "operationId": "get_booking_log",
+        "summary": "Booking event logs from S3",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/pronto/get-list-destination": {
+      "post": {
+        "operationId": "pronto_get_list_destination",
+        "summary": "List tags by destination",
+        "tags": [
+          "3ps"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/pronto/get-list-tag-name": {
+      "post": {
+        "operationId": "pronto_get_list_tag_name",
+        "summary": "List tags by name",
+        "tags": [
+          "3ps"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/pronto/view-destination": {
+      "post": {
+        "operationId": "pronto_view_destination",
+        "summary": "View tag detail by destination",
+        "tags": [
+          "3ps"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/pronto/view-tag-name": {
+      "post": {
+        "operationId": "pronto_view_tag_name",
+        "summary": "View tag detail by name",
+        "tags": [
+          "3ps"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/pronto/get-static-data": {
+      "post": {
+        "operationId": "pronto_get_static_data",
+        "summary": "Tagging static data",
+        "tags": [
+          "3ps"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/preflight/get-airport-list": {
+      "post": {
+        "operationId": "get_airport_list",
+        "summary": "Airport info list",
+        "tags": [
+          "3ps"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/airline-ids": {
+      "post": {
+        "operationId": "get_airline_ids",
+        "summary": "All airline IDs",
+        "tags": [
+          "3ps"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/countries": {
       "post": {
         "operationId": "get_countries",
-        "summary": "List all countries",
+        "summary": "All countries",
         "tags": [
-          "config"
+          "3ps"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/airline-route/get-all": {
+      "post": {
+        "operationId": "get_airline_routes",
+        "summary": "All airline routes",
+        "tags": [
+          "3ps"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/airline-route/history": {
+      "post": {
+        "operationId": "get_airline_route_history",
+        "summary": "Route change history",
+        "tags": [
+          "3ps"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/airline-route/history-filter": {
+      "post": {
+        "operationId": "get_airline_route_history_filtered",
+        "summary": "Filtered route history",
+        "tags": [
+          "3ps"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "TODO: scan backend for schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/flight-id/decrypt": {
+      "post": {
+        "operationId": "decrypt_flight_id",
+        "summary": "Decrypt flight ID",
+        "tags": [
+          "3ps"
         ],
         "requestBody": {
           "required": true,

@@ -10,6 +10,7 @@
 #   - "crud/getEntryDetail(entityType)" → CRUD framework detail op
 #
 # Adding a new op: add entry here → run gen-schema → CI pushes to S3 → Gateway picks up.
+# Phase-1 = read-only ops only. Phase-2 (write ops) excluded.
 
 pricing:
   - id: load_autopilot_rules
@@ -97,6 +98,7 @@ pricing:
     description: Budget level types
 
 supply:
+  # — Search & Revalidate —
   - id: search_regular_fare
     path: supply-search-tool/search-regular-fare
     description: Search regular fares
@@ -125,63 +127,71 @@ supply:
     path: search-simulation/traveloka-initial
     description: Simulate full user search
 
+  # — Provider & Sourcing —
   - id: get_provider_sourcing
     path: provider-source/v2/get-provider-sourcing
     description: Provider sourcing config
 
   - id: get_provider_source_histories
-    path: get_provider_source_histories
+    path: provider-source/v2/get-histories
     description: Sourcing change history
 
   - id: get_provider_source_latest_version
-    path: get_provider_source_latest_version
+    path: provider-source/v2/version/get-latest-version
     description: Latest sourcing version
 
-  - id: get_airline_routes
-    path: supply/airline-route/load
-    description: Airline routes
+  - id: get_enabled_provider
+    path: fare-checking/get-enabled-provider
+    description: Enabled providers list
 
-  - id: get_airline_route_history
-    path: supply/airline-route/get-history
-    description: Airline route history
+  # — Fare Check —
+  - id: check_fare
+    path: fare-checking/submit-fare-checking
+    description: Check fare validity
 
-  - id: get_airline_route_history_filtered
-    path: supply/airline-route/get-history-filtered
-    description: Airline route history filtered
+  - id: get_fare_check_result
+    path: fare-checking/get-result
+    description: Fare check result
 
-  - id: get_arbitration_modes
-    path: supply/arbitration/get-modes
-    description: Arbitration modes
+  - id: get_special_fare_config
+    path: flight/special-fare/get-config-detail
+    description: Special fare configuration
 
+  # — Inventory & Winners —
   - id: get_inventory_detail
-    path: supply/inventory/get-detail
+    path: supply-metadata-tracking/get-inventory-detail
     description: Inventory detail
 
   - id: get_inventory_types
-    path: supply/inventory/get-types
+    path: provider-source/inventory-type/get-all
     description: Inventory types
 
-  - id: get_special_fare_config
-    path: supply/special-fare/get-config
-    description: Special fare config
+  - id: get_arbitration_modes
+    path: provider-source/arbitration-mode
+    description: Arbitration modes
 
-  - id: check_fare
-    path: supply/fare-check/check
-    description: Check fare
+  - id: get_winner_details
+    path: winner/get
+    description: Winner (selected fare/provider)
 
-  - id: get_fare_check_result
-    path: supply/fare-check/get-result
-    description: Fare check result
+  - id: search_winner
+    path: winner/search-by-spec
+    description: Search winners by route
+
+  # — Metadata & Top Picks —
+  - id: search_metadata
+    path: supply-metadata-tracking
+    description: EFS metadata by searchID
+
+  - id: top_pick_crud
+    path: simplecrud/simple-crud-query
+    description: Read/search top pick configs
 
 demand:
   # — Promo Label —
   - id: search_promo_labels
-    path: crud/getEntryList(flightPromoLabel)
-    description: Search/list promo label configs
-
-  - id: get_promo_label_detail
     path: flight-promo-label/get-promo-label-info
-    description: Get single promo label full config by promoLabelId
+    description: Read/search promo label configs
 
   - id: get_promo_label_data
     path: flight-promo-label/get-promo-label-supporting-data
@@ -205,7 +215,7 @@ demand:
     path: demand-experiment/get-contextid-namespace
     description: Experiment context ID
 
-  # — Mongo —
+  # — Mongo / Config —
   - id: list_mongo_collections
     path: flight/mongo-operation-manager/collection-name
     description: List mongo collections
@@ -214,38 +224,21 @@ demand:
     path: simplecrud/simple-crud-query
     description: Direct mongo CRUD (GET/UPSERT/DELETE)
 
-  # — Winner —
-  - id: search_winner
-    path: demand/winner/search
-    description: Search winners
-
-  - id: get_winner_details
-    path: demand/winner/get-winner-details
-    description: Winner details
-
   # — Booking —
-  - id: get_booking_log
-    path: demand/booking/get-booking-log
-    description: Booking log
-
   - id: get_flight_info
-    path: demand/booking/get-flight-info
-    description: Booking flight info
+    path: booking-details/get-flight-info
+    description: Booking details by ID
 
   - id: get_flight_info_json
-    path: demand/booking/get-flight-info-json
-    description: Booking flight info (JSON)
+    path: booking-details/get-flight-info-json
+    description: Booking JSON (full pricing debug)
 
-  # — User Profile —
-  - id: search_user_profile
-    path: demand/user-profile/search
-    description: Search user profile
+  - id: get_booking_log
+    path: booking-log/get-object-content
+    description: Booking event logs from S3
 
-  - id: load_profiling_config
-    path: demand/profiling/load-config
-    description: Profiling configuration
-
-config:
+sysinteg:
+  # — Feature Control —
   - id: get_flag_applications
     path: flag/get-applications
     description: List all apps with feature flags
@@ -258,6 +251,7 @@ config:
     path: flag/get-flag-configuration
     description: Get flag detail/rules/rollout
 
+  # — Audit & Utility —
   - id: get_activity_log
     path: activity-log/getLogs
     description: Who changed what config and when
@@ -266,14 +260,60 @@ config:
     path: get_decompressed_object
     description: Decompress S3/stored object
 
-  - id: convert_currency
-    path: convert-currency
-    description: Convert currency
+3ps:
+  # — Airport/City Tagging —
+  - id: pronto_get_list_destination
+    path: pronto/get-list-destination
+    description: List tags by destination
+
+  - id: pronto_get_list_tag_name
+    path: pronto/get-list-tag-name
+    description: List tags by name
+
+  - id: pronto_view_destination
+    path: pronto/view-destination
+    description: View tag detail by destination
+
+  - id: pronto_view_tag_name
+    path: pronto/view-tag-name
+    description: View tag detail by name
+
+  - id: pronto_get_static_data
+    path: pronto/get-static-data
+    description: Tagging static data
+
+  # — Airport/Airline Info —
+  - id: get_airport_list
+    path: preflight/get-airport-list
+    description: Airport info list
 
   - id: get_airline_ids
-    path: get-airline-ids
-    description: List all airline IDs
+    path: airline-ids
+    description: All airline IDs
 
   - id: get_countries
-    path: get-countries
-    description: List all countries
+    path: countries
+    description: All countries
+
+  # — Airline Routes —
+  - id: get_airline_routes
+    path: airline-route/get-all
+    description: All airline routes
+
+  - id: get_airline_route_history
+    path: airline-route/history
+    description: Route change history
+
+  - id: get_airline_route_history_filtered
+    path: airline-route/history-filter
+    description: Filtered route history
+
+  # — Multi Country —
+  - id: multi_country_crud
+    path: simplecrud/simple-crud-query
+    description: Multi-country config CRUD
+
+  # — Utility —
+  - id: decrypt_flight_id
+    path: flight-id/decrypt
+    description: Decrypt flight ID

@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "FPR Config API",
+    "title": "FPR Sysinteg API",
     "version": "2.0.0",
-    "description": "Auto-generated from exposed-ops.yaml \u2014 config domain."
+    "description": "Auto-generated from exposed-ops.yaml \u2014 sysinteg domain."
   },
   "servers": [
     {
@@ -73,7 +73,7 @@
           }
         },
         "tags": [
-          "config"
+          "sysinteg"
         ]
       }
     },
@@ -139,7 +139,7 @@
           }
         },
         "tags": [
-          "config"
+          "sysinteg"
         ]
       }
     },
@@ -205,7 +205,7 @@
           }
         },
         "tags": [
-          "config"
+          "sysinteg"
         ]
       }
     },
@@ -220,8 +220,7 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "entityType",
-                  "entryId"
+                  "entityType"
                 ],
                 "properties": {
                   "data": {
@@ -284,265 +283,40 @@
           }
         },
         "tags": [
-          "config"
+          "sysinteg"
         ]
       }
     },
-    "/tool/get_decompressed_object": {
+    "/api/v2/get_decompressed_object": {
       "post": {
         "operationId": "get_decompressed_object",
-        "summary": "Get decompressed object",
-        "description": "Get decompressed object",
+        "summary": "Decompress S3/stored object",
+        "tags": [
+          "sysinteg"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "compressedObject": {
-                        "type": "string",
-                        "description": "Compressed object"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                },
-                "required": [
-                  "compressedObject"
-                ]
+                "description": "TODO: scan backend for schema"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Success"
-          }
-        },
-        "tags": [
-          "config"
-        ]
-      }
-    },
-    "/api/v2/currency-value/convert": {
-      "post": {
-        "operationId": "convert_currency",
-        "summary": "Convert Currency",
-        "description": "Convert an amount between currencies using FPR's internal exchange rates. Use when someone asks to 'convert IDR to USD', 'what is 1000 THB in IDR', 'currency conversion', or needs to compare amounts across markets. Keywords: currency conversion, exchange rate, amount conversion.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "fromCurrency",
-                  "toCurrency",
-                  "amount"
-                ],
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
-                    "properties": {
-                      "fromCurrency": {
-                        "type": "string",
-                        "description": "Source currency code, e.g. IDR, THB, VND, USD"
-                      },
-                      "toCurrency": {
-                        "type": "string",
-                        "description": "Target currency code"
-                      },
-                      "amount": {
-                        "type": "number",
-                        "description": "Amount to convert"
-                      }
-                    }
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
                 }
               }
             }
           }
-        },
-        "responses": {
-          "200": {
-            "description": "Currency conversion completed successfully"
-          }
-        },
-        "tags": [
-          "config"
-        ]
-      }
-    },
-    "/api/airline-ids": {
-      "post": {
-        "operationId": "get_airline_ids",
-        "summary": "List All Airline IDs",
-        "description": "List all supported airline IDs in the system. Returns IATA codes and airline names. Use when someone asks 'what airlines are supported', 'list airlines', 'airline codes', or needs to look up an airline code. Keywords: airline codes, IATA codes, supported airlines.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Airline IDs retrieved successfully"
-          }
-        },
-        "tags": [
-          "config"
-        ]
-      }
-    },
-    "/api/countries": {
-      "post": {
-        "operationId": "get_countries",
-        "summary": "List All Countries",
-        "description": "List all supported countries in the system. Returns country codes and names. Use when someone asks 'what countries are supported', 'list countries', 'country codes', or needs to verify a country code. Keywords: country codes, supported countries, country list.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
-                  },
-                  "context": {
-                    "type": "object",
-                    "description": "Authentication context",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token for authentication"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "description": "Client interface type",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Response field filter",
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Countries list retrieved successfully"
-          }
-        },
-        "tags": [
-          "config"
-        ]
+        }
       }
     }
   },
