@@ -30,7 +30,7 @@ ID_TOKEN=$(python3 -c "import json; print(json.load(open('$HOME/.fpr/auth.json')
 # fpr-auth.py token prints ACCESS_TOKEN only — do NOT use it for authServiceToken
 ```
 
-If `~/.fpr/fpr-auth.py` doesn't exist: extract it from [`auth.md`](references/auth.md) → write to `~/.fpr/fpr-auth.py`.
+If `~/.fpr/fpr-auth.py` doesn't exist OR its `SCRIPT_VERSION` doesn't match the version in [`auth.md`](references/auth.md): extract the script from auth.md → write to `~/.fpr/fpr-auth.py`. Check version by running `python3 ~/.fpr/fpr-auth.py version` or reading `SCRIPT_VERSION` from the file.
 Never switch env (prod→stg) to work around a 401/403 — fix the token, retry same env.
 
 **AgentCore:** skip this — IAM handles it.

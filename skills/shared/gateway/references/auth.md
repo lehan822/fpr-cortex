@@ -10,9 +10,13 @@ Call MCP tools directly. On 401, the agent handles it automatically:
 2. `python3 ~/.fpr/fpr-auth.py daemon <env>` — starts background daemon (refreshes token in background, no more 401s going forward)
 3. Retry the original MCP call
 
-## Bootstrap
+## Bootstrap & Auto-update
 
-If `~/.fpr/fpr-auth.py` doesn't exist, extract the Python script from the `## Script` section below and write it there. The agent handles this automatically.
+If `~/.fpr/fpr-auth.py` doesn't exist, extract the Python script from the `## Script` section below and write it there.
+
+**Auto-update:** The script contains a `SCRIPT_VERSION` constant. When auth.md is updated (e.g. bug fixes), bump `SCRIPT_VERSION`. The agent checks: if the local file's `SCRIPT_VERSION` doesn't match the version in auth.md, re-extract and overwrite. This ensures fixes propagate without manual intervention.
+
+Check current version: `python3 ~/.fpr/fpr-auth.py version`
 
 ## Commands
 
@@ -25,6 +29,7 @@ If `~/.fpr/fpr-auth.py` doesn't exist, extract the Python script from the `## Sc
 | `python3 ~/.fpr/fpr-auth.py token <env>` | Print access_token for scripts |
 | `python3 ~/.fpr/fpr-auth.py daemon <env>` | Start background auto-refresh daemon |
 | `python3 ~/.fpr/fpr-auth.py daemon-stop` | Stop the daemon |
+| `python3 ~/.fpr/fpr-auth.py version` | Print SCRIPT_VERSION (for update check) |
 
 ## Token model
 
@@ -61,6 +66,8 @@ Environment: stg | prod
 
 import json, os, sys, time, urllib.request, hashlib, base64, http.server
 import webbrowser, urllib.parse, secrets, subprocess, signal
+
+SCRIPT_VERSION = 2
 
 AUTH_FILE = os.path.expanduser("~/.fpr/auth.json")
 COGNITO_URL = "https://cognito-idp.ap-southeast-1.amazonaws.com/"
@@ -278,6 +285,10 @@ def main():
 
     if cmd == "daemon-stop":
         stop_daemon()
+        return
+
+    if cmd == "version":
+        print(SCRIPT_VERSION)
         return
 
     if cmd not in ("_daemon_loop", "daemon-stop") and env not in CLIENT_IDS:
