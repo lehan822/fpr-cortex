@@ -8,7 +8,7 @@
 | operationId | Description | Domain |
 |---|---|---|
 | `check_fare` | Check fare validity | supply |
-| `check_tiered_incentive_progress` | Check incentive progress for a booking | pricing |
+| `check_tiered_incentive_progress` | Check Tiered Incentive Progress for a Booking | pricing |
 | `convert_currency` | Convert currency | sysinteg |
 | `decrypt_flight_id` | Decrypt flight ID | 3ps-datainfo |
 | `get_activity_log` | Get Activity/Audit Log | sysinteg |
@@ -20,8 +20,8 @@
 | `get_arbitration_modes` | Arbitration modes | supply |
 | `get_booking_log` | Booking event logs from S3 | demand |
 | `get_budget_balance` | Get Budget Balance | pricing |
-| `get_budget_levels` | Budget level types | pricing |
-| `get_budget_user_balance` | User-level budget balance | pricing |
+| `get_budget_levels` | Get Budget Level Types | pricing |
+| `get_budget_user_balance` | Get User-Level Budget Balance | pricing |
 | `get_countries` | All countries | 3ps-datainfo, sysinteg |
 | `get_decompressed_object` | Decompress S3/stored object | sysinteg |
 | `get_demand_experiment_contextid` | Experiment context ID | demand |
@@ -41,30 +41,30 @@
 | `get_provider_sourcing` | Provider sourcing config | supply |
 | `get_special_fare_config` | Special fare configuration | supply |
 | `get_winner_details` | Winner (selected fare/provider) | ❌ unclaimed |
-| `list_active_budgets` | List active budgets | pricing |
+| `list_active_budgets` | List Active Budgets | pricing |
 | `list_mongo_collections` | List MongoDB Collections | demand |
 | `load_autopilot_rules` | Load Autopilot Pricing Rules | pricing |
-| `load_baseline_pricing_rules` | Base markup/margin rules | pricing |
-| `load_bundling_pricing_rules` | Bundle pricing (flight+hotel) | pricing |
-| `load_commission_incentive_profiles` | Commission profile list | pricing |
-| `load_commission_incentive_rules` | Commission rates | pricing |
-| `load_condition_groups` | Reusable filter condition groups | sysinteg |
-| `load_fare_adjuster_by_airport_tax` | Fare adjuster by airport tax | ❌ unclaimed |
-| `load_fare_adjuster_by_base_fare` | Fare adjuster by base fare | ❌ unclaimed |
-| `load_issuance_fee_rules` | Ticket issuance fees | pricing |
+| `load_baseline_pricing_rules` | Load Baseline Pricing Rules | pricing |
+| `load_bundling_pricing_rules` | Load Bundling Pricing Rules | pricing |
+| `load_commission_incentive_profiles` | Load Commission Incentive Profiles | pricing |
+| `load_commission_incentive_rules` | Load Commission Incentive Rules | pricing |
+| `load_condition_groups` | Load Condition Groups | sysinteg |
+| `load_fare_adjuster_by_airport_tax` | Load fare adjuster by airport tax | ❌ unclaimed |
+| `load_fare_adjuster_by_base_fare` | Load fare adjuster by base fare | ❌ unclaimed |
+| `load_issuance_fee_rules` | Load Ticket Issuance Fee Rules | pricing |
 | `load_price_cut_modifier_rules` | Load Price Cut / Promo Modifier Rules | pricing |
 | `load_price_prediction_rules` | Load Price Prediction Rules | pricing |
-| `load_pricing_profiles` | Pricing profile names | pricing |
+| `load_pricing_profiles` | Load Pricing Profile Names | pricing |
 | `load_profiling_config` | Profiling configuration | ❌ unclaimed |
-| `load_tiered_incentive_rules` | Volume-based incentive tiers | pricing |
-| `load_trx_fee_rules` | Transaction/service fee | pricing |
+| `load_tiered_incentive_rules` | Load Tiered Incentive Rules | pricing |
+| `load_trx_fee_rules` | Load Transaction Fee Rules | pricing |
 | `multi_country_crud` | Multi-country config CRUD | 3ps-datainfo |
 | `pronto_get_list_destination` | List tags by destination | 3ps-datainfo |
 | `pronto_get_list_tag_name` | List tags by name | 3ps-datainfo |
 | `pronto_get_static_data` | Tagging static data | 3ps-datainfo |
 | `pronto_view_destination` | View tag detail by destination | 3ps-datainfo |
 | `pronto_view_tag_name` | View tag detail by name | 3ps-datainfo |
-| `read_pricing_provider` | Pricing provider config | ❌ unclaimed |
+| `read_pricing_provider` | Read pricing provider | ❌ unclaimed |
 | `revalidate_regular_fare` | Revalidate regular fare | supply |
 | `revalidate_special_fare` | Revalidate special fare | supply |
 | `revalidate_upsell_fare` | Revalidate upsell fare | supply |
