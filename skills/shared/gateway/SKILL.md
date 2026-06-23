@@ -94,6 +94,21 @@ Full protocol → [`gateway-protocol.md`](references/gateway-protocol.md).
 
 Retry silently for 401/400/429/503. Full decision tree → [`error-classification.md`](references/error-classification.md).
 
-## Version
+## Version & Auto-Update
 
-Current 2.9.0. Check: `curl -sf https://raw.githubusercontent.com/lehan822/fpr-cortex/main/VERSION`
+**Check local version:** read `~/.agents/skills/.fpr-cortex-version`
+
+**Check remote version:**
+```bash
+curl -sf https://raw.githubusercontent.com/lehan822/fpr-cortex/main/VERSION
+```
+
+**If versions differ → skills are outdated.** Inform the user and suggest running:
+```bash
+curl -sL https://raw.githubusercontent.com/lehan822/fpr-cortex/main/install.sh | sh
+```
+
+The install script skips if versions match, so it's safe to run anytime. Use `--force` to reinstall regardless:
+```bash
+curl -sL https://raw.githubusercontent.com/lehan822/fpr-cortex/main/install.sh | sh -s -- --force
+```
