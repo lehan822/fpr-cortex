@@ -26,23 +26,28 @@
         "summary": "List Flag Applications",
         "description": "List all applications that have feature flags configured. Use when someone asks 'which apps have flags', 'flag applications', or needs to know what application names to use. Keywords: flag applications, application list, configured apps.",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
                 "properties": {
                   "data": {
                     "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
+                    "description": "Request parameters",
+                    "properties": {},
+                    "required": null
                   },
                   "context": {
                     "type": "object",
-                    "description": "Authentication context",
                     "properties": {
                       "authServiceToken": {
                         "type": "string",
-                        "description": "User JWT token for authentication"
+                        "description": "User JWT token"
                       }
                     },
                     "required": [
@@ -51,7 +56,6 @@
                   },
                   "clientInterface": {
                     "type": "string",
-                    "description": "Client interface type",
                     "default": "DESKTOP"
                   },
                   "fields": {
@@ -59,7 +63,6 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Response field filter",
                     "default": []
                   }
                 }
@@ -69,7 +72,14 @@
         },
         "responses": {
           "200": {
-            "description": "List of flag applications retrieved successfully"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -83,32 +93,34 @@
         "summary": "Get Feature Flags",
         "description": "Retrieve feature flags for a specific application. Shows which features are enabled/disabled and their current state. Use when someone asks about 'feature flags', 'is X feature enabled', 'flag status for fprtckt', or 'what flags are on'. Keywords: feature flags, flag status, feature enablement.",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "required": [
-                  "applicationName"
+                  "data",
+                  "context"
                 ],
                 "properties": {
                   "data": {
                     "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
+                    "description": "Request parameters",
                     "properties": {
                       "applicationName": {
-                        "type": "string",
-                        "description": "Application name, e.g. fprtckt, fprcoin, fprlari, fprbud, fprtxf"
+                        "type": "string"
                       }
-                    }
+                    },
+                    "required": [
+                      "applicationName"
+                    ]
                   },
                   "context": {
                     "type": "object",
-                    "description": "Authentication context",
                     "properties": {
                       "authServiceToken": {
                         "type": "string",
-                        "description": "User JWT token for authentication"
+                        "description": "User JWT token"
                       }
                     },
                     "required": [
@@ -117,7 +129,6 @@
                   },
                   "clientInterface": {
                     "type": "string",
-                    "description": "Client interface type",
                     "default": "DESKTOP"
                   },
                   "fields": {
@@ -125,7 +136,6 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Response field filter",
                     "default": []
                   }
                 }
@@ -135,7 +145,14 @@
         },
         "responses": {
           "200": {
-            "description": "Feature flags for application retrieved successfully"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -149,32 +166,34 @@
         "summary": "Get Flag Configuration Detail",
         "description": "Get detailed configuration for a specific feature flag. Shows the flag's rules, conditions, rollout percentage, and targeting criteria. Use when someone asks 'what does flag X do', 'flag configuration', or 'how is this flag set up'. Keywords: flag configuration, rollout settings, flag rules.",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "required": [
-                  "featureFlag"
+                  "data",
+                  "context"
                 ],
                 "properties": {
                   "data": {
                     "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
+                    "description": "Request parameters",
                     "properties": {
                       "featureFlag": {
-                        "type": "string",
-                        "description": "Feature flag name/identifier"
+                        "type": "string"
                       }
-                    }
+                    },
+                    "required": [
+                      "featureFlag"
+                    ]
                   },
                   "context": {
                     "type": "object",
-                    "description": "Authentication context",
                     "properties": {
                       "authServiceToken": {
                         "type": "string",
-                        "description": "User JWT token for authentication"
+                        "description": "User JWT token"
                       }
                     },
                     "required": [
@@ -183,7 +202,6 @@
                   },
                   "clientInterface": {
                     "type": "string",
-                    "description": "Client interface type",
                     "default": "DESKTOP"
                   },
                   "fields": {
@@ -191,7 +209,6 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Response field filter",
                     "default": []
                   }
                 }
@@ -201,7 +218,14 @@
         },
         "responses": {
           "200": {
-            "description": "Flag configuration retrieved successfully"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -215,30 +239,28 @@
         "summary": "Get Activity/Audit Log",
         "description": "Retrieve activity and audit logs showing who changed what configuration and when. Essential for tracking config changes and debugging. Use when someone asks 'who changed this', 'audit log', 'activity log', 'recent changes', or 'what was modified'. Keywords: audit log, activity log, configuration changes, change tracking.",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "required": [
-                  "entityType"
+                  "data",
+                  "context"
                 ],
                 "properties": {
                   "data": {
                     "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
+                    "description": "Request parameters",
                     "properties": {
                       "entityType": {
-                        "type": "string",
-                        "description": "Entity type (CRUD entity name). Common values: flight-PricingAutopilotRules, flight-PricingBaselineRules, flight-CommissionIncentiveRules, flight-PricingBudget, flight-PricePredictionRules, flight-TransactionFee"
+                        "type": "string"
                       },
                       "entryId": {
-                        "type": "string",
-                        "description": "Entry ID to query logs for. For autopilot: {profileGroup}.{profileType}.{productType}.{profileName}.{currency} e.g. AFFILIATE.SPECIFIC.STANDALONE.skyscanner-flight.THB"
+                        "type": "string"
                       },
                       "nextToken": {
-                        "type": "string",
-                        "description": "Pagination token from previous response"
+                        "type": "string"
                       }
                     },
                     "required": [
@@ -248,11 +270,10 @@
                   },
                   "context": {
                     "type": "object",
-                    "description": "Authentication context",
                     "properties": {
                       "authServiceToken": {
                         "type": "string",
-                        "description": "User JWT token for authentication"
+                        "description": "User JWT token"
                       }
                     },
                     "required": [
@@ -261,7 +282,6 @@
                   },
                   "clientInterface": {
                     "type": "string",
-                    "description": "Client interface type",
                     "default": "DESKTOP"
                   },
                   "fields": {
@@ -269,7 +289,6 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Response field filter",
                     "default": []
                   }
                 }
@@ -279,7 +298,14 @@
         },
         "responses": {
           "200": {
-            "description": "Activity logs retrieved successfully"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
         },
         "tags": [

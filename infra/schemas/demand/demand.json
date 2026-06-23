@@ -33,7 +33,47 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "TODO: scan backend for schema"
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "promoLabelId": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "promoLabelId"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -115,37 +155,34 @@
         "summary": "Search Fare Cache by Route",
         "description": "Look up cached fare data for a specific route. Shows what fares are currently cached for a given origin-destination pair. Use when someone asks about 'fare cache', 'cached prices for JKT-SIN', 'what fares are cached', or 'demand cache by route'. Keywords: fare cache, route cache, cached fares.",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "required": [
-                  "origin",
-                  "destination"
+                  "data",
+                  "context"
                 ],
                 "properties": {
                   "data": {
                     "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
+                    "description": "Request parameters",
                     "properties": {
-                      "origin": {
-                        "type": "string",
-                        "description": "Origin airport code, e.g. CGK, BKK, SGN"
-                      },
-                      "destination": {
-                        "type": "string",
-                        "description": "Destination airport code"
+                      "searchId": {
+                        "type": "string"
                       }
-                    }
+                    },
+                    "required": [
+                      "searchId"
+                    ]
                   },
                   "context": {
                     "type": "object",
-                    "description": "Authentication context",
                     "properties": {
                       "authServiceToken": {
                         "type": "string",
-                        "description": "User JWT token for authentication"
+                        "description": "User JWT token"
                       }
                     },
                     "required": [
@@ -154,7 +191,6 @@
                   },
                   "clientInterface": {
                     "type": "string",
-                    "description": "Client interface type",
                     "default": "DESKTOP"
                   },
                   "fields": {
@@ -162,7 +198,6 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Response field filter",
                     "default": []
                   }
                 }
@@ -172,7 +207,14 @@
         },
         "responses": {
           "200": {
-            "description": "Cached fare data retrieved successfully"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -316,23 +358,28 @@
         "summary": "List MongoDB Collections",
         "description": "List all available MongoDB collection names in the demand database. Use when someone asks 'what mongo collections exist', 'list collections', or needs to know which collections can be queried. Keywords: MongoDB collections, collection list, available collections.",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
                 "properties": {
                   "data": {
                     "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
+                    "description": "Request parameters",
+                    "properties": {},
+                    "required": null
                   },
                   "context": {
                     "type": "object",
-                    "description": "Authentication context",
                     "properties": {
                       "authServiceToken": {
                         "type": "string",
-                        "description": "User JWT token for authentication"
+                        "description": "User JWT token"
                       }
                     },
                     "required": [
@@ -341,7 +388,6 @@
                   },
                   "clientInterface": {
                     "type": "string",
-                    "description": "Client interface type",
                     "default": "DESKTOP"
                   },
                   "fields": {
@@ -349,7 +395,6 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Response field filter",
                     "default": []
                   }
                 }
@@ -359,7 +404,14 @@
         },
         "responses": {
           "200": {
-            "description": "MongoDB collection names listed successfully"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -451,7 +503,47 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "TODO: scan backend for schema"
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "bookingId": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "bookingId"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -483,7 +575,47 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "TODO: scan backend for schema"
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "bookingId": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "bookingId"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -515,7 +647,48 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "TODO: scan backend for schema"
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "date": {
+                        "type": "string"
+                      },
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": null
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
               }
             }
           }

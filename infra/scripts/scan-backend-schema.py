@@ -3,15 +3,17 @@
 scan-backend-schema.py — Scan fpr-fprtool-backend API interfaces → extract request schemas → inject.
 
 1. Build class map from backend (all .java files)
-2. Scan *API.java for @URL annotations + method signatures
+2. Parse *API.java files method-by-method to extract @URL + request DTO pairs
 3. Match against exposed-ops.yaml desired paths
 4. Extract DTO fields (type + nullability) from request DTOs
 5. Build OpenAPI schema with data/context envelope
 6. Inject into domain JSONs and fprtool-full.json
 
+Designed for reuse: import scan_and_inject() from gen-schema.py or run standalone.
+
 Usage:
-  python infra/scripts/scan-backend-schema.py
-  python infra/scripts/scan-backend-schema.py --inject
+  python infra/scripts/scan-backend-schema.py              # dry-run
+  python infra/scripts/scan-backend-schema.py --inject     # write schemas
 """
 
 import argparse
@@ -46,15 +48,18 @@ DTO_FIELD_RE = re.compile(
     re.DOTALL
 )
 
-URL_METHOD_RE = re.compile(
-    r'@URL\("([^"]+)"\).*?'
-    r'OptoolsPublicAPIResponse<[^>]*>\s+(\w+)\s*'
-    r'\(.*?OptoolsPublicAPIRequest<(\w+)>',
-    re.DOTALL
+# Match a single API method: @URL + @RouteId? + ResponseType methodName(OptoolsPublicAPIRequest<DtoType>)
+URL_METHOD_LINE_RE = re.compile(
+    r'^\s*@URL\("([^"]+)"\)\s*$'
+)
+METHOD_SIG_RE = re.compile(
+    r'OptoolsPublicAPIResponse<([^>]*)>\s+(\w+)\s*\(\s*'
+    r'OptoolsPublicAPIRequest<(\w+)>'
 )
 
 
 def build_class_map(backend_path):
+    """Build {ClassName: filePath} map for all Java files."""
     class_map = {}
     for root, dirs, files in os.walk(backend_path):
         if '/test/' in root or '/target/' in root:
@@ -65,7 +70,43 @@ def build_class_map(backend_path):
     return class_map
 
 
-def extract_fields(dto_content):
+def extract_api_methods(content):
+    """Parse a Java API interface file and extract (url, request_dto) pairs.
+    
+    Scans line-by-line: tracks current @URL, then matches the next method signature.
+    """
+    results = []
+    current_url = None
+
+    for line in content.split('\n'):
+        stripped = line.strip()
+
+        # Track @URL annotation
+        url_match = re.match(r'@URL\("([^"]+)"\)', stripped)
+        if url_match:
+            current_url = url_match.group(1)
+            continue
+
+        # Skip other annotations and modifiers
+        if stripped.startswith('@') or stripped in ('public', 'private', 'protected', ''):
+            continue
+
+        # Try to match method signature on current line
+        sig_match = METHOD_SIG_RE.search(stripped)
+        if sig_match and current_url:
+            results.append({
+                'url': current_url,
+                'response_dto': sig_match.group(1),
+                'method_name': sig_match.group(2),
+                'request_dto': sig_match.group(3),
+            })
+            current_url = None  # consumed
+
+    return results
+
+
+def extract_dto_fields(dto_content):
+    """Extract field names, types, and nullability from DTO Java source."""
     fields = []
     seen = set()
     for m in DTO_FIELD_RE.finditer(dto_content):
@@ -88,6 +129,7 @@ def extract_fields(dto_content):
 
 
 def build_request_schema(fields):
+    """Build {properties, required} from extracted fields."""
     return {
         'type': 'object',
         'properties': {f['name']: f['schema'] for f in fields},
@@ -95,7 +137,23 @@ def build_request_schema(fields):
     }
 
 
+DATA_ENVELOPE = {
+    'type': 'object',
+    'properties': {
+        'authServiceToken': {
+            'type': 'string',
+            'description': 'User JWT token',
+        },
+    },
+    'required': ['authServiceToken'],
+}
+
+CLIENT_IFACE = {'type': 'string', 'default': 'DESKTOP'}
+FIELDS_ARRAY = {'type': 'array', 'items': {'type': 'string'}, 'default': []}
+
+
 def build_operation(data_schema):
+    """Wrap request schema in data/context/clientInterface/fields envelope."""
     return {
         'requestBody': {
             'required': True,
@@ -111,25 +169,9 @@ def build_operation(data_schema):
                                 'properties': data_schema.get('properties', {}),
                                 'required': data_schema.get('required'),
                             },
-                            'context': {
-                                'type': 'object',
-                                'properties': {
-                                    'authServiceToken': {
-                                        'type': 'string',
-                                        'description': 'User JWT token',
-                                    }
-                                },
-                                'required': ['authServiceToken'],
-                            },
-                            'clientInterface': {
-                                'type': 'string',
-                                'default': 'DESKTOP',
-                            },
-                            'fields': {
-                                'type': 'array',
-                                'items': {'type': 'string'},
-                                'default': [],
-                            },
+                            'context': DATA_ENVELOPE,
+                            'clientInterface': CLIENT_IFACE,
+                            'fields': FIELDS_ARRAY,
                         },
                     }
                 }
@@ -144,39 +186,32 @@ def build_operation(data_schema):
     }
 
 
-def main():
-    parser = argparse.ArgumentParser(description='Scan backend APIs for request schemas')
-    parser.add_argument('--backend-path', default=DEFAULT_BACKEND)
-    parser.add_argument('--schemas-dir', default=DEFAULT_SCHEMAS)
-    parser.add_argument('--inject', action='store_true', help='Write schemas into domain JSONs')
-    args = parser.parse_args()
+def scan_and_match(backend_path, config_path=CONFIG_PATH, skip_domains=None):
+    """Scan backend API interfaces and match against exposed-ops.yaml.
+    
+    Returns: {op_id: {dto, schema, field_count}} for matched operations.
+    """
+    skip_domains = set(skip_domains or [])
 
-    backend = os.path.abspath(args.backend_path)
-    schemas_dir = os.path.abspath(args.schemas_dir)
-
-    # 1. Load config
-    if not os.path.exists(CONFIG_PATH):
-        print(f"ERROR: Config not found: {CONFIG_PATH}", file=sys.stderr)
-        sys.exit(1)
-    with open(CONFIG_PATH) as f:
+    # Load config
+    with open(config_path) as f:
         config = yaml.safe_load(f)
 
-    desired_ops = {}
-    path_to_op = {}  # desired_path → op_id
+    path_to_op = {}
     for domain, ops in config.items():
+        if domain in skip_domains:
+            continue
         for op in ops:
             desired_path = f'/api/v2/{op["path"]}'
-            desired_ops[op['id']] = {'domain': domain, 'desired_path': desired_path}
             path_to_op[desired_path] = op['id']
 
-    print(f"📋 {len(desired_ops)} desired ops from exposed-ops.yaml")
+    print(f"📋 {len(path_to_op)} desired ops")
 
-    # 2. Build class map
-    print(f"🔍 Scanning backend...")
-    class_map = build_class_map(backend)
+    # Build class map
+    class_map = build_class_map(backend_path)
     print(f"  {len(class_map)} Java classes")
 
-    # 3. Scan API interfaces
+    # Scan API interfaces
     api_files = [p for name, p in class_map.items() if name.endswith('API')]
     print(f"  {len(api_files)} API interfaces")
 
@@ -185,12 +220,13 @@ def main():
         with open(fpath, encoding='utf-8', errors='ignore') as f:
             content = f.read()
 
-        for m in URL_METHOD_RE.finditer(content):
-            api_url = m.group(1)  # e.g. /api/supply-search-tool/search-regular-fare
-            req_dto = m.group(3)
+        methods = extract_api_methods(content)
+        for m in methods:
+            api_url = m['url']
+            req_dto_name = m['request_dto']
 
-            # Normalize: /api/X → /api/v2/X
-            if api_url.startswith('/api/'):
+            # Normalize: /api/X → /api/v2/X; /api/v2/X stays as-is
+            if api_url.startswith('/api/') and not api_url.startswith('/api/v2/'):
                 check_url = '/api/v2' + api_url[4:]
             else:
                 check_url = api_url
@@ -199,7 +235,7 @@ def main():
             if not op_id:
                 continue
 
-            if req_dto == 'EmptyRequest':
+            if req_dto_name == 'EmptyRequest':
                 schemas_found[op_id] = {
                     'dto': 'EmptyRequest',
                     'schema': build_request_schema([]),
@@ -208,29 +244,31 @@ def main():
                 print(f'  ✅ {op_id}: EmptyRequest')
                 continue
 
-            if req_dto not in class_map:
+            if req_dto_name not in class_map:
                 continue
 
-            with open(class_map[req_dto], encoding='utf-8', errors='ignore') as f2:
+            with open(class_map[req_dto_name], encoding='utf-8', errors='ignore') as f2:
                 dto_content = f2.read()
 
-            fields = extract_fields(dto_content)
+            fields = extract_dto_fields(dto_content)
             request_schema = build_request_schema(fields)
             schemas_found[op_id] = {
-                'dto': req_dto,
+                'dto': req_dto_name,
                 'schema': request_schema,
                 'field_count': len(fields),
             }
             n_req = len(request_schema.get('required') or [])
-            print(f'  ✅ {op_id}: {req_dto} ({len(fields)} fields, {n_req} required)')
+            print(f'  ✅ {op_id}: {req_dto_name} ({len(fields)} fields, {n_req} required)')
 
-    print(f"\n📊 Matched: {len(schemas_found)}/{len(desired_ops)}")
+    print(f"\n📊 Matched: {len(schemas_found)}/{len(path_to_op)}")
+    return schemas_found
 
-    if not args.inject:
-        return
 
-    # 4. Inject into domain JSONs
+def inject_schemas(schemas_found, schemas_dir=DEFAULT_SCHEMAS):
+    """Inject found schemas into domain JSONs and fprtool-full.json."""
     injected = 0
+
+    # Domain schemas
     for entry in os.listdir(schemas_dir):
         domain_dir = os.path.join(schemas_dir, entry)
         if not os.path.isdir(domain_dir):
@@ -248,7 +286,6 @@ def main():
                 op_id = ops.get('operationId', '')
                 if op_id in schemas_found:
                     info = schemas_found[op_id]
-                    ops.pop('summary', None)
                     ops.update(build_operation(info['schema']))
                     updated = True
                     injected += 1
@@ -258,9 +295,9 @@ def main():
                 json.dump(spec, f, indent=2)
                 f.write('\n')
 
-    print(f"  💉 Injected {injected} schemas into domain files")
+    print(f"  💉 Injected {injected} into domain files")
 
-    # 5. Inject into fprtool-full.json
+    # fprtool-full.json
     full_path = os.path.join(schemas_dir, 'fprtool-full.json')
     if os.path.exists(full_path):
         with open(full_path) as f:
@@ -277,6 +314,24 @@ def main():
                 json.dump(full_spec, f, indent=2)
                 f.write('\n')
             print(f"  💉 Injected {updated} into fprtool-full.json")
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Scan backend APIs for request schemas')
+    parser.add_argument('--backend-path', default=DEFAULT_BACKEND)
+    parser.add_argument('--schemas-dir', default=DEFAULT_SCHEMAS)
+    parser.add_argument('--inject', action='store_true', help='Write schemas into domain JSONs')
+    parser.add_argument('--skip-domains', nargs='*', default=['pricing'],
+                        help='Domains to skip (default: pricing)')
+    args = parser.parse_args()
+
+    print(f"🔍 Scanning backend: {args.backend_path}")
+    if args.skip_domains:
+        print(f"⏭️  Skipping domains: {args.skip_domains}")
+    schemas_found = scan_and_match(args.backend_path, skip_domains=args.skip_domains)
+
+    if schemas_found and args.inject:
+        inject_schemas(schemas_found, args.schemas_dir)
 
 
 if __name__ == '__main__':
