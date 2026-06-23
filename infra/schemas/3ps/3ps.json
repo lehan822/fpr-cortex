@@ -215,7 +215,6 @@
     "/api/v2/airline-ids": {
       "post": {
         "operationId": "get_airline_ids",
-        "summary": "All airline IDs",
         "tags": [
           "3ps"
         ],
@@ -225,7 +224,41 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "TODO: scan backend for schema"
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {},
+                    "required": null
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -247,7 +280,6 @@
     "/api/v2/countries": {
       "post": {
         "operationId": "get_countries",
-        "summary": "All countries",
         "tags": [
           "3ps"
         ],
@@ -257,7 +289,41 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "TODO: scan backend for schema"
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {},
+                    "required": null
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -279,7 +345,6 @@
     "/api/v2/airline-route/get-all": {
       "post": {
         "operationId": "get_airline_routes",
-        "summary": "All airline routes",
         "tags": [
           "3ps"
         ],
@@ -289,7 +354,48 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "TODO: scan backend for schema"
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "pagination": {
+                        "type": "string"
+                      },
+                      "filter": {
+                        "type": "string"
+                      }
+                    },
+                    "required": null
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -311,7 +417,6 @@
     "/api/v2/airline-route/history": {
       "post": {
         "operationId": "get_airline_route_history",
-        "summary": "Route change history",
         "tags": [
           "3ps"
         ],
@@ -321,7 +426,48 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "TODO: scan backend for schema"
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "pagination": {
+                        "type": "string"
+                      },
+                      "filter": {
+                        "type": "string"
+                      }
+                    },
+                    "required": null
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -343,7 +489,6 @@
     "/api/v2/airline-route/history-filter": {
       "post": {
         "operationId": "get_airline_route_history_filtered",
-        "summary": "Filtered route history",
         "tags": [
           "3ps"
         ],
@@ -353,7 +498,48 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "TODO: scan backend for schema"
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "pagination": {
+                        "type": "string"
+                      },
+                      "filter": {
+                        "type": "string"
+                      }
+                    },
+                    "required": null
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
               }
             }
           }
