@@ -257,7 +257,7 @@ sysinteg:
     description: Who changed what config and when
 
   - id: get_decompressed_object
-    path: get_decompressed_object
+    path: supply-metadata-tracking/get-decompressed-object
     description: Decompress S3/stored object
 
 3ps:

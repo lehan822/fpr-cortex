@@ -40,9 +40,11 @@ TYPE_MAP = {
     'Instant': 'string', 'Date': 'string', 'ZonedDateTime': 'string',
 }
 
+# Matches: @NotNullable/@Nullable\n  [private|protected] [final] Type name;
 DTO_FIELD_RE = re.compile(
     r'(@NotNullable|@Nullable)\s*\n'
     r'\s*(?:(?:private|protected|public)\s+)?'
+    r'(?:final\s+)?'
     r'((?:List<[^>]+>|Map<[^>,]+,\s*[^>]+>|\w+(?:<[^>]+>)?))\s+'
     r'(\w+)\s*[;=]',
     re.DOTALL
@@ -73,10 +75,13 @@ def build_class_map(backend_path):
 def extract_api_methods(content):
     """Parse a Java API interface file and extract (url, request_dto) pairs.
     
-    Scans line-by-line: tracks current @URL, then matches the next method signature.
+    Scans line-by-line with multi-line method signature support.
+    Tracks current @URL, then matches the method signature across multiple lines.
     """
     results = []
     current_url = None
+    pending_method = None   # collect multi-line method signature
+    pending_started = False
 
     for line in content.split('\n'):
         stripped = line.strip()
@@ -85,22 +90,35 @@ def extract_api_methods(content):
         url_match = re.match(r'@URL\("([^"]+)"\)', stripped)
         if url_match:
             current_url = url_match.group(1)
+            pending_method = None
+            pending_started = False
             continue
 
-        # Skip other annotations and modifiers
-        if stripped.startswith('@') or stripped in ('public', 'private', 'protected', ''):
+        # Skip other annotations and modifiers (but not if pending method)
+        if pending_started:
+            # Continue collecting pending method
+            pending_method = (pending_method or '') + ' ' + stripped
+        elif stripped.startswith('@') or stripped in ('public', 'private', 'protected', ''):
+            # Skip annotations and modifiers before signature
             continue
+        else:
+            # This might be the start of a method signature
+            pending_method = stripped
+            pending_started = True
 
-        # Try to match method signature on current line
-        sig_match = METHOD_SIG_RE.search(stripped)
-        if sig_match and current_url:
-            results.append({
-                'url': current_url,
-                'response_dto': sig_match.group(1),
-                'method_name': sig_match.group(2),
-                'request_dto': sig_match.group(3),
-            })
-            current_url = None  # consumed
+        # Try to match complete method signature
+        if pending_method and current_url:
+            sig_match = METHOD_SIG_RE.search(pending_method)
+            if sig_match:
+                results.append({
+                    'url': current_url,
+                    'response_dto': sig_match.group(1),
+                    'method_name': sig_match.group(2),
+                    'request_dto': sig_match.group(3),
+                })
+                current_url = None
+                pending_method = None
+                pending_started = False
 
     return results
 
@@ -203,9 +221,11 @@ def scan_and_match(backend_path, config_path=CONFIG_PATH, skip_domains=None):
             continue
         for op in ops:
             desired_path = f'/api/v2/{op["path"]}'
-            path_to_op[desired_path] = op['id']
+            op_ids = path_to_op.get(desired_path, [])
+            op_ids.append(op['id'])
+            path_to_op[desired_path] = op_ids
 
-    print(f"📋 {len(path_to_op)} desired ops")
+    print(f"📋 {sum(len(v) for v in path_to_op.values())} desired ops")
 
     # Build class map
     class_map = build_class_map(backend_path)
@@ -225,42 +245,46 @@ def scan_and_match(backend_path, config_path=CONFIG_PATH, skip_domains=None):
             api_url = m['url']
             req_dto_name = m['request_dto']
 
-            # Normalize: /api/X → /api/v2/X; /api/v2/X stays as-is
-            if api_url.startswith('/api/') and not api_url.startswith('/api/v2/'):
+            # Normalize: /api/X → /api/v2/X; /api/v1/X → /api/v2/X; /api/v2/X stays
+            if api_url.startswith('/api/v1/'):
+                check_url = '/api/v2' + api_url[7:]
+            elif api_url.startswith('/api/') and not api_url.startswith('/api/v2/'):
                 check_url = '/api/v2' + api_url[4:]
             else:
                 check_url = api_url
 
-            op_id = path_to_op.get(check_url)
-            if not op_id:
+            op_ids = path_to_op.get(check_url, [])
+            if not op_ids:
                 continue
 
-            if req_dto_name == 'EmptyRequest':
+            for op_id in op_ids:
+                if req_dto_name in ('EmptyRequest', 'PEmpty'):
+                    schemas_found[op_id] = {
+                        'dto': 'EmptyRequest',
+                        'schema': build_request_schema([]),
+                        'field_count': 0,
+                    }
+                    print(f'  ✅ {op_id}: EmptyRequest')
+                    continue
+
+                if req_dto_name not in class_map:
+                    continue
+
+                with open(class_map[req_dto_name], encoding='utf-8', errors='ignore') as f2:
+                    dto_content = f2.read()
+
+                fields = extract_dto_fields(dto_content)
+                request_schema = build_request_schema(fields)
                 schemas_found[op_id] = {
-                    'dto': 'EmptyRequest',
-                    'schema': build_request_schema([]),
-                    'field_count': 0,
+                    'dto': req_dto_name,
+                    'schema': request_schema,
+                    'field_count': len(fields),
                 }
-                print(f'  ✅ {op_id}: EmptyRequest')
-                continue
+                n_req = len(request_schema.get('required') or [])
+                print(f'  ✅ {op_id}: {req_dto_name} ({len(fields)} fields, {n_req} required)')
 
-            if req_dto_name not in class_map:
-                continue
-
-            with open(class_map[req_dto_name], encoding='utf-8', errors='ignore') as f2:
-                dto_content = f2.read()
-
-            fields = extract_dto_fields(dto_content)
-            request_schema = build_request_schema(fields)
-            schemas_found[op_id] = {
-                'dto': req_dto_name,
-                'schema': request_schema,
-                'field_count': len(fields),
-            }
-            n_req = len(request_schema.get('required') or [])
-            print(f'  ✅ {op_id}: {req_dto_name} ({len(fields)} fields, {n_req} required)')
-
-    print(f"\n📊 Matched: {len(schemas_found)}/{len(path_to_op)}")
+    total_desired = sum(len(v) for v in path_to_op.values())
+    print(f"\n📊 Matched: {len(schemas_found)}/{total_desired}")
     return schemas_found
 
 

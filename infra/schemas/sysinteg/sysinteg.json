@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://tool-api.fpr.traveloka.com",
+      "url": "https://api-tool.fpr.traveloka.com",
       "description": "Production"
     },
     {
@@ -15,7 +15,7 @@
       "description": "Flight Staging"
     },
     {
-      "url": "https://tool-api.fpr.staging-traveloka.com",
+      "url": "https://api-tool.fpr.traveloka.com",
       "description": "Shared Staging"
     }
   ],
@@ -313,7 +313,7 @@
         ]
       }
     },
-    "/api/v2/get_decompressed_object": {
+    "/api/v2/supply-metadata-tracking/get-decompressed-object": {
       "post": {
         "operationId": "get_decompressed_object",
         "summary": "Decompress S3/stored object",
@@ -326,7 +326,47 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "TODO: scan backend for schema"
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "compressedObjectKey": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "compressedObjectKey"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
               }
             }
           }

@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://tool-api.fpr.traveloka.com",
+      "url": "https://api-tool.fpr.traveloka.com",
       "description": "Production"
     },
     {
@@ -15,7 +15,7 @@
       "description": "Flight Staging"
     },
     {
-      "url": "https://tool-api.fpr.staging-traveloka.com",
+      "url": "https://api-tool.fpr.traveloka.com",
       "description": "Shared Staging"
     }
   ],
@@ -98,23 +98,28 @@
         "summary": "Get Promo Label Supporting Data",
         "description": "Get supporting data and options for promo labels. Returns available promo label types, configurations, and setup options. Use when someone asks about 'promo label options', 'label configuration', or needs to set up new promo labels. Keywords: label configuration, promo options, label setup.",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
                 "properties": {
                   "data": {
                     "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
+                    "description": "Request parameters",
+                    "properties": {},
+                    "required": null
                   },
                   "context": {
                     "type": "object",
-                    "description": "Authentication context",
                     "properties": {
                       "authServiceToken": {
                         "type": "string",
-                        "description": "User JWT token for authentication"
+                        "description": "User JWT token"
                       }
                     },
                     "required": [
@@ -123,7 +128,6 @@
                   },
                   "clientInterface": {
                     "type": "string",
-                    "description": "Client interface type",
                     "default": "DESKTOP"
                   },
                   "fields": {
@@ -131,7 +135,6 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Response field filter",
                     "default": []
                   }
                 }
@@ -141,7 +144,14 @@
         },
         "responses": {
           "200": {
-            "description": "Promo label supporting data retrieved successfully"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -301,7 +311,41 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "TODO: scan backend for schema"
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {},
+                    "required": null
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -333,7 +377,41 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "TODO: scan backend for schema"
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {},
+                    "required": null
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -422,40 +500,60 @@
     "/api/v2/simplecrud/simple-crud-query": {
       "post": {
         "operationId": "simple_crud_query",
-        "summary": "MongoDB CRUD Query",
-        "description": "Execute direct MongoDB queries on demand-side collections. Supports GET, UPSERT, and DELETE operations on any demand_booking collection. Use when someone needs to 'query mongo', 'check mongo collection', or run a 'direct database query'. WARNING: UPSERT/DELETE operations modify data. Keywords: MongoDB, direct query, database operation.",
+        "summary": "Direct mongo CRUD (GET/UPSERT/DELETE)",
+        "tags": [
+          "demand"
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
                 "properties": {
                   "data": {
                     "type": "object",
-                    "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true,
+                    "description": "Request parameters",
                     "properties": {
-                      "collection": {
-                        "type": "string",
-                        "description": "MongoDB collection name"
+                      "action": {
+                        "type": "string"
                       },
-                      "operation": {
-                        "type": "string",
-                        "description": "CRUD operation: GET, UPSERT, DELETE"
+                      "database": {
+                        "type": "string"
                       },
-                      "query": {
-                        "type": "string",
-                        "description": "MongoDB query as JSON string"
+                      "collectionName": {
+                        "type": "string"
+                      },
+                      "_id": {
+                        "type": "string"
+                      },
+                      "field": {
+                        "type": "string"
+                      },
+                      "fieldUpdate": {
+                        "type": "string"
+                      },
+                      "valueUpdate": {
+                        "type": "string"
                       }
-                    }
+                    },
+                    "required": [
+                      "action",
+                      "database",
+                      "collectionName",
+                      "_id"
+                    ]
                   },
                   "context": {
                     "type": "object",
-                    "description": "Authentication context",
                     "properties": {
                       "authServiceToken": {
                         "type": "string",
-                        "description": "User JWT token for authentication"
+                        "description": "User JWT token"
                       }
                     },
                     "required": [
@@ -464,7 +562,6 @@
                   },
                   "clientInterface": {
                     "type": "string",
-                    "description": "Client interface type",
                     "default": "DESKTOP"
                   },
                   "fields": {
@@ -472,7 +569,6 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Response field filter",
                     "default": []
                   }
                 }
@@ -482,12 +578,16 @@
         },
         "responses": {
           "200": {
-            "description": "MongoDB query executed successfully"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
-        },
-        "tags": [
-          "demand"
-        ]
+        }
       }
     },
     "/api/v2/booking-details/get-flight-info": {

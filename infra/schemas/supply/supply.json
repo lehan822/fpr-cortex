@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://tool-api.fpr.traveloka.com",
+      "url": "https://api-tool.fpr.traveloka.com",
       "description": "Production"
     },
     {
@@ -15,7 +15,7 @@
       "description": "Flight Staging"
     },
     {
-      "url": "https://tool-api.fpr.staging-traveloka.com",
+      "url": "https://api-tool.fpr.traveloka.com",
       "description": "Shared Staging"
     }
   ],
@@ -23,6 +23,7 @@
     "/api/v2/supply-search-tool/search-regular-fare": {
       "post": {
         "operationId": "search_regular_fare",
+        "summary": "Search regular fares",
         "tags": [
           "supply"
         ],
@@ -138,6 +139,7 @@
     "/api/v2/supply-search-tool/search-special-fare": {
       "post": {
         "operationId": "search_special_fare",
+        "summary": "Special fare search",
         "tags": [
           "supply"
         ],
@@ -209,6 +211,7 @@
     "/api/v2/supply-search-tool/search-upsell-fare": {
       "post": {
         "operationId": "search_upsell_fare",
+        "summary": "Upsell fare search",
         "tags": [
           "supply"
         ],
@@ -280,6 +283,7 @@
     "/api/v2/supply-search-tool/revalidate-regular-fare": {
       "post": {
         "operationId": "revalidate_regular_fare",
+        "summary": "Revalidate regular fare",
         "tags": [
           "supply"
         ],
@@ -355,6 +359,7 @@
     "/api/v2/supply-search-tool/revalidate-special-fare": {
       "post": {
         "operationId": "revalidate_special_fare",
+        "summary": "Revalidate special fare",
         "tags": [
           "supply"
         ],
@@ -426,6 +431,7 @@
     "/api/v2/supply-search-tool/revalidate-upsell-fare": {
       "post": {
         "operationId": "revalidate_upsell_fare",
+        "summary": "Revalidate upsell fare",
         "tags": [
           "supply"
         ],
@@ -507,7 +513,121 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "TODO: scan backend for schema"
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "competitorName": {
+                        "type": "string"
+                      },
+                      "tripType": {
+                        "type": "string"
+                      },
+                      "seatPublishedClass": {
+                        "type": "string"
+                      },
+                      "journeys": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "selectedFlights": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "numSeats": {
+                        "type": "string"
+                      },
+                      "agentId": {
+                        "type": "string"
+                      },
+                      "searchId": {
+                        "type": "string"
+                      },
+                      "currency": {
+                        "type": "string"
+                      },
+                      "locale": {
+                        "type": "string"
+                      },
+                      "additionalData": {
+                        "type": "string"
+                      },
+                      "filter": {
+                        "type": "string"
+                      },
+                      "originCode": {
+                        "type": "string"
+                      },
+                      "destinationCode": {
+                        "type": "string"
+                      },
+                      "departureDate": {
+                        "type": "string"
+                      },
+                      "numAdults": {
+                        "type": "integer"
+                      },
+                      "numChildren": {
+                        "type": "integer"
+                      },
+                      "numInfants": {
+                        "type": "integer"
+                      },
+                      "standAlone": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "tripType",
+                      "seatPublishedClass",
+                      "journeys",
+                      "selectedFlights",
+                      "numSeats",
+                      "agentId",
+                      "searchId",
+                      "currency",
+                      "locale",
+                      "originCode",
+                      "destinationCode",
+                      "departureDate",
+                      "numAdults",
+                      "numChildren",
+                      "numInfants"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
               }
             }
           }
@@ -529,6 +649,7 @@
     "/api/v2/provider-source/v2/get-provider-sourcing": {
       "post": {
         "operationId": "get_provider_sourcing",
+        "summary": "Provider sourcing config",
         "tags": [
           "supply"
         ],
@@ -601,6 +722,7 @@
     "/api/v2/provider-source/v2/get-histories": {
       "post": {
         "operationId": "get_provider_source_histories",
+        "summary": "Sourcing change history",
         "tags": [
           "supply"
         ],
@@ -673,6 +795,7 @@
     "/api/v2/provider-source/v2/version/get-latest-version": {
       "post": {
         "operationId": "get_provider_source_latest_version",
+        "summary": "Latest sourcing version",
         "tags": [
           "supply"
         ],
@@ -738,6 +861,7 @@
     "/api/v2/fare-checking/get-enabled-provider": {
       "post": {
         "operationId": "get_enabled_provider",
+        "summary": "Enabled providers list",
         "tags": [
           "supply"
         ],
@@ -803,6 +927,7 @@
     "/api/v2/fare-checking/submit-fare-checking": {
       "post": {
         "operationId": "check_fare",
+        "summary": "Check fare validity",
         "tags": [
           "supply"
         ],
@@ -892,6 +1017,7 @@
     "/api/v2/fare-checking/get-result": {
       "post": {
         "operationId": "get_fare_check_result",
+        "summary": "Fare check result",
         "tags": [
           "supply"
         ],
@@ -1107,6 +1233,7 @@
     "/api/v2/provider-source/inventory-type/get-all": {
       "post": {
         "operationId": "get_inventory_types",
+        "summary": "Inventory types",
         "tags": [
           "supply"
         ],
@@ -1172,6 +1299,7 @@
     "/api/v2/provider-source/arbitration-mode": {
       "post": {
         "operationId": "get_arbitration_modes",
+        "summary": "Arbitration modes",
         "tags": [
           "supply"
         ],
@@ -1474,7 +1602,68 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "TODO: scan backend for schema"
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "action": {
+                        "type": "string"
+                      },
+                      "database": {
+                        "type": "string"
+                      },
+                      "collectionName": {
+                        "type": "string"
+                      },
+                      "_id": {
+                        "type": "string"
+                      },
+                      "field": {
+                        "type": "string"
+                      },
+                      "fieldUpdate": {
+                        "type": "string"
+                      },
+                      "valueUpdate": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "database",
+                      "collectionName",
+                      "_id"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
               }
             }
           }
