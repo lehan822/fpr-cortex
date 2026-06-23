@@ -363,7 +363,8 @@
                         "type": "string",
                         "description": "IATA airline code, e.g. GA, SQ, QZ"
                       }
-                    }
+                    },
+                    "required": []
                   },
                   "context": {
                     "type": "object",
@@ -391,7 +392,8 @@
                     "description": "Response field filter",
                     "default": []
                   }
-                }
+                },
+                "required": []
               }
             }
           }
@@ -443,7 +445,8 @@
                         "type": "string",
                         "description": "IATA airline code"
                       }
-                    }
+                    },
+                    "required": []
                   },
                   "context": {
                     "type": "object",
@@ -471,7 +474,8 @@
                     "description": "Response field filter",
                     "default": []
                   }
-                }
+                },
+                "required": []
               }
             }
           }
@@ -520,7 +524,8 @@
                       "airlineId": {
                         "type": "string"
                       }
-                    }
+                    },
+                    "required": []
                   },
                   "context": {
                     "type": "object",
@@ -548,7 +553,8 @@
                     "description": "Response field filter",
                     "default": []
                   }
-                }
+                },
+                "required": []
               }
             }
           }
@@ -597,7 +603,8 @@
                       "airlineId": {
                         "type": "string"
                       }
-                    }
+                    },
+                    "required": []
                   },
                   "context": {
                     "type": "object",
@@ -625,7 +632,8 @@
                     "description": "Response field filter",
                     "default": []
                   }
-                }
+                },
+                "required": []
               }
             }
           }
@@ -674,7 +682,8 @@
                       "airlineId": {
                         "type": "string"
                       }
-                    }
+                    },
+                    "required": []
                   },
                   "context": {
                     "type": "object",
@@ -702,7 +711,8 @@
                     "description": "Response field filter",
                     "default": []
                   }
-                }
+                },
+                "required": []
               }
             }
           }
@@ -751,7 +761,8 @@
                       "airlineId": {
                         "type": "string"
                       }
-                    }
+                    },
+                    "required": []
                   },
                   "context": {
                     "type": "object",
@@ -779,7 +790,8 @@
                     "description": "Response field filter",
                     "default": []
                   }
-                }
+                },
+                "required": []
               }
             }
           }
@@ -809,7 +821,8 @@
                   "data": {
                     "type": "object",
                     "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
+                    "additionalProperties": true,
+                    "required": []
                   },
                   "context": {
                     "type": "object",
@@ -837,7 +850,8 @@
                     "description": "Response field filter",
                     "default": []
                   }
-                }
+                },
+                "required": []
               }
             }
           }
@@ -866,7 +880,8 @@
                   "data": {
                     "type": "object",
                     "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
+                    "additionalProperties": true,
+                    "required": []
                   },
                   "context": {
                     "type": "object",
@@ -894,7 +909,8 @@
                     "description": "Response field filter",
                     "default": []
                   }
-                }
+                },
+                "required": []
               }
             }
           }
@@ -930,7 +946,8 @@
                         "type": "string",
                         "description": "Flight provider ID"
                       }
-                    }
+                    },
+                    "required": []
                   },
                   "context": {
                     "type": "object",
@@ -997,7 +1014,8 @@
                         "type": "string",
                         "description": "Flight provider ID"
                       }
-                    }
+                    },
+                    "required": []
                   },
                   "context": {
                     "type": "object",
@@ -1058,7 +1076,8 @@
                   "data": {
                     "type": "object",
                     "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
+                    "additionalProperties": true,
+                    "required": []
                   },
                   "context": {
                     "type": "object",
@@ -1086,7 +1105,8 @@
                     "description": "Response field filter",
                     "default": []
                   }
-                }
+                },
+                "required": []
               }
             }
           }
@@ -1130,7 +1150,8 @@
                         "type": "string",
                         "description": "IATA airline code to filter commission rules, e.g. GA, SQ, QZ"
                       }
-                    }
+                    },
+                    "required": []
                   },
                   "context": {
                     "type": "object",
@@ -1158,7 +1179,8 @@
                     "description": "Response field filter",
                     "default": []
                   }
-                }
+                },
+                "required": []
               }
             }
           }
@@ -1188,7 +1210,8 @@
                   "data": {
                     "type": "object",
                     "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
+                    "additionalProperties": true,
+                    "required": []
                   },
                   "context": {
                     "type": "object",
@@ -1216,7 +1239,8 @@
                     "description": "Response field filter",
                     "default": []
                   }
-                }
+                },
+                "required": []
               }
             }
           }
@@ -1264,7 +1288,8 @@
                         "type": "string",
                         "description": "IATA airline code"
                       }
-                    }
+                    },
+                    "required": []
                   },
                   "context": {
                     "type": "object",
@@ -1292,7 +1317,8 @@
                     "description": "Response field filter",
                     "default": []
                   }
-                }
+                },
+                "required": []
               }
             }
           }
@@ -1331,7 +1357,8 @@
                         "type": "string",
                         "description": "Booking PNR code (e.g. ABC123)"
                       }
-                    }
+                    },
+                    "required": []
                   },
                   "context": {
                     "type": "object",
@@ -1398,7 +1425,8 @@
                         "type": "string",
                         "description": "Currency code: IDR (Indonesian Rupiah), THB (Thai Baht), VND (Vietnamese Dong), SGD (Singapore Dollar), MYR (Malaysian Ringgit)"
                       }
-                    }
+                    },
+                    "required": []
                   },
                   "context": {
                     "type": "object",
@@ -1465,7 +1493,8 @@
                         "type": "string",
                         "description": "Currency code: IDR, THB, VND, SGD, MYR"
                       }
-                    }
+                    },
+                    "required": []
                   },
                   "context": {
                     "type": "object",
@@ -1532,7 +1561,8 @@
                         "type": "string",
                         "description": "Currency code: IDR, THB, VND, SGD, MYR"
                       }
-                    }
+                    },
+                    "required": []
                   },
                   "context": {
                     "type": "object",
@@ -1590,7 +1620,8 @@
                   "data": {
                     "type": "object",
                     "description": "Request data payload (tool-specific parameters go here)",
-                    "additionalProperties": true
+                    "additionalProperties": true,
+                    "required": []
                   },
                   "context": {
                     "type": "object",
@@ -1618,7 +1649,8 @@
                     "description": "Response field filter",
                     "default": []
                   }
-                }
+                },
+                "required": []
               }
             }
           }

@@ -40,7 +40,7 @@
                     "type": "object",
                     "description": "Request parameters",
                     "properties": {},
-                    "required": null
+                    "required": []
                   },
                   "context": {
                     "type": "object",
