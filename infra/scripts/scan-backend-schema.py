@@ -131,7 +131,7 @@ def extract_dto_fields(dto_content):
         elif java_type in PRIMITIVE_TYPES:
             schema = {'type': TYPE_MAP.get(java_type, 'string')}
         else:
-            schema = {'type': 'object'}  # will be corrected to string for enums below
+            schema = {'type': 'string'}  # default (enum/external): will fix below for known DTOs
 
         fields.append({'name': field_name, 'schema': schema, 'required': required})
     return fields
@@ -263,8 +263,8 @@ def scan_and_match(backend_path, config_path=CONFIG_PATH, skip_domains=None):
                         if jt in class_map:
                             with open(class_map[jt], encoding='utf-8', errors='ignore') as ef:
                                 first = ''.join(ef.readlines()[:50])
-                            if re.search(r'\benum\b', first):
-                                fld['schema'] = {'type': 'string'}
+                            if not re.search(r'\benum\b', first):
+                                fld['schema'] = {'type': 'object'}  # confirmed non-enum DTO
                 
                 request_schema = build_request_schema(fields)
                 schemas_found[op_id] = {

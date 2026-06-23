@@ -432,7 +432,7 @@
                         "type": "string"
                       },
                       "valueUpdate": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": [
@@ -522,7 +522,7 @@
                         "type": "string"
                       },
                       "fareType": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "searchId": {
                         "type": "string"
@@ -546,7 +546,7 @@
                         "type": "boolean"
                       },
                       "searchSeqNo": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": [
@@ -1008,7 +1008,7 @@
                         }
                       },
                       "numSeats": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "agentId": {
                         "type": "string"
@@ -1023,10 +1023,10 @@
                         "type": "string"
                       },
                       "additionalData": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "filter": {
-                        "type": "object"
+                        "type": "string"
                       },
                       "originCode": {
                         "type": "string"

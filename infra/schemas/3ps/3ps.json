@@ -482,7 +482,7 @@
                         "type": "string"
                       },
                       "valueUpdate": {
-                        "type": "object"
+                        "type": "string"
                       }
                     },
                     "required": [
