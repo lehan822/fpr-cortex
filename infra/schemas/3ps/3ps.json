@@ -482,7 +482,7 @@
                         "type": "string"
                       },
                       "valueUpdate": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": [
@@ -729,10 +729,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "filter": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": []
@@ -802,10 +802,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "filter": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": []
@@ -875,10 +875,10 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "filter": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": []

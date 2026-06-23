@@ -131,8 +131,7 @@ def extract_dto_fields(dto_content):
         elif java_type in PRIMITIVE_TYPES:
             schema = {'type': TYPE_MAP.get(java_type, 'string')}
         else:
-            # Unknown type (enum, nested class, etc.) — default to string
-            schema = {'type': 'string'}
+            schema = {'type': 'object'}  # will be corrected to string for enums below
 
         fields.append({'name': field_name, 'schema': schema, 'required': required})
     return fields
@@ -253,6 +252,20 @@ def scan_and_match(backend_path, config_path=CONFIG_PATH, skip_domains=None):
                     dto_content = f2.read()
 
                 fields = extract_dto_fields(dto_content)
+                # Fix: enum types → string (seems object now)
+                for fld in fields:
+                    jt = None
+                    for m2 in DTO_FIELD_RE.finditer(dto_content):
+                        if m2.group(3) == fld['name']:
+                            jt = m2.group(2)
+                            break
+                    if jt and jt not in PRIMITIVE_TYPES and not jt.startswith('List') and not jt.startswith('Map'):
+                        if jt in class_map:
+                            with open(class_map[jt], encoding='utf-8', errors='ignore') as ef:
+                                first = ''.join(ef.readlines()[:50])
+                            if re.search(r'\benum\b', first):
+                                fld['schema'] = {'type': 'string'}
+                
                 request_schema = build_request_schema(fields)
                 schemas_found[op_id] = {
                     'dto': req_dto_name, 'schema': request_schema,

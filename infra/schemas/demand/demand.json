@@ -539,7 +539,7 @@
                         "type": "string"
                       },
                       "valueUpdate": {
-                        "type": "string"
+                        "type": "object"
                       }
                     },
                     "required": [
@@ -758,7 +758,7 @@
                     "description": "Request parameters",
                     "properties": {
                       "date": {
-                        "type": "string"
+                        "type": "object"
                       },
                       "path": {
                         "type": "string"
