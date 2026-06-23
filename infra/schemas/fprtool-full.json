@@ -2535,7 +2535,14 @@
               "schema": {
                 "type": "object",
                 "description": "TODO: scan backend for schema",
-                "required": []
+                "required": [],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                  }
+                }
               }
             }
           }
@@ -2568,7 +2575,14 @@
               "schema": {
                 "type": "object",
                 "description": "TODO: scan backend for schema",
-                "required": []
+                "required": [],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                  }
+                }
               }
             }
           }
@@ -2601,7 +2615,14 @@
               "schema": {
                 "type": "object",
                 "description": "TODO: scan backend for schema",
-                "required": []
+                "required": [],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                  }
+                }
               }
             }
           }
@@ -3643,7 +3664,14 @@
               "schema": {
                 "type": "object",
                 "description": "TODO: scan backend for schema",
-                "required": []
+                "required": [],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                  }
+                }
               }
             }
           }
