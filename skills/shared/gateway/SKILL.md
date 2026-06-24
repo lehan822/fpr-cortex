@@ -1,6 +1,6 @@
 ---
 name: fpr-shared
-version: 2.9.0
+version: 2.10.0
 description: "Flight Pricing & Revenue shared layer: auth, calling conventions, common parameter standards. Covers both local agents and AgentCore agents."
 category: shared
 ---
@@ -12,14 +12,20 @@ category: shared
 
 ## Auth
 
-Call MCP tools directly. On 401 or 403:
+**Daemon manages tokens automatically. Do NOT manually refresh unless you see a 401.**
 
 ```bash
-python3 ~/.fpr/fpr-auth.py <env>          # check → silent refresh → browser login if needed
-# retry the original call
-# THEN — after successful auth, start daemon so tokens stay fresh:
-python3 ~/.fpr/fpr-auth.py daemon <env>   # background auto-refresh, no more 401s
+# Once per session — then tokens auto-refresh in background
+python3 ~/.fpr/fpr-auth.py daemon prod
 ```
+
+Only active action for auth issues:
+
+| Signal | Action |
+|--------|--------|
+| **HTTP 401** response | `python3 ~/.fpr/fpr-auth.py prod` → retry once |
+| **HTTP 403** response | Report to user (permission, not transient) |
+| Any other error | Token is fine — do NOT run fpr-auth.py. The daemon handles it.
 
 **Two different tokens — never mix them up:**
 
@@ -31,7 +37,7 @@ ID_TOKEN=$(python3 -c "import json; print(json.load(open('$HOME/.fpr/auth.json')
 # fpr-auth.py token prints ACCESS_TOKEN only — do NOT use it for authServiceToken
 ```
 
-If `~/.fpr/fpr-auth.py` doesn't exist OR its `SCRIPT_VERSION` doesn't match the version in [`auth.md`](references/auth.md): extract the script from auth.md → write to `~/.fpr/fpr-auth.py`. Check version by running `python3 ~/.fpr/fpr-auth.py version` or reading `SCRIPT_VERSION` from the file.
+If `~/.fpr/fpr-auth.py` doesn't exist: extract it from [`auth.md`](references/auth.md) → write to `~/.fpr/fpr-auth.py`.
 Never switch env (prod→stg) to work around a 401/403 — fix the token, retry same env.
 
 **AgentCore:** skip this — IAM handles it.
@@ -86,30 +92,20 @@ Full protocol → [`gateway-protocol.md`](references/gateway-protocol.md).
 
 ## Error Handling
 
-| Code | Action | Retry |
-|------|--------|-------|
-| 401 | re-auth → retry | 1 |
-| 400 | re-search schema → retry | 1 |
-| 429 / 503 | backoff 1s → 3s → 9s | 3 |
-| 403 / 500 | report to user | 0 |
+| Response | Action | Retry |
+|----------|--------|-------|
+| HTTP 401 | re-auth → retry | 1 |
+| HTTP 400 | re-search schema → retry | 1 (correct params) |
+| HTTP 429 / 503 | backoff 1s → 3s → 9s | 3 |
+| HTTP 403 / 500 | report to user | 0 |
+| HTTP 200 + `"internal error"` text | **Do NOT re-auth or change params** | retry 2 (same call) |
 
-Retry silently for 401/400/429/503. Full decision tree → [`error-classification.md`](references/error-classification.md).
+**Backend outage rule:** If 2+ **different** tools on the same gateway return `"internal error"`, stop. It's a backend outage, not a parameter/auth problem. Report to user. Do NOT try variant parameter formats.
 
-## Version & Auto-Update
+Never switch env (prod→stg) to work around errors — fix the root cause.
 
-**Check local version:** read `~/.agents/skills/.fpr-cortex-version`
+Full decision tree → [`error-classification.md`](references/error-classification.md).
 
-**Check remote version:**
-```bash
-curl -sf https://raw.githubusercontent.com/lehan822/fpr-cortex/main/VERSION
-```
+## Version
 
-**If versions differ → skills are outdated.** Inform the user and suggest running:
-```bash
-curl -sL https://raw.githubusercontent.com/lehan822/fpr-cortex/main/install.sh | sh
-```
-
-The install script skips if versions match, so it's safe to run anytime. Use `--force` to reinstall regardless:
-```bash
-curl -sL https://raw.githubusercontent.com/lehan822/fpr-cortex/main/install.sh | sh -s -- --force
-```
+Current 2.10.0. Check: `curl -sf https://raw.githubusercontent.com/lehan822/fpr-cortex/main/VERSION`
