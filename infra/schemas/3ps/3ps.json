@@ -729,10 +729,89 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "object"
+                        "type": "object",
+                        "properties": {
+                          "pageNo": {
+                            "type": "integer"
+                          },
+                          "pageSize": {
+                            "type": "integer"
+                          }
+                        }
                       },
                       "filter": {
-                        "type": "object"
+                        "type": "object",
+                        "properties": {
+                          "inventoryType": {
+                            "type": "string"
+                          },
+                          "agentId": {
+                            "type": "string"
+                          },
+                          "locale": {
+                            "type": "string"
+                          },
+                          "airlineId": {
+                            "type": "string"
+                          },
+                          "originCountry": {
+                            "type": "string"
+                          },
+                          "destinationCountry": {
+                            "type": "string"
+                          },
+                          "originAirport": {
+                            "type": "string"
+                          },
+                          "destinationAirport": {
+                            "type": "string"
+                          },
+                          "excludedDestinationAirports": {
+                            "type": "string"
+                          },
+                          "defaultProvider": {
+                            "type": "string"
+                          },
+                          "defaultFulfillment": {
+                            "type": "string"
+                          },
+                          "providers": {
+                            "type": "string"
+                          },
+                          "providersPcc": {
+                            "type": "string"
+                          },
+                          "version": {
+                            "type": "integer"
+                          },
+                          "interlineCombination": {
+                            "type": "string"
+                          },
+                          "addedItem": {
+                            "type": "string"
+                          },
+                          "removedItem": {
+                            "type": "string"
+                          },
+                          "changedItem": {
+                            "type": "string"
+                          },
+                          "month": {
+                            "type": "integer"
+                          },
+                          "year": {
+                            "type": "integer"
+                          },
+                          "removeProvider": {
+                            "type": "string"
+                          },
+                          "replaceProvider": {
+                            "type": "string"
+                          },
+                          "providerId": {
+                            "type": "string"
+                          }
+                        }
                       }
                     },
                     "required": []
@@ -802,10 +881,89 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "object"
+                        "type": "object",
+                        "properties": {
+                          "pageNo": {
+                            "type": "integer"
+                          },
+                          "pageSize": {
+                            "type": "integer"
+                          }
+                        }
                       },
                       "filter": {
-                        "type": "object"
+                        "type": "object",
+                        "properties": {
+                          "inventoryType": {
+                            "type": "string"
+                          },
+                          "agentId": {
+                            "type": "string"
+                          },
+                          "locale": {
+                            "type": "string"
+                          },
+                          "airlineId": {
+                            "type": "string"
+                          },
+                          "originCountry": {
+                            "type": "string"
+                          },
+                          "destinationCountry": {
+                            "type": "string"
+                          },
+                          "originAirport": {
+                            "type": "string"
+                          },
+                          "destinationAirport": {
+                            "type": "string"
+                          },
+                          "excludedDestinationAirports": {
+                            "type": "string"
+                          },
+                          "defaultProvider": {
+                            "type": "string"
+                          },
+                          "defaultFulfillment": {
+                            "type": "string"
+                          },
+                          "providers": {
+                            "type": "string"
+                          },
+                          "providersPcc": {
+                            "type": "string"
+                          },
+                          "version": {
+                            "type": "integer"
+                          },
+                          "interlineCombination": {
+                            "type": "string"
+                          },
+                          "addedItem": {
+                            "type": "string"
+                          },
+                          "removedItem": {
+                            "type": "string"
+                          },
+                          "changedItem": {
+                            "type": "string"
+                          },
+                          "month": {
+                            "type": "integer"
+                          },
+                          "year": {
+                            "type": "integer"
+                          },
+                          "removeProvider": {
+                            "type": "string"
+                          },
+                          "replaceProvider": {
+                            "type": "string"
+                          },
+                          "providerId": {
+                            "type": "string"
+                          }
+                        }
                       }
                     },
                     "required": []
@@ -875,10 +1033,89 @@
                     "description": "Request parameters",
                     "properties": {
                       "pagination": {
-                        "type": "object"
+                        "type": "object",
+                        "properties": {
+                          "pageNo": {
+                            "type": "integer"
+                          },
+                          "pageSize": {
+                            "type": "integer"
+                          }
+                        }
                       },
                       "filter": {
-                        "type": "object"
+                        "type": "object",
+                        "properties": {
+                          "inventoryType": {
+                            "type": "string"
+                          },
+                          "agentId": {
+                            "type": "string"
+                          },
+                          "locale": {
+                            "type": "string"
+                          },
+                          "airlineId": {
+                            "type": "string"
+                          },
+                          "originCountry": {
+                            "type": "string"
+                          },
+                          "destinationCountry": {
+                            "type": "string"
+                          },
+                          "originAirport": {
+                            "type": "string"
+                          },
+                          "destinationAirport": {
+                            "type": "string"
+                          },
+                          "excludedDestinationAirports": {
+                            "type": "string"
+                          },
+                          "defaultProvider": {
+                            "type": "string"
+                          },
+                          "defaultFulfillment": {
+                            "type": "string"
+                          },
+                          "providers": {
+                            "type": "string"
+                          },
+                          "providersPcc": {
+                            "type": "string"
+                          },
+                          "version": {
+                            "type": "integer"
+                          },
+                          "interlineCombination": {
+                            "type": "string"
+                          },
+                          "addedItem": {
+                            "type": "string"
+                          },
+                          "removedItem": {
+                            "type": "string"
+                          },
+                          "changedItem": {
+                            "type": "string"
+                          },
+                          "month": {
+                            "type": "integer"
+                          },
+                          "year": {
+                            "type": "integer"
+                          },
+                          "removeProvider": {
+                            "type": "string"
+                          },
+                          "replaceProvider": {
+                            "type": "string"
+                          },
+                          "providerId": {
+                            "type": "string"
+                          }
+                        }
                       }
                     },
                     "required": []

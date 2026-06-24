@@ -181,7 +181,48 @@
                     "description": "Request parameters",
                     "properties": {
                       "featureFlag": {
-                        "type": "object"
+                        "type": "object",
+                        "properties": {
+                          "configurations": {
+                            "type": "string"
+                          },
+                          "configurationKey": {
+                            "type": "object",
+                            "properties": {
+                              "applicationName": {
+                                "type": "string"
+                              },
+                              "applicationId": {
+                                "type": "string"
+                              },
+                              "environmentName": {
+                                "type": "string"
+                              },
+                              "environmentId": {
+                                "type": "string"
+                              },
+                              "configurationName": {
+                                "type": "string"
+                              },
+                              "configurationId": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "applicationName",
+                              "applicationId",
+                              "environmentName",
+                              "environmentId",
+                              "configurationName"
+                            ]
+                          },
+                          "state": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "configurationKey"
+                        ]
                       }
                     },
                     "required": [

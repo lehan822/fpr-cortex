@@ -758,7 +758,23 @@
                     "description": "Request parameters",
                     "properties": {
                       "date": {
-                        "type": "object"
+                        "type": "object",
+                        "properties": {
+                          "month": {
+                            "type": "integer"
+                          },
+                          "day": {
+                            "type": "integer"
+                          },
+                          "year": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "month",
+                          "day",
+                          "year"
+                        ]
                       },
                       "path": {
                         "type": "string"

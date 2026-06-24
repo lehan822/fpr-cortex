@@ -2,12 +2,10 @@
 """
 scan-backend-schema.py — Scan fpr-fprtool-backend API interfaces → extract request schemas → inject.
 
-1. Build class map from backend (all .java files)
-2. Parse *API.java files method-by-method to extract @URL + request DTO pairs
-3. Match against exposed-ops.yaml desired paths
-4. Extract DTO fields (type + nullability) from request DTOs
-5. Build OpenAPI schema with data/context envelope
-6. Inject into domain JSONs and fprtool-full.json, fixing paths to actual @URL
+Features:
+- Extracts DTO fields with types, nullability, and nested expansion (recursive)
+- Extracts Java enum values into JSON schema enum arrays
+- Injects schemas into domain JSONs, fixing paths to actual @URL
 
 Usage:
   python infra/scripts/scan-backend-schema.py              # dry-run
@@ -38,10 +36,7 @@ TYPE_MAP = {
     'Instant': 'string', 'Date': 'string', 'ZonedDateTime': 'string',
 }
 
-# Types that suggest a complex/nested object (not a primitive)
-PRIMITIVE_TYPES = {'String', 'Integer', 'Long', 'int', 'long', 'boolean', 'Boolean',
-    'Double', 'double', 'Float', 'BigDecimal', 'LocalDate', 'LocalDateTime',
-    'Instant', 'Date', 'ZonedDateTime'}
+PRIMITIVE_TYPES = set(TYPE_MAP.keys())
 
 DTO_FIELD_RE = re.compile(
     r'(@NotNullable|@Nullable)\s*\n'
@@ -77,14 +72,12 @@ def extract_api_methods(content):
 
     for line in content.split('\n'):
         stripped = line.strip()
-
         url_match = re.match(r'@URL\("([^"]+)"\)', stripped)
         if url_match:
             current_url = url_match.group(1)
             pending_method = None
             pending_started = False
             continue
-
         if pending_started:
             pending_method = (pending_method or '') + ' ' + stripped
         elif stripped.startswith('@') or stripped in ('public', 'private', 'protected', ''):
@@ -92,7 +85,6 @@ def extract_api_methods(content):
         else:
             pending_method = stripped
             pending_started = True
-
         if pending_method and current_url:
             sig_match = METHOD_SIG_RE.search(pending_method)
             if sig_match:
@@ -105,14 +97,93 @@ def extract_api_methods(content):
                 current_url = None
                 pending_method = None
                 pending_started = False
-
     return results
 
 
-def extract_dto_fields(dto_content):
+def is_enum(class_map, type_name):
+    """Check if a Java type is an enum by reading its source file."""
+    if type_name not in class_map:
+        return False
+    with open(class_map[type_name], encoding='utf-8', errors='ignore') as f:
+        first = ''.join(f.readlines()[:50])
+    return bool(re.search(r'\benum\b', first))
+
+
+def get_enum_values(class_map, type_name):
+    """Extract enum constant names from a Java enum class."""
+    if type_name not in class_map:
+        return None
+    with open(class_map[type_name], encoding='utf-8', errors='ignore') as f:
+        content = f.read()
+    # Find enum body: between first { and first ;
+    start = content.find('{')
+    if start == -1:
+        return None
+    end = content.find(';', start)
+    if end == -1:
+        return None
+    body = content[start + 1:end]
+    values = re.findall(r'^\s*(\w+)\s*[,)]?\s*$', body, re.MULTILINE)
+    return values if values else None
+
+
+def build_field_schema(java_type, class_map, depth=0):
+    """Build JSON schema for a Java field type, recursively expanding nested DTOs.
+    
+    Returns: dict like {'type': 'string'} or {'type': 'object', 'properties': {...}}
+    """
+    if depth > 2:  # prevent infinite recursion
+        return {'type': 'object'}
+
+    # List<X>
+    list_match = re.match(r'List<(.+)>', java_type)
+    if list_match:
+        inner = list_match.group(1)
+        if inner in PRIMITIVE_TYPES:
+            return {'type': 'array', 'items': {'type': TYPE_MAP[inner]}}
+        else:
+            inner_schema = build_field_schema(inner, class_map, depth)
+            return {'type': 'array', 'items': inner_schema}
+
+    # Primitives
+    if java_type in PRIMITIVE_TYPES:
+        return {'type': TYPE_MAP[java_type]}
+
+    # Enum
+    if is_enum(class_map, java_type):
+        values = get_enum_values(class_map, java_type)
+        schema = {'type': 'string'}
+        if values:
+            schema['enum'] = values
+        return schema
+
+    # Nested DTO — expand recursively
+    if java_type in class_map:
+        fields = extract_dto_fields(class_map[java_type], class_map, depth + 1)
+        schema = {
+            'type': 'object',
+            'properties': {f['name']: f['schema'] for f in fields},
+        }
+        required = [f['name'] for f in fields if f['required']]
+        if required:
+            schema['required'] = required
+        return schema
+
+    # Unknown type (external dependency)
+    return {'type': 'string'}
+
+
+def extract_dto_fields(dto_path_or_content, class_map, depth=0):
+    """Extract field names, types, nullability, and schemas from a DTO."""
+    if os.path.exists(dto_path_or_content):
+        with open(dto_path_or_content, encoding='utf-8', errors='ignore') as f:
+            content = f.read()
+    else:
+        content = dto_path_or_content
+
     fields = []
     seen = set()
-    for m in DTO_FIELD_RE.finditer(dto_content):
+    for m in DTO_FIELD_RE.finditer(content):
         required = 'NotNullable' in m.group(1)
         java_type = m.group(2)
         field_name = m.group(3)
@@ -120,19 +191,7 @@ def extract_dto_fields(dto_content):
             continue
         seen.add(field_name)
 
-        list_match = re.match(r'List<(.+)>', java_type)
-        if list_match:
-            inner = list_match.group(1)
-            if inner in PRIMITIVE_TYPES:
-                inner_schema = {'type': TYPE_MAP.get(inner, 'string')}
-            else:
-                inner_schema = {'type': 'object'}
-            schema = {'type': 'array', 'items': inner_schema}
-        elif java_type in PRIMITIVE_TYPES:
-            schema = {'type': TYPE_MAP.get(java_type, 'string')}
-        else:
-            schema = {'type': 'string'}  # default (enum/external): will fix below for known DTOs
-
+        schema = build_field_schema(java_type, class_map, depth)
         fields.append({'name': field_name, 'schema': schema, 'required': required})
     return fields
 
@@ -221,10 +280,9 @@ def scan_and_match(backend_path, config_path=CONFIG_PATH, skip_domains=None):
 
         methods = extract_api_methods(content)
         for m in methods:
-            api_url = m['url']  # e.g. /api/supply-search-tool/search-regular-fare
+            api_url = m['url']
             req_dto_name = m['request_dto']
 
-            # Normalize: /api/X → /api/v2/X; /api/v1/X → /api/v2/X
             if api_url.startswith('/api/v1/'):
                 check_url = '/api/v2' + api_url[7:]
             elif api_url.startswith('/api/') and not api_url.startswith('/api/v2/'):
@@ -248,31 +306,17 @@ def scan_and_match(backend_path, config_path=CONFIG_PATH, skip_domains=None):
                 if req_dto_name not in class_map:
                     continue
 
-                with open(class_map[req_dto_name], encoding='utf-8', errors='ignore') as f2:
-                    dto_content = f2.read()
-
-                fields = extract_dto_fields(dto_content)
-                # Fix: enum types → string (seems object now)
-                for fld in fields:
-                    jt = None
-                    for m2 in DTO_FIELD_RE.finditer(dto_content):
-                        if m2.group(3) == fld['name']:
-                            jt = m2.group(2)
-                            break
-                    if jt and jt not in PRIMITIVE_TYPES and not jt.startswith('List') and not jt.startswith('Map'):
-                        if jt in class_map:
-                            with open(class_map[jt], encoding='utf-8', errors='ignore') as ef:
-                                first = ''.join(ef.readlines()[:50])
-                            if not re.search(r'\benum\b', first):
-                                fld['schema'] = {'type': 'object'}  # confirmed non-enum DTO
-                
+                fields = extract_dto_fields(class_map[req_dto_name], class_map)
                 request_schema = build_request_schema(fields)
                 schemas_found[op_id] = {
                     'dto': req_dto_name, 'schema': request_schema,
                     'field_count': len(fields), 'api_url': api_url,
                 }
-                n_req = len(request_schema.get('required') or [])
-                print(f'  ✅ {op_id}: {req_dto_name} ({len(fields)} fields, {n_req} required)')
+                n_req = len(request_schema.get('required', []))
+                enums = sum(1 for f in fields if 'enum' in f.get('schema', {}))
+                nested = sum(1 for f in fields if f.get('schema', {}).get('type') == 'object')
+                extra = f', {enums} enums, {nested} nested' if enums or nested else ''
+                print(f'  ✅ {op_id}: {req_dto_name} ({len(fields)} fields, {n_req} required{extra})')
 
     total_desired = sum(len(v) for v in path_to_op.values())
     print(f"\n📊 Matched: {len(schemas_found)}/{total_desired}")
@@ -319,7 +363,6 @@ def inject_schemas(schemas_found, schemas_dir=DEFAULT_SCHEMAS):
 
     print(f"  💉 Injected {injected} into domain files")
 
-    # fprtool-full.json — also fix paths
     full_path = os.path.join(schemas_dir, 'fprtool-full.json')
     if os.path.exists(full_path):
         with open(full_path) as f:
