@@ -14,9 +14,9 @@ prerequisites:
 
 ```
 # Common examples
-tool: get_flight_info                  data: {bookingId: 123456789}
-tool: search_cache_content             data: {origin: "CGK", destination: "DPS"}
-tool: get_booking_log                  data: {path: "/123456789/"}
+tool: get_flight_info                  data: {bookingId: 1365484156}
+tool: search_cache_content             data: {searchId: "..."}
+tool: get_booking_log                  data: {date: "2026-06-23", path: "/123456789/"}
 ```
 
 ## Prerequisites — Read Before Executing
@@ -25,7 +25,7 @@ tool: get_booking_log                  data: {path: "/123456789/"}
 
 1. **Local MCP only** → read **fpr-shared** first — auth, tool name prefix, request envelope (**all operations**)
 2. **Querying bookings** → MUST read [`booking-operations.md`](references/booking-operations.md) (bookingId vs PNR distinction)
-3. **Unsure about parameters** → MUST read [`parameter-standards.md`](references/parameter-standards.md) (bookingId type, path format)
+3. **Price inconsistency oncall** → MUST read [`price-inconsistency-playbook.md`](references/price-inconsistency-playbook.md) (end-to-end investigation workflow)
 
 **Executing an operation without reading its required reference will cause parameter errors.**
 
@@ -68,7 +68,15 @@ tool: get_booking_log                  data: {path: "/123456789/"}
 
 - **bookingId MUST be integer** — not string; `123456789` not `"123456789"`
 - **PNR vs bookingId** — PNR is airline reference (string), bookingId is Traveloka internal (integer); see [booking-operations.md](references/booking-operations.md)
-- **Parameter normalization** — see [parameter-standards.md](references/parameter-standards.md)
+- **Price inconsistency oncall** — follow the full playbook in [price-inconsistency-playbook.md](references/price-inconsistency-playbook.md)
+
+## Oncall Scenarios
+
+| User Intent | → Workflow |
+|-------------|------------|
+| "price jump at booking", "price inconsistency" | See [price-inconsistency-playbook.md](references/price-inconsistency-playbook.md) |
+| "why did subclass change" | `get_booking_log` → Datadog fprbopi funnel |
+| "stale supply data", "old cache" | Check `supplyCacheTimestamp` in fprbopi logs |
 
 ## Disambiguation
 

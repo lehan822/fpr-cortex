@@ -14,10 +14,10 @@ prerequisites:
 
 ```
 # Common examples
-tool: search_regular_fare           data: {airlineId: "GA", origin: "CGK", destination: "DPS"}
-tool: check_fare                    data: {airlineId: "GA", origin: "CGK", destination: "DPS", departureDate: "2026-01-15"}
-tool: get_provider_sourcing         data: {airlineId: "GA", origin: "CGK", destination: "DPS"}
-tool: simulate_search               data: {origin: "CGK", destination: "DPS", departureDate: "2026-01-15", pax: {adult: 1}}
+tool: search_regular_fare           data: {tripType: "ONE_WAY", journeys: [{firstAirport: "CGK", lastAirport: "DPS", departureDate: {month: 6, day: 25, year: 2026}}], numberOfSeats: {numAdults: 1, numChildren: 0, numInfants: 0}, seatClass: "ECONOMY", fareType: "STANDALONE", excludeStale: true}
+tool: check_fare                    data: {campaignName: "test", providerContexts: [], airlineId: "GA", specs: []}
+tool: get_fare_check_result         data: {executionId: "..."}
+tool: simulate_search               data: {tripType: "ONE_WAY", journeys: [{origin: "CGK", destination: "DPS", departureDate: "2026-01-15"}], numAdults: 1, numChildren: 0, numInfants: 0}
 ```
 
 ## Prerequisites — Read Before Executing
@@ -25,7 +25,9 @@ tool: simulate_search               data: {origin: "CGK", destination: "DPS", de
 **CRITICAL — before the matching operation, you MUST Read the file(s) below. None are optional:**
 
 1. **Local MCP only** → read **fpr-shared** first — auth, tool name prefix, request envelope (**all operations**)
-2. **Unsure about parameters** → MUST read [`parameter-standards.md`](references/parameter-standards.md) (airlineId IATA format, origin/destination codes)
+2. **Running fare check** → MUST read [`fare-check-workflow.md`](references/fare-check-workflow.md) (async 2-step operation)
+3. **Querying provider config** → MUST read [`provider-operations.md`](references/provider-operations.md)
+4. **Inventory staleness issues** → MUST read [`inventory-staleness.md`](references/inventory-staleness.md) (stale filter logic, supplyCacheTimestamp meaning)
 
 **Executing an operation without reading its required reference will cause parameter errors.**
 
@@ -34,36 +36,32 @@ tool: simulate_search               data: {origin: "CGK", destination: "DPS", de
 | Operation | Description | Key Parameters |
 |-----------|-------------|----------------|
 | **Fare Search & Revalidation** |||
-| `search_regular_fare` | Search regular fare data | airlineId, origin, destination |
-| `search_special_fare` | Search special/negotiated fare | airlineId, origin, destination |
-| `search_upsell_fare` | Search upsell fare options | airlineId, origin, destination |
-| `revalidate_regular_fare` | Revalidate regular fare | airlineId, origin, destination, departureDate |
-| `revalidate_special_fare` | Revalidate special fare | airlineId, origin, destination, departureDate |
-| `revalidate_upsell_fare` | Revalidate upsell fare | airlineId, origin, destination, departureDate |
+| `search_regular_fare` | Search regular fare data | tripType, journeys, numberOfSeats, seatClass, fareType, excludeStale |
+| `search_special_fare` | Search special/negotiated fare | searchByFlightNumber, richFlightInfo |
+| `search_upsell_fare` | Search upsell fare options | UpsellFareSpec |
+| `revalidate_regular_fare` | Revalidate regular fare | revalidationJobSpec, revalidationSelectionSpec |
+| `revalidate_special_fare` | Revalidate special fare | (see DTO) |
+| `revalidate_upsell_fare` | Revalidate upsell fare | (see DTO) |
 | **Search Simulation** |||
-| `simulate_search` | Simulate end-to-end flight search | origin, destination, departureDate, pax |
+| `simulate_search` | Simulate end-to-end flight search | tripType, journeys, numAdults, numChildren, numInfants |
 | **Provider Management** |||
-| `get_provider_sourcing` | Provider sourcing configuration | airlineId, origin, destination |
-| `get_provider_source_histories` | Provider source history | providerSourceId |
-| `get_provider_source_latest_version` | Latest provider source version | providerSourceId |
+| `get_provider_sourcing` | Provider sourcing configuration | pagination, filter |
+| `get_provider_source_histories` | Provider source history | filter, pagination |
+| `get_provider_source_latest_version` | Latest provider source version | — |
 | `get_enabled_provider` | Enabled providers for fare checking | — |
-| `save_provider_source` | Save provider source (write) | providerSourceData |
-| `import_provider_source` | Import provider source (write) | providerSourceData |
-| `remove_provider` | Remove provider (write) | providerId |
 | **Fare Checking** |||
-| `check_fare` | Trigger fare check (async) | airlineId, origin, destination, departureDate |
-| `get_fare_check_result` | Poll fare check result | fareCheckId |
-| `upload_fare_checking_csv` | Upload fare checking CSV (write) | csvData |
+| `check_fare` | Trigger fare check (async) | campaignName, providerContexts, airlineId, specs |
+| `get_fare_check_result` | Poll fare check result | executionId |
 | **Inventory & Special Fare** |||
-| `get_special_fare_config` | Special fare configuration | airlineId |
-| `get_inventory_detail` | Detailed inventory breakdown | airlineId, flightNumber |
+| `get_special_fare_config` | Special fare configuration | configId |
+| `get_inventory_detail` | Detailed inventory breakdown | resultKey |
 | `get_inventory_types` | Inventory type definitions | — |
 | **Arbitration & Winner** |||
-| `get_arbitration_modes` | Arbitration mode settings | airlineId |
-| `search_winner` | Search winners by route/date | origin, destination, departureDate |
+| `get_arbitration_modes` | Arbitration mode settings | — |
+| `search_winner` | Search winners by route/date | originAirport, destinationAirport, departureDate, locale |
 | **Metadata & Top Pick** |||
-| `search_metadata` | Supply metadata | filters |
-| `top_pick_crud` | Top pick CRUD operations | operation, data |
+| `search_metadata` | Supply metadata | searchQuery |
+| `top_pick_crud` | Top pick CRUD operations | action, database, collection, search |
 
 ## Routing Guide
 
@@ -79,15 +77,35 @@ tool: simulate_search               data: {origin: "CGK", destination: "DPS", de
 | "winner", "selected fare" | `search_winner` |
 | "arbitration", "fare arbitration" | `get_arbitration_modes` |
 
-## Gotchas (top traps)
+## Gotchas (top traps — full rules in references)
 
-- **Fare check is async** — call `check_fare` first, then poll `get_fare_check_result`
-- **Parameter normalization** — airlineId must be IATA 2-letter uppercase (`"GA"` not `"garuda"`); see [parameter-standards.md](references/parameter-standards.md)
+- **Fare check is async** — must call `check_fare` first, then poll `get_fare_check_result`; see [fare-check-workflow.md](references/fare-check-workflow.md)
+- **Inventory staleness filter** — fares older than a threshold may be filtered out; see [inventory-staleness.md](references/inventory-staleness.md)
+- **Parameter normalization** — airlineId must be IATA 2-letter uppercase (`"GA"` not `"garuda"`); see table below
+
+## Fare Check Workflow
+
+Fare check is a 2-step async operation:
+1. Call `check_fare` → returns `fareCheckId`
+2. Poll `get_fare_check_result` with `fareCheckId` (may need 2-3 retries, 5s interval)
+
+See [fare-check-workflow.md](references/fare-check-workflow.md) for full details.
+
+## Parameter Normalization
+
+| Parameter | Accepts | Normalized To |
+|-----------|---------|--------------|
+| airlineId | "Garuda", "garuda" | `"GA"` (IATA 2-letter) |
+| origin/destination | "Jakarta", "CGK", "cgk" | `"CGK"` (IATA 3-letter) |
+| departureDate | "tomorrow", "next Monday" | `"YYYY-MM-DD"` |
+| tripType | "one way", "round trip" | `"ONE_WAY"`, `"TWO_WAY"`, `"MULTI_CITY"` (enum, use schema values) |
+
+**Note**: Actual required params vary by operation. Always check the schema (Gateway validates types + enum values) before calling. The examples above use the correct schema-extracted field names.
 
 ## Disambiguation
 
 - "budget", "commission", "markup" → **fpr-pricing** (not supply)
 - "booking detail", "PNR lookup" → **fpr-demand** (not supply)
 - "feature flag" → **fpr-sysinteg** (not supply)
-- "price inconsistency investigation" → **fpr-demand** (booking logs, fare comparison)
+- "price inconsistency investigation" → start with **fpr-demand** playbook, then come here for stale filter details
 - "airline route history" (reference data) → **fpr-3ps-datainfo**; (provider config) → **fpr-supply**
