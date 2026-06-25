@@ -3,7 +3,7 @@
 > Auto-generated — do not edit manually.
 > Run: `python scripts/generate-catalog.py`
 
-**Total: 72 operations** across 1 backend(s): fprtool
+**Total: 73 operations** across 1 backend(s): fprtool
 
 | operationId | Description | Domain |
 |---|---|---|
@@ -36,6 +36,7 @@
 | `get_inventory_detail` | Inventory detail | supply |
 | `get_inventory_types` | Inventory types | supply |
 | `get_promo_label_data` | Get Promo Label Supporting Data | ❌ unclaimed |
+| `get_promo_label_detail` | Get single promo label full config | ❌ unclaimed |
 | `get_provider_source_histories` | Sourcing change history | supply |
 | `get_provider_source_latest_version` | Latest sourcing version | supply |
 | `get_provider_sourcing` | Provider sourcing config | supply |
@@ -71,7 +72,7 @@
 | `search_cache_by_id` | Search Cache by Search ID | demand |
 | `search_cache_content` | Search Fare Cache by Route | demand |
 | `search_metadata` | EFS metadata by searchID | supply |
-| `search_promo_labels` | Read/search promo label configs | ❌ unclaimed |
+| `search_promo_labels` | Search/list promo labels | ❌ unclaimed |
 | `search_regular_fare` | Search regular fares | supply |
 | `search_special_fare` | Special fare search | supply |
 | `search_upsell_fare` | Upsell fare search | supply |
@@ -82,8 +83,8 @@
 
 ## Summary
 
-- **Claimed:** 64/72
-- **Unclaimed:** 8
+- **Claimed:** 64/73
+- **Unclaimed:** 9
 
 - **3ps-datainfo:** 13 ops
 - **demand:** 9 ops
