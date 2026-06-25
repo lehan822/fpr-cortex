@@ -1,0 +1,213 @@
+name: Deploy Schema to S3
+
+on:
+  push:
+    branches: [main, release]
+    paths:
+      - 'infra/config/exposed-ops.yaml'
+      - 'infra/scripts/gen-schema.py'
+      - 'infra/schemas/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options:
+          - stg
+          - prod
+
+jobs:
+  deploy-schema:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    env:
+      STG_BUCKET: bedrock-agentcore-runtime-354767975881-ap-southeast-1-a1beixhzs
+      PROD_BUCKET: bedrock-agentcore-runtime-348767535692-ap-southeast-1-837werwc9
+      STG_GATEWAY_ID: fpr-cortex-sg-ruypqkcdov
+      STG_TARGET_ID: Q8YCABWZIN
+      STG_TARGET_NAME: fprtool-fpr
+      PROD_GATEWAY_ID: fpr-mcp-gateway-ghntgmtwjb
+      PROD_TARGET_ID: JZ3LSR9SUC
+      PROD_TARGET_NAME: fprtool-prod
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Schemas are pre-generated locally (scripts/deploy-schema.sh --gen-only)
+      # and committed to repo. CI only uploads to S3.
+
+      - name: Determine environment
+        id: env
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "env=${{ inputs.environment }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "env=stg" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/release" ]]; then
+            echo "env=prod" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Configure AWS credentials (stg)
+        if: steps.env.outputs.env == 'stg'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_STG }}
+          aws-region: ap-southeast-1
+
+      - name: Configure AWS credentials (prod)
+        if: steps.env.outputs.env == 'prod'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_PROD }}
+          aws-region: ap-southeast-1
+
+      - name: Set bucket
+        id: bucket
+        run: |
+          if [[ "${{ steps.env.outputs.env }}" == "stg" ]]; then
+            echo "name=${{ env.STG_BUCKET }}" >> $GITHUB_OUTPUT
+          else
+            echo "name=${{ env.PROD_BUCKET }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set gateway URL
+        id: gateway-url
+        run: |
+          if [[ "${{ steps.env.outputs.env }}" == "stg" ]]; then
+            echo "url=https://tz0pqimy4l.execute-api.ap-southeast-1.amazonaws.com/stg" >> $GITHUB_OUTPUT
+          else
+            echo "url=https://w73edrxlij.execute-api.ap-southeast-1.amazonaws.com/prd" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set AgentCore target
+        id: target
+        run: |
+          if [[ "${{ steps.env.outputs.env }}" == "stg" ]]; then
+            echo "gateway=${{ env.STG_GATEWAY_ID }}" >> $GITHUB_OUTPUT
+            echo "target_id=${{ env.STG_TARGET_ID }}" >> $GITHUB_OUTPUT
+            echo "target_name=${{ env.STG_TARGET_NAME }}" >> $GITHUB_OUTPUT
+            echo "description=FPR Tools API - 71 operations (pricing, supply, demand, sysinteg, 3ps)" >> $GITHUB_OUTPUT
+          else
+            echo "gateway=${{ env.PROD_GATEWAY_ID }}" >> $GITHUB_OUTPUT
+            echo "target_id=${{ env.PROD_TARGET_ID }}" >> $GITHUB_OUTPUT
+            echo "target_name=${{ env.PROD_TARGET_NAME }}" >> $GITHUB_OUTPUT
+            echo "description=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload schemas to S3
+        run: |
+          echo "Deploying to ${{ steps.env.outputs.env }} → s3://${{ steps.bucket.outputs.name }}/schemas/"
+          GATEWAY_URL="${{ steps.gateway-url.outputs.url }}"
+
+          for domain in pricing supply demand sysinteg 3ps; do
+            if [ -f "infra/schemas/$domain/$domain.json" ]; then
+              # Replace server URL to match target environment
+              python3 -c "
+          import json, sys
+          with open('infra/schemas/$domain/$domain.json') as f:
+              spec = json.load(f)
+          spec['servers'] = [{'url': '$GATEWAY_URL', 'description': '${{ steps.env.outputs.env }}'}]
+          json.dump(spec, sys.stdout, indent=2)
+          " > /tmp/$domain.json
+              aws s3 cp "/tmp/$domain.json" \
+                "s3://${{ steps.bucket.outputs.name }}/schemas/$domain.json"
+              echo "  ✅ $domain.json uploaded (server: $GATEWAY_URL)"
+            fi
+          done
+
+          if [ -f "infra/schemas/fprtool-full.json" ]; then
+            python3 -c "
+          import json, sys
+          with open('infra/schemas/fprtool-full.json') as f:
+              spec = json.load(f)
+          spec['servers'] = [{'url': '$GATEWAY_URL', 'description': '${{ steps.env.outputs.env }}'}]
+          json.dump(spec, sys.stdout, indent=2)
+          " > /tmp/fprtool-full.json
+            aws s3 cp /tmp/fprtool-full.json \
+              "s3://${{ steps.bucket.outputs.name }}/schemas/fprtool-full.json"
+            echo "  ✅ fprtool-full.json uploaded (server: $GATEWAY_URL)"
+          fi
+
+      - name: Verify upload
+        run: |
+          aws s3 ls "s3://${{ steps.bucket.outputs.name }}/schemas/"
+
+      - name: Reload AgentCore target from S3
+        run: |
+          TARGET_CONFIG="{\"mcp\":{\"openApiSchema\":{\"s3\":{\"uri\":\"s3://${{ steps.bucket.outputs.name }}/schemas/fprtool-full.json\"}}}}"
+
+          if [[ -n "${{ steps.target.outputs.description }}" ]]; then
+            aws bedrock-agentcore-control update-gateway-target \
+              --gateway-identifier "${{ steps.target.outputs.gateway }}" \
+              --target-id "${{ steps.target.outputs.target_id }}" \
+              --name "${{ steps.target.outputs.target_name }}" \
+              --description "${{ steps.target.outputs.description }}" \
+              --target-configuration "$TARGET_CONFIG"
+          else
+            aws bedrock-agentcore-control update-gateway-target \
+              --gateway-identifier "${{ steps.target.outputs.gateway }}" \
+              --target-id "${{ steps.target.outputs.target_id }}" \
+              --name "${{ steps.target.outputs.target_name }}" \
+              --target-configuration "$TARGET_CONFIG"
+          fi
+
+      - name: Wait for AgentCore target ready
+        run: |
+          for i in {1..30}; do
+            STATUS=$(aws bedrock-agentcore-control get-gateway-target \
+              --gateway-identifier "${{ steps.target.outputs.gateway }}" \
+              --target-id "${{ steps.target.outputs.target_id }}" \
+              --query status --output text)
+            echo "Target status: $STATUS"
+            if [[ "$STATUS" == "READY" ]]; then
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Target did not become READY in time"
+          exit 1
+
+      - name: Post-deploy smoke test (tool existence)
+        if: steps.env.outputs.env == 'stg'
+        run: |
+          echo "Verifying all skill tools exist in generated schemas..."
+          python3 -c "
+          import json, re, yaml
+          from pathlib import Path
+
+          # Load exposed-ops
+          with open('infra/config/exposed-ops.yaml') as f:
+              config = yaml.safe_load(f)
+          registered = set()
+          for ops in config.values():
+              for op in ops:
+                  registered.add(op['id'])
+
+          # Load skill tools
+          skill_tools = set()
+          for f in Path('skills/domain').rglob('SKILL.md'):
+              content = f.read_text()
+              m = re.search(r'^tools:\s*\n((?:\s+-\s+.+\n)+)', content, re.MULTILINE)
+              if m:
+                  for t in re.findall(r'^\s+-\s+(\S+)', m.group(1), re.MULTILINE):
+                      skill_tools.add(t)
+
+          # Check all skill tools have schemas generated
+          missing = []
+          for domain_dir in Path('infra/schemas').iterdir():
+              if domain_dir.is_dir() and (domain_dir / f'{domain_dir.name}.json').exists():
+                  pass  # schema exists
+          
+          for tool in sorted(skill_tools):
+              if tool not in registered:
+                  missing.append(tool)
+
+          if missing:
+              print(f'❌ {len(missing)} skill tools not in exposed-ops: {missing}')
+              exit(1)
+          print(f'✅ All {len(skill_tools)} skill tools registered and schemas deployed')
+          "

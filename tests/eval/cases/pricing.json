@@ -1,0 +1,10 @@
+[
+  {"prompt": "What's the commission rate for GA?", "operation": "load_commission_incentive_rules"},
+  {"prompt": "Check budget balance for IDR", "operation": "get_budget_balance"},
+  {"prompt": "Show me autopilot rules for Thailand", "operation": "load_autopilot_rules"},
+  {"prompt": "What's the markup for Garuda?", "operation": "load_baseline_pricing_rules"},
+  {"prompt": "Any flash sale active?", "operation": "load_price_cut_modifier_rules"},
+  {"prompt": "Show tiered incentive for this PNR", "operation": "check_tiered_incentive_progress"},
+  {"prompt": "Transaction fee rules", "operation": "load_trx_fee_rules"},
+  {"prompt": "Price prediction rules", "operation": "load_price_prediction_rules"}
+]

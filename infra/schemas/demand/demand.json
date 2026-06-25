@@ -1,0 +1,831 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FPR Demand API",
+    "version": "2.0.0",
+    "description": "Auto-generated from exposed-ops.yaml \u2014 demand domain."
+  },
+  "servers": [
+    {
+      "url": "https://api-tool.fpr.traveloka.com",
+      "description": "Production"
+    },
+    {
+      "url": "https://tool-flight-api.fpr.staging-traveloka.com",
+      "description": "Flight Staging"
+    },
+    {
+      "url": "https://api-tool.fpr.traveloka.com",
+      "description": "Shared Staging"
+    }
+  ],
+  "paths": {
+    "/api/v2/flight-promo-label/get-promo-label-info": {
+      "post": {
+        "operationId": "search_promo_labels",
+        "summary": "Read/search promo label configs",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "promoLabelId": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "promoLabelId"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/flight-promo-label/get-promo-label-supporting-data": {
+      "post": {
+        "operationId": "get_promo_label_data",
+        "summary": "Get Promo Label Supporting Data",
+        "description": "Get supporting data and options for promo labels. Returns available promo label types, configurations, and setup options. Use when someone asks about 'promo label options', 'label configuration', or needs to set up new promo labels. Keywords: label configuration, promo options, label setup.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {},
+                    "required": []
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "demand"
+        ]
+      }
+    },
+    "/api/v2/demand/search-cache/get": {
+      "post": {
+        "operationId": "search_cache_content",
+        "summary": "Search Fare Cache by Route",
+        "description": "Look up cached fare data for a specific route. Shows what fares are currently cached for a given origin-destination pair. Use when someone asks about 'fare cache', 'cached prices for JKT-SIN', 'what fares are cached', or 'demand cache by route'. Keywords: fare cache, route cache, cached fares.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "searchId": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "searchId"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "demand"
+        ]
+      }
+    },
+    "/api/v2/demand/search-cache/get-by-id": {
+      "post": {
+        "operationId": "search_cache_by_id",
+        "summary": "Search Cache by Search ID",
+        "description": "Look up demand cache by a specific search ID. Retrieves the cached search results for a particular search session. Use when someone has a 'search ID' and wants to see what results were cached. Keywords: search ID cache, session cache, search results.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "searchId"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request data payload (tool-specific parameters go here)",
+                    "additionalProperties": true,
+                    "properties": {
+                      "searchId": {
+                        "type": "string",
+                        "description": "Search ID from a demand search session"
+                      }
+                    },
+                    "required": []
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Authentication context",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token for authentication"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "description": "Client interface type",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Response field filter",
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cache data by search ID retrieved successfully"
+          }
+        },
+        "tags": [
+          "demand"
+        ]
+      }
+    },
+    "/api/v2/demand-experiment/get-variant-namespace": {
+      "post": {
+        "operationId": "get_demand_experiment_variant",
+        "summary": "Experiment variant namespace",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {},
+                    "required": []
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/demand-experiment/get-contextid-namespace": {
+      "post": {
+        "operationId": "get_demand_experiment_contextid",
+        "summary": "Experiment context ID",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {},
+                    "required": []
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/flight/mongo-operation-manager/collection-name": {
+      "post": {
+        "operationId": "list_mongo_collections",
+        "summary": "List MongoDB Collections",
+        "description": "List all available MongoDB collection names in the demand database. Use when someone asks 'what mongo collections exist', 'list collections', or needs to know which collections can be queried. Keywords: MongoDB collections, collection list, available collections.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {},
+                    "required": []
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "demand"
+        ]
+      }
+    },
+    "/api/v2/simplecrud/simple-crud-query": {
+      "post": {
+        "operationId": "simple_crud_query",
+        "summary": "Direct mongo CRUD (GET/UPSERT/DELETE)",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "action": {
+                        "type": "string"
+                      },
+                      "database": {
+                        "type": "string"
+                      },
+                      "collectionName": {
+                        "type": "string"
+                      },
+                      "_id": {
+                        "type": "string"
+                      },
+                      "field": {
+                        "type": "string"
+                      },
+                      "fieldUpdate": {
+                        "type": "string"
+                      },
+                      "valueUpdate": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "database",
+                      "collectionName",
+                      "_id"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/booking-details/get-flight-info": {
+      "post": {
+        "operationId": "get_flight_info",
+        "summary": "Booking details by ID",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "bookingId": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "bookingId"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/booking-details/get-flight-info-json": {
+      "post": {
+        "operationId": "get_flight_info_json",
+        "summary": "Booking JSON (full pricing debug)",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "bookingId": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "bookingId"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/booking-log/get-object-content": {
+      "post": {
+        "operationId": "get_booking_log",
+        "summary": "Booking event logs from S3",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "date": {
+                        "type": "object",
+                        "properties": {
+                          "month": {
+                            "type": "integer"
+                          },
+                          "day": {
+                            "type": "integer"
+                          },
+                          "year": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "month",
+                          "day",
+                          "year"
+                        ]
+                      },
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": []
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {}
+  }
+}

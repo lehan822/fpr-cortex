@@ -1,0 +1,2504 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FPR Supply API",
+    "version": "2.0.0",
+    "description": "Auto-generated from exposed-ops.yaml \u2014 supply domain."
+  },
+  "servers": [
+    {
+      "url": "https://api-tool.fpr.traveloka.com",
+      "description": "Production"
+    },
+    {
+      "url": "https://tool-flight-api.fpr.staging-traveloka.com",
+      "description": "Flight Staging"
+    },
+    {
+      "url": "https://api-tool.fpr.traveloka.com",
+      "description": "Shared Staging"
+    }
+  ],
+  "paths": {
+    "/api/v2/flight/special-fare/get-config-detail": {
+      "post": {
+        "operationId": "get_special_fare_config",
+        "summary": "Special fare configuration",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "entityId": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "entityId"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply-metadata-tracking/get-inventory-detail": {
+      "post": {
+        "operationId": "get_inventory_detail",
+        "summary": "Inventory detail",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "resultKey": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "resultKey"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/winner/get": {
+      "post": {
+        "operationId": "get_winner_details",
+        "summary": "Winner (selected fare/provider)",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/winner/search-by-spec": {
+      "post": {
+        "operationId": "search_winner",
+        "summary": "Search winners by route",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "originAirport": {
+                        "type": "string"
+                      },
+                      "destinationAirport": {
+                        "type": "string"
+                      },
+                      "locale": {
+                        "type": "string"
+                      },
+                      "departureDate": {
+                        "type": "object",
+                        "properties": {
+                          "month": {
+                            "type": "integer"
+                          },
+                          "day": {
+                            "type": "integer"
+                          },
+                          "year": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "month",
+                          "day",
+                          "year"
+                        ]
+                      }
+                    },
+                    "required": []
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply-metadata-tracking": {
+      "post": {
+        "operationId": "search_metadata",
+        "summary": "EFS metadata by searchID",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "searchId": {
+                        "type": "string"
+                      },
+                      "searchPeriod": {
+                        "type": "object",
+                        "properties": {
+                          "start": {
+                            "type": "integer"
+                          },
+                          "end": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "start",
+                          "end"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "searchId",
+                      "searchPeriod"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/simplecrud/simple-crud-query": {
+      "post": {
+        "operationId": "top_pick_crud",
+        "summary": "Read/search top pick configs",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "action": {
+                        "type": "string"
+                      },
+                      "database": {
+                        "type": "string"
+                      },
+                      "collectionName": {
+                        "type": "string"
+                      },
+                      "_id": {
+                        "type": "string"
+                      },
+                      "field": {
+                        "type": "string"
+                      },
+                      "fieldUpdate": {
+                        "type": "string"
+                      },
+                      "valueUpdate": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "database",
+                      "collectionName",
+                      "_id"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/supply-search-tool/search-regular-fare": {
+      "post": {
+        "operationId": "search_regular_fare",
+        "summary": "Search regular fares",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "tripType": {
+                        "type": "string",
+                        "enum": [
+                          "ONE_WAY",
+                          "TWO_WAY",
+                          "MULTI_CITY"
+                        ]
+                      },
+                      "journeys": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "firstAirport": {
+                              "type": "string"
+                            },
+                            "lastAirport": {
+                              "type": "string"
+                            },
+                            "departureDate": {
+                              "type": "object",
+                              "properties": {
+                                "month": {
+                                  "type": "integer"
+                                },
+                                "day": {
+                                  "type": "integer"
+                                },
+                                "year": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "month",
+                                "day",
+                                "year"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "firstAirport",
+                            "lastAirport",
+                            "departureDate"
+                          ]
+                        }
+                      },
+                      "numberOfSeats": {
+                        "type": "object",
+                        "properties": {
+                          "numAdults": {
+                            "type": "integer"
+                          },
+                          "numChildren": {
+                            "type": "integer"
+                          },
+                          "numInfants": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "numAdults",
+                          "numChildren",
+                          "numInfants"
+                        ]
+                      },
+                      "seatClass": {
+                        "type": "string"
+                      },
+                      "fareType": {
+                        "type": "string"
+                      },
+                      "searchId": {
+                        "type": "string"
+                      },
+                      "agentId": {
+                        "type": "string"
+                      },
+                      "locale": {
+                        "type": "string"
+                      },
+                      "shouldDoPolling": {
+                        "type": "boolean"
+                      },
+                      "shouldTriggerSignal": {
+                        "type": "boolean"
+                      },
+                      "showDebugInfo": {
+                        "type": "boolean"
+                      },
+                      "excludeStale": {
+                        "type": "boolean"
+                      },
+                      "searchSeqNo": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "tripType",
+                      "journeys",
+                      "numberOfSeats",
+                      "seatClass",
+                      "fareType",
+                      "excludeStale"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/supply-search-tool/search-special-fare": {
+      "post": {
+        "operationId": "search_special_fare",
+        "summary": "Special fare search",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "specialFareSpec": {
+                        "type": "object",
+                        "properties": {
+                          "flightSpecialFareSpec": {
+                            "type": "string"
+                          },
+                          "searchToolFlightSearchJobSpec": {
+                            "type": "object",
+                            "properties": {
+                              "journeys": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "flightNumberOfSeats": {
+                                "type": "string"
+                              },
+                              "seatClass": {
+                                "type": "string"
+                              },
+                              "fareType": {
+                                "type": "string"
+                              },
+                              "ticketType": {
+                                "type": "string"
+                              },
+                              "triggerSignal": {
+                                "type": "boolean"
+                              },
+                              "searchId": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "journeys",
+                              "flightNumberOfSeats",
+                              "seatClass",
+                              "fareType",
+                              "ticketType",
+                              "triggerSignal"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "flightSpecialFareSpec",
+                          "searchToolFlightSearchJobSpec"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "specialFareSpec"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/supply-search-tool/search-upsell-fare": {
+      "post": {
+        "operationId": "search_upsell_fare",
+        "summary": "Upsell fare search",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "upsellFareSpec": {
+                        "type": "object",
+                        "properties": {
+                          "tripType": {
+                            "type": "string",
+                            "enum": [
+                              "ONE_WAY",
+                              "TWO_WAY",
+                              "MULTI_CITY"
+                            ]
+                          },
+                          "flightUpsellSpec": {
+                            "type": "string"
+                          },
+                          "searchToolFlightSearchJobSpec": {
+                            "type": "object",
+                            "properties": {
+                              "journeys": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "flightNumberOfSeats": {
+                                "type": "string"
+                              },
+                              "seatClass": {
+                                "type": "string"
+                              },
+                              "fareType": {
+                                "type": "string"
+                              },
+                              "ticketType": {
+                                "type": "string"
+                              },
+                              "triggerSignal": {
+                                "type": "boolean"
+                              },
+                              "searchId": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "journeys",
+                              "flightNumberOfSeats",
+                              "seatClass",
+                              "fareType",
+                              "ticketType",
+                              "triggerSignal"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "tripType",
+                          "flightUpsellSpec",
+                          "searchToolFlightSearchJobSpec"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "upsellFareSpec"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/supply-search-tool/revalidate-regular-fare": {
+      "post": {
+        "operationId": "revalidate_regular_fare",
+        "summary": "Revalidate regular fare",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "revalidationJobSpec": {
+                        "type": "object",
+                        "properties": {
+                          "journeys": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "firstAirport": {
+                                  "type": "string"
+                                },
+                                "lastAirport": {
+                                  "type": "string"
+                                },
+                                "departureDate": {
+                                  "type": "object",
+                                  "properties": {
+                                    "month": {
+                                      "type": "object"
+                                    },
+                                    "day": {
+                                      "type": "object"
+                                    },
+                                    "year": {
+                                      "type": "object"
+                                    }
+                                  },
+                                  "required": [
+                                    "month",
+                                    "day",
+                                    "year"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "firstAirport",
+                                "lastAirport",
+                                "departureDate"
+                              ]
+                            }
+                          },
+                          "numberOfSeats": {
+                            "type": "object",
+                            "properties": {
+                              "numAdults": {
+                                "type": "integer"
+                              },
+                              "numChildren": {
+                                "type": "integer"
+                              },
+                              "numInfants": {
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "numAdults",
+                              "numChildren",
+                              "numInfants"
+                            ]
+                          },
+                          "seatClass": {
+                            "type": "string"
+                          },
+                          "fareType": {
+                            "type": "string"
+                          },
+                          "searchId": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "journeys",
+                          "numberOfSeats",
+                          "seatClass",
+                          "fareType"
+                        ]
+                      },
+                      "revalidationSelectionSpec": {
+                        "type": "object",
+                        "properties": {
+                          "agentId": {
+                            "type": "string"
+                          },
+                          "locale": {
+                            "type": "string"
+                          },
+                          "providerId": {
+                            "type": "string"
+                          },
+                          "routes": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "sourceAirport": {
+                                  "type": "string"
+                                },
+                                "destinationAirport": {
+                                  "type": "string"
+                                },
+                                "fulfillmentId": {
+                                  "type": "string"
+                                },
+                                "segments": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "firstAirport": {
+                                        "type": "object"
+                                      },
+                                      "lastAirport": {
+                                        "type": "object"
+                                      },
+                                      "departureDate": {
+                                        "type": "object"
+                                      },
+                                      "departureTime": {
+                                        "type": "object"
+                                      },
+                                      "arrivalTime": {
+                                        "type": "object"
+                                      },
+                                      "flightCode": {
+                                        "type": "object"
+                                      },
+                                      "airlineCode": {
+                                        "type": "object"
+                                      },
+                                      "brandCode": {
+                                        "type": "object"
+                                      },
+                                      "operatingAirlineCode": {
+                                        "type": "object"
+                                      }
+                                    },
+                                    "required": [
+                                      "firstAirport",
+                                      "lastAirport",
+                                      "departureDate",
+                                      "departureTime",
+                                      "arrivalTime",
+                                      "flightCode",
+                                      "airlineCode"
+                                    ]
+                                  }
+                                }
+                              },
+                              "required": [
+                                "sourceAirport",
+                                "destinationAirport",
+                                "segments"
+                              ]
+                            }
+                          }
+                        },
+                        "required": [
+                          "agentId",
+                          "locale",
+                          "providerId",
+                          "routes"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "revalidationJobSpec",
+                      "revalidationSelectionSpec"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/supply-search-tool/revalidate-special-fare": {
+      "post": {
+        "operationId": "revalidate_special_fare",
+        "summary": "Revalidate special fare",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "revalidateSpecialFareSpec": {
+                        "type": "object",
+                        "properties": {
+                          "flightSearchJobSpec": {
+                            "type": "object",
+                            "properties": {
+                              "journeys": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "flightNumberOfSeats": {
+                                "type": "string"
+                              },
+                              "seatClass": {
+                                "type": "string"
+                              },
+                              "fareType": {
+                                "type": "string"
+                              },
+                              "ticketType": {
+                                "type": "string"
+                              },
+                              "triggerSignal": {
+                                "type": "boolean"
+                              },
+                              "searchId": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "journeys",
+                              "flightNumberOfSeats",
+                              "seatClass",
+                              "fareType",
+                              "ticketType",
+                              "triggerSignal"
+                            ]
+                          },
+                          "selectionItinerary": {
+                            "type": "object",
+                            "properties": {
+                              "providerId": {
+                                "type": "string"
+                              },
+                              "airlineId": {
+                                "type": "string"
+                              },
+                              "selectionRoutes": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "firstAirport": {
+                                      "type": "object"
+                                    },
+                                    "lastAirport": {
+                                      "type": "object"
+                                    },
+                                    "departureDate": {
+                                      "type": "object"
+                                    },
+                                    "seatPublishedClass": {
+                                      "type": "object"
+                                    },
+                                    "seatClass": {
+                                      "type": "object"
+                                    },
+                                    "fareBasisCode": {
+                                      "type": "object"
+                                    },
+                                    "specialFareInformation": {
+                                      "type": "object"
+                                    },
+                                    "flightSpecialFareSelectionSegments": {
+                                      "type": "object"
+                                    }
+                                  },
+                                  "required": [
+                                    "firstAirport",
+                                    "lastAirport",
+                                    "departureDate",
+                                    "specialFareInformation",
+                                    "flightSpecialFareSelectionSegments"
+                                  ]
+                                }
+                              }
+                            },
+                            "required": [
+                              "providerId",
+                              "airlineId",
+                              "selectionRoutes"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "flightSearchJobSpec",
+                          "selectionItinerary"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "revalidateSpecialFareSpec"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/supply-search-tool/revalidate-upsell-fare": {
+      "post": {
+        "operationId": "revalidate_upsell_fare",
+        "summary": "Revalidate upsell fare",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "revalidateUpsellFareSpec": {
+                        "type": "object",
+                        "properties": {
+                          "tripType": {
+                            "type": "string",
+                            "enum": [
+                              "ONE_WAY",
+                              "TWO_WAY",
+                              "MULTI_CITY"
+                            ]
+                          },
+                          "flightSearchJobSpec": {
+                            "type": "object",
+                            "properties": {
+                              "journeys": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "flightNumberOfSeats": {
+                                "type": "string"
+                              },
+                              "seatClass": {
+                                "type": "string"
+                              },
+                              "fareType": {
+                                "type": "string"
+                              },
+                              "ticketType": {
+                                "type": "string"
+                              },
+                              "triggerSignal": {
+                                "type": "boolean"
+                              },
+                              "searchId": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "journeys",
+                              "flightNumberOfSeats",
+                              "seatClass",
+                              "fareType",
+                              "ticketType",
+                              "triggerSignal"
+                            ]
+                          },
+                          "selectionItinerary": {
+                            "type": "object",
+                            "properties": {
+                              "providerId": {
+                                "type": "string"
+                              },
+                              "airlineId": {
+                                "type": "string"
+                              },
+                              "selectionRoutes": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "firstAirport": {
+                                      "type": "object"
+                                    },
+                                    "lastAirport": {
+                                      "type": "object"
+                                    },
+                                    "departureDate": {
+                                      "type": "object"
+                                    },
+                                    "seatPublishedClass": {
+                                      "type": "object"
+                                    },
+                                    "seatClass": {
+                                      "type": "object"
+                                    },
+                                    "fareBasisCode": {
+                                      "type": "object"
+                                    },
+                                    "selectionSegments": {
+                                      "type": "object"
+                                    }
+                                  },
+                                  "required": [
+                                    "firstAirport",
+                                    "lastAirport",
+                                    "departureDate",
+                                    "selectionSegments"
+                                  ]
+                                }
+                              }
+                            },
+                            "required": [
+                              "providerId",
+                              "airlineId",
+                              "selectionRoutes"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "tripType",
+                          "flightSearchJobSpec",
+                          "selectionItinerary"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "revalidateUpsellFareSpec"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/search-simulation/traveloka-initial": {
+      "post": {
+        "operationId": "simulate_search",
+        "summary": "Simulate full user search",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "competitorName": {
+                        "type": "string"
+                      },
+                      "tripType": {
+                        "type": "string"
+                      },
+                      "seatPublishedClass": {
+                        "type": "string"
+                      },
+                      "journeys": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "selectedFlights": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "numSeats": {
+                        "type": "string"
+                      },
+                      "agentId": {
+                        "type": "string"
+                      },
+                      "searchId": {
+                        "type": "string"
+                      },
+                      "currency": {
+                        "type": "string"
+                      },
+                      "locale": {
+                        "type": "string"
+                      },
+                      "additionalData": {
+                        "type": "string"
+                      },
+                      "filter": {
+                        "type": "string"
+                      },
+                      "originCode": {
+                        "type": "string"
+                      },
+                      "destinationCode": {
+                        "type": "string"
+                      },
+                      "departureDate": {
+                        "type": "string"
+                      },
+                      "numAdults": {
+                        "type": "integer"
+                      },
+                      "numChildren": {
+                        "type": "integer"
+                      },
+                      "numInfants": {
+                        "type": "integer"
+                      },
+                      "standAlone": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "tripType",
+                      "seatPublishedClass",
+                      "journeys",
+                      "selectedFlights",
+                      "numSeats",
+                      "agentId",
+                      "searchId",
+                      "currency",
+                      "locale",
+                      "originCode",
+                      "destinationCode",
+                      "departureDate",
+                      "numAdults",
+                      "numChildren",
+                      "numInfants"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/provider-source/v2/get-provider-sourcing": {
+      "post": {
+        "operationId": "get_provider_sourcing",
+        "summary": "Provider sourcing config",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "pagination": {
+                        "type": "object",
+                        "properties": {
+                          "pageNo": {
+                            "type": "integer"
+                          },
+                          "pageSize": {
+                            "type": "integer"
+                          }
+                        }
+                      },
+                      "filter": {
+                        "type": "object",
+                        "properties": {
+                          "agentId": {
+                            "type": "string"
+                          },
+                          "inventoryType": {
+                            "type": "string"
+                          },
+                          "active": {
+                            "type": "boolean"
+                          },
+                          "locale": {
+                            "type": "string"
+                          },
+                          "airlineId": {
+                            "type": "string"
+                          },
+                          "originCountry": {
+                            "type": "string"
+                          },
+                          "destinationCountry": {
+                            "type": "string"
+                          },
+                          "originAirport": {
+                            "type": "string"
+                          },
+                          "destinationAirport": {
+                            "type": "string"
+                          },
+                          "defaultProvider": {
+                            "type": "string"
+                          },
+                          "defaultFulfillment": {
+                            "type": "string"
+                          },
+                          "providers": {
+                            "type": "string"
+                          },
+                          "providersPcc": {
+                            "type": "string"
+                          },
+                          "arbitrationMode": {
+                            "type": "string"
+                          },
+                          "departureDate": {
+                            "type": "object",
+                            "properties": {
+                              "month": {
+                                "type": "integer"
+                              },
+                              "day": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "month",
+                              "day",
+                              "year"
+                            ]
+                          },
+                          "enableBookingFailsafe": {
+                            "type": "boolean"
+                          },
+                          "version": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "required": []
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/provider-source/v2/get-histories": {
+      "post": {
+        "operationId": "get_provider_source_histories",
+        "summary": "Sourcing change history",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "filter": {
+                        "type": "object",
+                        "properties": {
+                          "addedItem": {
+                            "type": "string"
+                          },
+                          "removedItem": {
+                            "type": "string"
+                          },
+                          "changedItem": {
+                            "type": "string"
+                          },
+                          "version": {
+                            "type": "string"
+                          },
+                          "updatedBy": {
+                            "type": "string"
+                          },
+                          "reasonUpdate": {
+                            "type": "string"
+                          },
+                          "startDate": {
+                            "type": "object",
+                            "properties": {
+                              "month": {
+                                "type": "integer"
+                              },
+                              "day": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "month",
+                              "day",
+                              "year"
+                            ]
+                          },
+                          "endDate": {
+                            "type": "object",
+                            "properties": {
+                              "month": {
+                                "type": "integer"
+                              },
+                              "day": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "month",
+                              "day",
+                              "year"
+                            ]
+                          },
+                          "timeZoneId": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "pagination": {
+                        "type": "object",
+                        "properties": {
+                          "pageNo": {
+                            "type": "integer"
+                          },
+                          "pageSize": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "required": []
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/provider-source/v2/version/get-latest-version": {
+      "post": {
+        "operationId": "get_provider_source_latest_version",
+        "summary": "Latest sourcing version",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {},
+                    "required": []
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/fare-checking/get-enabled-provider": {
+      "post": {
+        "operationId": "get_enabled_provider",
+        "summary": "Enabled providers list",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {},
+                    "required": []
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/fare-checking/submit-fare-checking": {
+      "post": {
+        "operationId": "check_fare",
+        "summary": "Check fare validity",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "campaignName": {
+                        "type": "string"
+                      },
+                      "providerContexts": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "providerId": {
+                              "type": "string"
+                            },
+                            "pccId": {
+                              "type": "string"
+                            },
+                            "accountCode": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "providerId",
+                            "pccId"
+                          ]
+                        }
+                      },
+                      "airlineId": {
+                        "type": "string"
+                      },
+                      "specs": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "departureAirport": {
+                              "type": "string"
+                            },
+                            "arrivalAirport": {
+                              "type": "string"
+                            },
+                            "tripType": {
+                              "type": "string"
+                            },
+                            "dateOfIssuance": {
+                              "type": "object",
+                              "properties": {
+                                "from": {
+                                  "type": "string"
+                                },
+                                "to": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "from",
+                                "to"
+                              ]
+                            },
+                            "dateOfTravel": {
+                              "type": "object",
+                              "properties": {
+                                "from": {
+                                  "type": "string"
+                                },
+                                "to": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "from",
+                                "to"
+                              ]
+                            },
+                            "blackoutPeriods": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "from": {
+                                    "type": "string"
+                                  },
+                                  "to": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "from",
+                                  "to"
+                                ]
+                              }
+                            },
+                            "rbdCodes": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "eligibleFlightNumbers": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "excludedFlightNumbers": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "allowCodeShare": {
+                              "type": "boolean"
+                            },
+                            "allowInterline": {
+                              "type": "boolean"
+                            },
+                            "maxStayDurationInDays": {
+                              "type": "integer"
+                            },
+                            "minStayDurationInDays": {
+                              "type": "integer"
+                            },
+                            "discountType": {
+                              "type": "string"
+                            },
+                            "discountRate": {
+                              "type": "number"
+                            },
+                            "tourCode": {
+                              "type": "string"
+                            },
+                            "fareBasis": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "departureAirport",
+                            "arrivalAirport",
+                            "tripType",
+                            "dateOfIssuance",
+                            "dateOfTravel",
+                            "rbdCodes",
+                            "allowCodeShare",
+                            "allowInterline",
+                            "discountType",
+                            "discountRate",
+                            "fareBasis"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "campaignName",
+                      "providerContexts",
+                      "airlineId",
+                      "specs"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/fare-checking/get-result": {
+      "post": {
+        "operationId": "get_fare_check_result",
+        "summary": "Fare check result",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "executionId": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "executionId"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/provider-source/inventory-type/get-all": {
+      "post": {
+        "operationId": "get_inventory_types",
+        "summary": "Inventory types",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {},
+                    "required": []
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/provider-source/arbitration-mode": {
+      "post": {
+        "operationId": "get_arbitration_modes",
+        "summary": "Arbitration modes",
+        "tags": [
+          "supply"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {},
+                    "required": []
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {}
+  }
+}

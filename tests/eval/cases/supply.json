@@ -1,0 +1,14 @@
+[
+  {
+    "prompt": "Check fare for GA CGK-DPS tomorrow",
+    "operation": "check_fare"
+  },
+  {
+    "prompt": "Where does fare come from for GA CGK-SIN?",
+    "operation": "get_provider_sourcing"
+  },
+  {
+    "prompt": "Special fare config for TG",
+    "operation": "get_special_fare_config"
+  }
+]

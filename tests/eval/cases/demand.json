@@ -1,0 +1,18 @@
+[
+  {
+    "prompt": "Look up booking ABC123",
+    "operation": "get_flight_info"
+  },
+  {
+    "prompt": "Search fare cache CGK-SIN",
+    "operation": "search_cache_content"
+  },
+  {
+    "prompt": "Active promo labels for GA",
+    "operation": "search_promo_labels"
+  },
+  {
+    "prompt": "Booking log for order XYZ",
+    "operation": "get_booking_log"
+  }
+]

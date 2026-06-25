@@ -1,0 +1,116 @@
+name: Deploy Skills to S3
+
+on:
+  push:
+    branches: [main, release]
+    paths:
+      - 'skills/**/*.md'
+  workflow_dispatch:
+    inputs:
+      skill:
+        description: 'Specific skill to deploy (or "all")'
+        required: true
+        default: 'all'
+      environment:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options:
+          - stg
+          - prod
+        default: stg
+
+jobs:
+  deploy-skills:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    env:
+      STG_BUCKET: bedrock-agentcore-runtime-354767975881-ap-southeast-1-a1beixhzs
+      PROD_BUCKET: bedrock-agentcore-runtime-348767535692-ap-southeast-1-837werwc9
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Determine environment
+        id: env
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "env=${{ inputs.environment }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "env=stg" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/release" ]]; then
+            echo "env=prod" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Configure AWS credentials (stg)
+        if: steps.env.outputs.env == 'stg'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_STG }}
+          aws-region: ap-southeast-1
+
+      - name: Configure AWS credentials (prod)
+        if: steps.env.outputs.env == 'prod'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_PROD }}
+          aws-region: ap-southeast-1
+
+      - name: Set bucket
+        id: bucket
+        run: |
+          if [[ "${{ steps.env.outputs.env }}" == "stg" ]]; then
+            echo "name=${{ env.STG_BUCKET }}" >> $GITHUB_OUTPUT
+          else
+            echo "name=${{ env.PROD_BUCKET }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Detect changed skills
+        id: changed
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.skill }}" != "all" ]]; then
+            echo "skills=${{ inputs.skill }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.skill }}" == "all" ]]; then
+            # Deploy all skills
+            SKILLS=$(find skills -name "SKILL.md" -exec dirname {} \; | xargs -I{} basename {} | tr '\n' ' ')
+            echo "skills=${SKILLS}" >> $GITHUB_OUTPUT
+          else
+            # Find which skill folders had changes
+            CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'skills/**/*.md' \
+              | sed 's|skills/[^/]*/\([^/]*\)/.*|\1|' \
+              | sort -u \
+              | tr '\n' ' ')
+            echo "skills=${CHANGED}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy skills to S3
+        run: |
+          BUCKET="${{ steps.bucket.outputs.name }}"
+          echo "Deploying to ${{ steps.env.outputs.env }} → s3://${BUCKET}/skills/"
+
+          for SKILL in ${{ steps.changed.outputs.skills }}; do
+            # Find the skill directory (could be under domain/ or shared/)
+            SKILL_DIR=$(find skills -type d -name "$SKILL" | head -1)
+            if [[ -z "$SKILL_DIR" ]]; then
+              echo "⚠️ Skill directory not found: $SKILL"
+              continue
+            fi
+
+            echo "📦 Uploading ${SKILL} from ${SKILL_DIR}..."
+            aws s3 sync "${SKILL_DIR}/" "s3://${BUCKET}/skills/${SKILL}/" \
+              --exclude ".*" \
+              --delete
+
+            echo "✅ Deployed ${SKILL}"
+          done
+
+      - name: Verify deployment
+        run: |
+          BUCKET="${{ steps.bucket.outputs.name }}"
+          echo "Skills in S3:"
+          aws s3 ls "s3://${BUCKET}/skills/" --recursive | head -30
