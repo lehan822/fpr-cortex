@@ -11,7 +11,7 @@ Get up and running with the FPR AI Agent in **2 minutes**.
 ## Step 1 — Install Skills
 
 ```bash
-curl -sL https://raw.githubusercontent.com/lehan822/fpr-cortex/main/install.sh | bash
+curl -sL https://raw.githubusercontent.com/traveloka/fpr-cortex/main/install.sh | bash
 ```
 
 This installs all FPR skills (`fpr-shared`, `fpr-pricing`, `fpr-supply`, `fpr-demand`, `fpr-config`) to `~/.agents/skills/`.
@@ -65,7 +65,7 @@ You (natural language) → AI Agent → Skill (routing) → MCP Gateway → fprt
 When new operations are added, re-run:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/lehan822/fpr-cortex/main/install.sh | bash
+curl -sL https://raw.githubusercontent.com/traveloka/fpr-cortex/main/install.sh | bash
 ```
 
 ## Architecture (for the curious)

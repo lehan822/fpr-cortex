@@ -41,7 +41,7 @@ find ~ -path "*/fpr-cortex/infra/schemas/fprtool-full.json" -print -quit 2>/dev/
 
 If not found locally, fetch from GitHub:
 ```bash
-curl -sf https://raw.githubusercontent.com/lehan822/fpr-cortex/main/infra/schemas/fprtool-full.json
+curl -sf https://raw.githubusercontent.com/traveloka/fpr-cortex/main/infra/schemas/fprtool-full.json
 ```
 
 Extract from schema:

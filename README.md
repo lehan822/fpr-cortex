@@ -1,13 +1,13 @@
 # fpr-cortex
 
-[![CI](https://github.com/lehan822/fpr-cortex/actions/workflows/ci.yml/badge.svg)](https://github.com/lehan822/fpr-cortex/actions/workflows/ci.yml)
+[![CI](https://github.com/traveloka/fpr-cortex/actions/workflows/ci.yml/badge.svg)](https://github.com/traveloka/fpr-cortex/actions/workflows/ci.yml)
 
 > Flight Pricing & Revenue — AI Skills + Schema Pipeline
 
 ## For Users (install skills)
 
 ```bash
-npx skills add lehan822/fpr-cortex -g -y     # install all
+npx skills add traveloka/fpr-cortex -g -y     # install all
 npx skills update -g                          # update
 ```
 

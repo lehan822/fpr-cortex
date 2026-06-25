@@ -108,4 +108,4 @@ Full decision tree → [`error-classification.md`](references/error-classificati
 
 ## Version
 
-Current 2.10.0. Check: `curl -sf https://raw.githubusercontent.com/lehan822/fpr-cortex/main/VERSION`
+Current 2.10.0. Check: `curl -sf https://raw.githubusercontent.com/traveloka/fpr-cortex/main/VERSION`

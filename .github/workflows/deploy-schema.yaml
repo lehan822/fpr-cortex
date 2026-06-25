@@ -90,7 +90,7 @@ jobs:
             echo "gateway=${{ env.STG_GATEWAY_ID }}" >> $GITHUB_OUTPUT
             echo "target_id=${{ env.STG_TARGET_ID }}" >> $GITHUB_OUTPUT
             echo "target_name=${{ env.STG_TARGET_NAME }}" >> $GITHUB_OUTPUT
-            echo "description=FPR Tools API - 64 operations (pricing, supply, demand, config)" >> $GITHUB_OUTPUT
+            echo "description=FPR Tools API - 71 operations (pricing, supply, demand, sysinteg, 3ps)" >> $GITHUB_OUTPUT
           else
             echo "gateway=${{ env.PROD_GATEWAY_ID }}" >> $GITHUB_OUTPUT
             echo "target_id=${{ env.PROD_TARGET_ID }}" >> $GITHUB_OUTPUT
@@ -103,7 +103,7 @@ jobs:
           echo "Deploying to ${{ steps.env.outputs.env }} → s3://${{ steps.bucket.outputs.name }}/schemas/"
           GATEWAY_URL="${{ steps.gateway-url.outputs.url }}"
 
-          for domain in pricing supply demand config; do
+          for domain in pricing supply demand sysinteg 3ps; do
             if [ -f "infra/schemas/$domain/$domain.json" ]; then
               # Replace server URL to match target environment
               python3 -c "

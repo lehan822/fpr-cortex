@@ -1,12 +1,12 @@
 #!/bin/sh
 # FPR Cortex Skills — Quick Install / Update
-# Usage: curl -sL https://raw.githubusercontent.com/lehan822/fpr-cortex/main/install.sh | sh
+# Usage: curl -sL https://raw.githubusercontent.com/traveloka/fpr-cortex/main/install.sh | sh
 
 set -e
 
 SKILLS_DIR="${HOME}/.agents/skills"
 VERSION_FILE="${HOME}/.agents/skills/.fpr-cortex-version"
-REPO_URL="https://raw.githubusercontent.com/lehan822/fpr-cortex/main"
+REPO_URL="https://raw.githubusercontent.com/traveloka/fpr-cortex/main"
 
 # Fetch latest VERSION
 REMOTE_VERSION=$(curl -sf "${REPO_URL}/VERSION" 2>/dev/null || echo "unknown")
