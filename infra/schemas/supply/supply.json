@@ -1568,6 +1568,9 @@
                       "filter": {
                         "type": "string"
                       },
+                      "approvalEntryId": {
+                        "type": "string"
+                      },
                       "originCode": {
                         "type": "string"
                       },

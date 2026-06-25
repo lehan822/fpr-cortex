@@ -1244,78 +1244,6 @@
         }
       }
     },
-    "/api/v2/flight-promo-label/get-promo-label-info": {
-      "post": {
-        "operationId": "search_promo_labels",
-        "summary": "Read/search promo label configs",
-        "tags": [
-          "demand"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "data",
-                  "context"
-                ],
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "description": "Request parameters",
-                    "properties": {
-                      "promoLabelId": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "promoLabelId"
-                    ]
-                  },
-                  "context": {
-                    "type": "object",
-                    "properties": {
-                      "authServiceToken": {
-                        "type": "string",
-                        "description": "User JWT token"
-                      }
-                    },
-                    "required": [
-                      "authServiceToken"
-                    ]
-                  },
-                  "clientInterface": {
-                    "type": "string",
-                    "default": "DESKTOP"
-                  },
-                  "fields": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "default": []
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v2/demand-experiment/get-variant-namespace": {
       "post": {
         "operationId": "get_demand_experiment_variant",
@@ -3847,6 +3775,229 @@
         }
       }
     },
+    "/api/v2/crud/getEntryList#search_promo_labels": {
+      "post": {
+        "operationId": "search_promo_labels",
+        "summary": "Search/list promo labels",
+        "description": "List/search flightPromoLabel entries via CRUD framework.\nAvailable filter fields: archived, enabled, end_date, last_update, priority\nRequest goes to POST /api/v2/crud/getEntryList",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context",
+                  "clientInterface"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "entityType",
+                      "search"
+                    ],
+                    "properties": {
+                      "entityType": {
+                        "type": "string",
+                        "enum": [
+                          "flightPromoLabel"
+                        ],
+                        "description": "Must be \"flightPromoLabel\""
+                      },
+                      "search": {
+                        "type": "object",
+                        "required": [
+                          "entriesCount",
+                          "offset",
+                          "sort",
+                          "filter"
+                        ],
+                        "properties": {
+                          "searchQuery": {
+                            "type": "string",
+                            "description": "Free-text search (optional)",
+                            "default": ""
+                          },
+                          "entriesCount": {
+                            "type": "integer",
+                            "description": "Page size (max entries to return)",
+                            "default": 10
+                          },
+                          "offset": {
+                            "type": "integer",
+                            "description": "Pagination offset",
+                            "default": 0
+                          },
+                          "sort": {
+                            "type": "object",
+                            "properties": {
+                              "fieldName": {
+                                "type": "string",
+                                "description": "Field to sort by"
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "ASCENDING",
+                                  "DESCENDING"
+                                ]
+                              }
+                            }
+                          },
+                          "filter": {
+                            "type": "array",
+                            "description": "Filter conditions. Known fields: archived, enabled, end_date, last_update, priority",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "fieldName": {
+                                  "type": "string"
+                                },
+                                "arguments": {
+                                  "type": "object",
+                                  "properties": {
+                                    "value": {}
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "JWT auth token"
+                      }
+                    }
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "desktop"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Entry list result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "totalEntries": {
+                          "type": "string"
+                        },
+                        "entries": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/flight-promo-label/get-promo-label-info": {
+      "post": {
+        "operationId": "get_promo_label_detail",
+        "summary": "Get single promo label full config",
+        "tags": [
+          "demand"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "data",
+                  "context"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "description": "Request parameters",
+                    "properties": {
+                      "promoLabelId": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "promoLabelId"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "authServiceToken": {
+                        "type": "string",
+                        "description": "User JWT token"
+                      }
+                    },
+                    "required": [
+                      "authServiceToken"
+                    ]
+                  },
+                  "clientInterface": {
+                    "type": "string",
+                    "default": "DESKTOP"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/supply-search-tool/search-regular-fare": {
       "post": {
         "operationId": "search_regular_fare",
@@ -4901,6 +5052,9 @@
                         "type": "string"
                       },
                       "filter": {
+                        "type": "string"
+                      },
+                      "approvalEntryId": {
                         "type": "string"
                       },
                       "originCode": {
