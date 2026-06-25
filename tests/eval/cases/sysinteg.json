@@ -1,0 +1,10 @@
+[
+  {
+    "prompt": "Is feature X enabled?",
+    "operation": "get_feature_flags"
+  },
+  {
+    "prompt": "Who changed the pricing rule yesterday?",
+    "operation": "get_activity_log"
+  }
+]

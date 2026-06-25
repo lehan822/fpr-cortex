@@ -1,7 +1,7 @@
 ---
 name: fpr-pricing
 version: 2.6.0
-description: "Pricing rules, autopilot rules, budgets, commissions, incentives, baseline markup, bundling, transaction fees. Use for price adjustments, margin settings, and revenue management."
+description: "[domain] Pricing rules, autopilot rules, budgets, commissions, incentives, baseline markup, bundling, transaction fees. Use for price adjustments, margin settings, and revenue management."
 category: domain
 prerequisites:
   local: [fpr-shared]

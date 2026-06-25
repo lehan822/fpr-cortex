@@ -1,0 +1,6 @@
+[
+  {"prompt": "List all airline codes", "operation": "get_airline_ids"},
+  {"prompt": "Active routes for VietJet", "operation": "get_airline_routes"},
+  {"prompt": "Decrypt this flight ID", "operation": "decrypt_flight_id"},
+  {"prompt": "Show airport list", "operation": "get_airport_list"}
+]

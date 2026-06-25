@@ -1,7 +1,7 @@
 ---
 name: fpr-sysinteg
 version: 1.0.0
-description: "System integration tools: feature flags, audit logs, configuration management, currency conversion, reference data (countries, airlines). Use for cross-team configuration queries and change auditing."
+description: "[domain] System integration tools: feature flags, audit logs, configuration management, currency conversion, reference data (countries, airlines). Use for cross-team configuration queries and change auditing."
 category: domain
 prerequisites:
   local: [fpr-shared]

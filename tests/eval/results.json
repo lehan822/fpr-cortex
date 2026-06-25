@@ -1,39 +1,33 @@
 {
   "mode": "keyword",
-  "total": 25,
-  "skill_accuracy": 0.56,
-  "operation_accuracy": 0.52,
-  "full_accuracy": 0.52,
+  "total": 21,
+  "skill_accuracy": 0.38095238095238093,
+  "operation_accuracy": 0.38095238095238093,
+  "full_accuracy": 0.3333333333333333,
   "cases": [
     {
       "status": "\u274c",
-      "prompt": "Is feature X enabled?",
-      "expected": "fpr-config \u2192 get_feature_flags",
-      "predicted": "None \u2192 none"
-    },
-    {
-      "status": "\u274c",
-      "prompt": "Who changed the pricing rule yesterday?",
-      "expected": "fpr-config \u2192 get_activity_log",
-      "predicted": "None \u2192 none"
-    },
-    {
-      "status": "\u274c",
       "prompt": "List all airline codes",
-      "expected": "fpr-config \u2192 get_airline_ids",
+      "expected": "fpr-3ps \u2192 get_airline_ids",
       "predicted": "None \u2192 none"
     },
     {
       "status": "\u274c",
-      "prompt": "Convert 100 IDR to THB",
-      "expected": "fpr-config \u2192 convert_currency",
+      "prompt": "Active routes for VietJet",
+      "expected": "fpr-3ps \u2192 get_airline_routes",
       "predicted": "None \u2192 none"
     },
     {
-      "status": "\u2705",
-      "prompt": "Show condition group rules",
-      "expected": "fpr-config \u2192 load_condition_groups",
-      "predicted": "fpr-config \u2192 load_condition_groups"
+      "status": "\u274c",
+      "prompt": "Decrypt this flight ID",
+      "expected": "fpr-3ps \u2192 decrypt_flight_id",
+      "predicted": "None \u2192 none"
+    },
+    {
+      "status": "\u274c",
+      "prompt": "Show airport list",
+      "expected": "fpr-3ps \u2192 get_airport_list",
+      "predicted": "fpr-3ps-datainfo \u2192 get_airport_list"
     },
     {
       "status": "\u274c",
@@ -43,27 +37,15 @@
     },
     {
       "status": "\u274c",
-      "prompt": "Simulate search CGK to DPS next Monday",
-      "expected": "fpr-demand \u2192 simulate_search",
-      "predicted": "None \u2192 none"
-    },
-    {
-      "status": "\u2705",
       "prompt": "Search fare cache CGK-SIN",
       "expected": "fpr-demand \u2192 search_cache_content",
-      "predicted": "fpr-demand \u2192 search_cache_content"
+      "predicted": "fpr-supply \u2192 search_regular_fare"
     },
     {
-      "status": "\u2705",
-      "prompt": "User profile for user 12345",
-      "expected": "fpr-demand \u2192 search_user_profile",
-      "predicted": "fpr-demand \u2192 search_user_profile"
-    },
-    {
-      "status": "\u2705",
+      "status": "\u274c",
       "prompt": "Active promo labels for GA",
       "expected": "fpr-demand \u2192 search_promo_labels",
-      "predicted": "fpr-demand \u2192 search_promo_labels"
+      "predicted": "None \u2192 none"
     },
     {
       "status": "\u2705",
@@ -126,24 +108,6 @@
       "predicted": "None \u2192 none"
     },
     {
-      "status": "\u2705",
-      "prompt": "What's the fare adjuster for Lion Air?",
-      "expected": "fpr-supply \u2192 load_fare_adjuster_by_base_fare",
-      "predicted": "fpr-supply \u2192 load_fare_adjuster_by_base_fare"
-    },
-    {
-      "status": "\u2705",
-      "prompt": "Show provider config for provider 123",
-      "expected": "fpr-supply \u2192 read_pricing_provider",
-      "predicted": "fpr-supply \u2192 read_pricing_provider"
-    },
-    {
-      "status": "\u274c",
-      "prompt": "Active routes for VietJet",
-      "expected": "fpr-supply \u2192 get_airline_routes",
-      "predicted": "None \u2192 none"
-    },
-    {
       "status": "\u274c",
       "prompt": "Where does fare come from for GA CGK-SIN?",
       "expected": "fpr-supply \u2192 get_provider_sourcing",
@@ -154,6 +118,18 @@
       "prompt": "Special fare config for TG",
       "expected": "fpr-supply \u2192 get_special_fare_config",
       "predicted": "fpr-supply \u2192 get_special_fare_config"
+    },
+    {
+      "status": "\u274c",
+      "prompt": "Is feature X enabled?",
+      "expected": "fpr-sysinteg \u2192 get_feature_flags",
+      "predicted": "None \u2192 none"
+    },
+    {
+      "status": "\u274c",
+      "prompt": "Who changed the pricing rule yesterday?",
+      "expected": "fpr-sysinteg \u2192 get_activity_log",
+      "predicted": "None \u2192 none"
     }
   ]
 }

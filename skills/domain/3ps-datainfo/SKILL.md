@@ -1,7 +1,7 @@
 ---
 name: fpr-3ps-datainfo
 version: 1.0.0
-description: "Third-party services and data information: Pronto destination tags, airport lists, airline routes, flight ID decryption. Use for reference data queries and route management."
+description: "[domain] Third-party services and data information: Pronto destination tags, airport lists, airline routes, flight ID decryption. Use for reference data queries and route management."
 category: domain
 prerequisites:
   local: [fpr-shared]

@@ -1,7 +1,7 @@
 ---
 name: fpr-shared
 version: 2.10.0
-description: "Flight Pricing & Revenue shared layer: auth, calling conventions, common parameter standards. Covers both local agents and AgentCore agents."
+description: "[shared] Flight Pricing & Revenue shared layer: auth, calling conventions, common parameter standards. Covers both local agents and AgentCore agents."
 category: shared
 ---
 

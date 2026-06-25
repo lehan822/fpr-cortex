@@ -1,7 +1,7 @@
 ---
 name: fpr-demand
 version: 2.6.0
-description: "Demand-side tools: booking lookup, fare cache, demand experiments, MongoDB queries. Use for demand-side debugging — bookings, search results, user experiments."
+description: "[domain] Demand-side tools: booking lookup, fare cache, demand experiments, MongoDB queries. Use for demand-side debugging — bookings, search results, user experiments."
 category: domain
 prerequisites:
   local: [fpr-shared]

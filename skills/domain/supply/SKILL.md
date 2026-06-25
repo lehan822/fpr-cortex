@@ -1,7 +1,7 @@
 ---
 name: fpr-supply
 version: 2.5.0
-description: "Supply-side tools: fare search (regular/special/upsell), revalidation, search simulation, provider sourcing, fare checking, inventory management, winner selection. Use for supply-side debugging and provider management."
+description: "[domain] Supply-side tools: fare search (regular/special/upsell), revalidation, search simulation, provider sourcing, fare checking, inventory management, winner selection. Use for supply-side debugging and provider management."
 category: domain
 prerequisites:
   local: [fpr-shared]

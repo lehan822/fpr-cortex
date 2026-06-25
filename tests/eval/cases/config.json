@@ -1,7 +1,0 @@
-[
-  {"prompt": "Is feature X enabled?", "operation": "get_feature_flags"},
-  {"prompt": "Who changed the pricing rule yesterday?", "operation": "get_activity_log"},
-  {"prompt": "List all airline codes", "operation": "get_airline_ids"},
-  {"prompt": "Convert 100 IDR to THB", "operation": "convert_currency"},
-  {"prompt": "Show condition group rules", "operation": "load_condition_groups"}
-]
