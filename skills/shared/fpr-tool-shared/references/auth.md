@@ -2,6 +2,20 @@
 
 > AgentCore agents skip this — runtime handles auth via IAM.
 
+## Bootstrap (do this first if the script is missing)
+
+`fpr-auth.py` is NOT a separate download — its full source is embedded in the
+`## Script` section at the bottom of this file.
+
+- If `~/.fpr/fpr-auth.py` does **not** exist (e.g. you saw
+  `No such file or directory`), extract the script from `## Script`, write it
+  verbatim to `~/.fpr/fpr-auth.py`, then run `python3 ~/.fpr/fpr-auth.py <env>`
+  for first-time token creation. **Do not ask the user to obtain the file — you
+  build it.**
+- **Auto-update:** the script carries a `SCRIPT_VERSION` constant. If
+  `python3 ~/.fpr/fpr-auth.py version` doesn't match the `## Script` version,
+  re-extract and overwrite.
+
 ## Reactive flow
 
 Call MCP tools directly. Auth recovery is signal-specific:
@@ -18,14 +32,6 @@ After auth:
 2. Retry the original MCP call
 
 `login <env>` binds `localhost:18999/callback`, opens the Cognito authorize URL, exchanges the callback code, and writes `~/.fpr/auth.json`. In Codex sandbox it usually requires escalated execution because localhost binding/browser opening is blocked.
-
-## Bootstrap & Auto-update
-
-If `~/.fpr/fpr-auth.py` doesn't exist, extract the Python script from the `## Script` section below and write it there. Then run `python3 ~/.fpr/fpr-auth.py <env>` for first-time token creation.
-
-**Auto-update:** The script contains a `SCRIPT_VERSION` constant. When auth.md is updated, bump `SCRIPT_VERSION`. The agent checks: if the local file's version doesn't match, re-extract the script.
-
-Check current version: `python3 ~/.fpr/fpr-auth.py version`
 
 ## Commands
 

@@ -14,6 +14,12 @@ category: shared
 
 Authoritative details: [`references/auth.md`](references/auth.md).
 
+**First use — `fpr-auth.py: No such file or directory`:** the script is NOT a
+separate download. Its full source is embedded in `references/auth.md` under the
+`## Script` section. If `~/.fpr/fpr-auth.py` is missing, read that section, write
+it verbatim to `~/.fpr/fpr-auth.py`, then run `python3 ~/.fpr/fpr-auth.py <env>`.
+Do not ask the user to obtain or set up the file — bootstrap it yourself.
+
 - `401` → auto auth with `python3 ~/.fpr/fpr-auth.py <env>`
 - JSON-RPC `insufficient_scope` / code `-32002`, or switching login identity/scopes → force browser login with `python3 ~/.fpr/fpr-auth.py login <env>`
 - `login <env>` binds `localhost:18999/callback` and opens Cognito; in Codex this usually requires escalated execution.
