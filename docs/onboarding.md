@@ -14,7 +14,7 @@ Get up and running with the FPR AI Agent in **2 minutes**.
 curl -sL https://raw.githubusercontent.com/lehan822/fpr-cortex/main/install.sh | sh
 ```
 
-This installs all FPR skills (`fpr-tool-shared`, `fpr-tool-pricing`, `fpr-tool-supply`, `fpr-tool-demand`, `fpr-tool-sysinteg`, `fpr-tool-3ps-data`, `fpr-oncall-pricing`, `fpr-oncall-supply`) to `~/.agents/skills/`.
+This installs all FPR tool skills (`fpr-tool-shared`, `fpr-tool-pricing`, `fpr-tool-supply`, `fpr-tool-demand`, `fpr-tool-sysinteg`, `fpr-tool-3ps-data`) to `~/.agents/skills/`.
 
 ## Step 2 — First Query (triggers login)
 

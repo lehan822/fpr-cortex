@@ -26,14 +26,6 @@
     "fpr-tool-3ps-data": {
       "skillPath": "skills/fpr-tools/fpr-tool-3ps-data/SKILL.md",
       "description": "Third-party reference data: airports, routes, flight ID decryption"
-    },
-    "fpr-oncall-pricing": {
-      "skillPath": "skills/oncall/fpr-oncall-pricing/SKILL.md",
-      "description": "Pricing on-call runbooks (placeholder)"
-    },
-    "fpr-oncall-supply": {
-      "skillPath": "skills/oncall/fpr-oncall-supply/SKILL.md",
-      "description": "Supply on-call runbooks (placeholder)"
     }
   }
 }

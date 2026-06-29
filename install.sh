@@ -78,15 +78,11 @@ install_skill "fpr-tool-demand"    "skills/fpr-tools/fpr-tool-demand"    booking
 install_skill "fpr-tool-sysinteg"  "skills/fpr-tools/fpr-tool-sysinteg"  parameter-standards.md
 install_skill "fpr-tool-3ps-data"  "skills/fpr-tools/fpr-tool-3ps-data"  parameter-standards.md
 
-# On-call skills
-install_skill "fpr-oncall-pricing" "skills/oncall/fpr-oncall-pricing"
-install_skill "fpr-oncall-supply"  "skills/oncall/fpr-oncall-supply"
-
 # Save version
 echo "${REMOTE_VERSION}" > "${VERSION_FILE}"
 
 echo ""
-echo "✅ Done! 8 skills installed to ${SKILLS_DIR} (v${REMOTE_VERSION})"
+echo "✅ Done! 6 skills installed to ${SKILLS_DIR} (v${REMOTE_VERSION})"
 
 do_link
 

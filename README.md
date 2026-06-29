@@ -18,8 +18,6 @@ Installed skills:
 - `fpr-tool-demand`
 - `fpr-tool-sysinteg`
 - `fpr-tool-3ps-data`
-- `fpr-oncall-pricing`
-- `fpr-oncall-supply`
 
 ## Update
 
