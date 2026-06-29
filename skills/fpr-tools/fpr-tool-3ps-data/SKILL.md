@@ -1,16 +1,16 @@
 ---
-name: fpr-3ps-datainfo
+name: fpr-tool-3ps-data
 version: 1.0.0
-description: "[domain] Third-party services and data information: Pronto destination tags, airport lists, airline routes, flight ID decryption. Use for reference data queries and route management."
-category: domain
+description: "[fprtool] Third-party services and data information: Pronto destination tags, airport lists, airline routes, flight ID decryption. Use for reference data queries and route management."
+category: fprtool
 prerequisites:
-  local: [fpr-shared]
+  local: [fpr-tool-shared]
   agentcore: []
 ---
 
 # FPR 3PS & Data Info
 
-> **⚠️ Local MCP tools. All tools are prefixed and authed via fpr-shared — read it first (see Prerequisites).**
+> **⚠️ Local MCP tools. All tools are prefixed and authed via fpr-tool-shared — read it first (see Prerequisites).**
 
 ```
 # Common examples
@@ -24,7 +24,7 @@ tool: decrypt_flight_id                    data: {flightId: "xxx"}
 
 **CRITICAL — before the matching operation, you MUST Read the file(s) below. None are optional:**
 
-1. **Local MCP only** → read **fpr-shared** first — auth, tool name prefix, request envelope (**all operations**)
+1. **Local MCP only** → read **fpr-tool-shared** first — auth, tool name prefix, request envelope (**all operations**)
 2. **Unsure about parameters** → MUST read [`parameter-standards.md`](references/parameter-standards.md) (airlineId IATA format, destinationId type)
 
 **Executing an operation without reading its required reference will cause parameter errors.**
@@ -62,10 +62,11 @@ tool: decrypt_flight_id                    data: {flightId: "xxx"}
 | User Intent | → Operation |
 |-------------|-------------|
 | "airport list", "all airports" | `get_airport_list` |
+| "airline list", "airline codes" | `get_airline_ids` |
 | "airline routes", "active routes" | `get_airline_routes` |
 | "route history", "when did route start" | `get_airline_route_history` |
 | "pronto tag", "destination tag" | `pronto_get_list_destination` or `pronto_view_destination` |
-| "decrypt flight ID", "decode flight ID" | `decrypt_flight_id` |
+| "flight ID", "decrypt flight ID", "decode flight ID" | `decrypt_flight_id` |
 | "multi-country", "batch country ops" | `multi_country_crud` |
 
 ## Gotchas (top traps — full rules in references)
@@ -76,7 +77,7 @@ tool: decrypt_flight_id                    data: {flightId: "xxx"}
 
 ## Disambiguation
 
-- "fare adjuster", "provider sourcing" → **fpr-supply** (not 3ps-datainfo)
-- "booking detail", "PNR lookup" → **fpr-demand** (not 3ps-datainfo)
-- "feature flag" → **fpr-sysinteg** (not 3ps-datainfo)
-- "airline route config" (provider level) → **fpr-supply**; at reference data level → **fpr-3ps-datainfo**
+- "fare adjuster", "provider sourcing" → **fpr-tool-supply** (not 3ps-datainfo)
+- "booking detail", "PNR lookup" → **fpr-tool-demand** (not 3ps-datainfo)
+- "feature flag" → **fpr-tool-sysinteg** (not 3ps-datainfo)
+- "airline route config" (provider level) → **fpr-tool-supply**; at reference data level → **fpr-tool-3ps-data**

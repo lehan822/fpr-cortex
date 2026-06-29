@@ -4,17 +4,26 @@
 
 ## Reactive flow
 
-Call MCP tools directly. On 401, the agent handles it automatically:
+Call MCP tools directly. Auth recovery is signal-specific:
 
-1. `python3 ~/.fpr/fpr-auth.py <env>` — checks token, silent refresh if expired, opens browser if needed
+| Signal | Command | Why |
+|--------|---------|-----|
+| `401` / expired token | `python3 ~/.fpr/fpr-auth.py <env>` | Auto mode checks validity, silently refreshes when possible, and falls back to browser login only when needed. |
+| JSON-RPC `-32002` + `insufficient_scope` | `python3 ~/.fpr/fpr-auth.py login <env>` | Token can be valid but missing scopes; auto/refresh may skip browser login. |
+| Need to switch login identity/scopes | `python3 ~/.fpr/fpr-auth.py login <env>` | Force PKCE browser login and save fresh access/id tokens. |
+
+After auth:
+
+1. Run the appropriate command above
 2. Retry the original MCP call
-3. **After successful auth (login or refresh), start the daemon:** `python3 ~/.fpr/fpr-auth.py daemon <env>` — runs in background, refreshes token before expiry, no more 401s going forward. Skip if daemon already running.
+
+`login <env>` binds `localhost:18999/callback`, opens the Cognito authorize URL, exchanges the callback code, and writes `~/.fpr/auth.json`. In Codex sandbox it usually requires escalated execution because localhost binding/browser opening is blocked.
 
 ## Bootstrap & Auto-update
 
-If `~/.fpr/fpr-auth.py` doesn't exist, extract the Python script from the `## Script` section below and write it there. After writing + login: start the daemon.
+If `~/.fpr/fpr-auth.py` doesn't exist, extract the Python script from the `## Script` section below and write it there. Then run `python3 ~/.fpr/fpr-auth.py <env>` for first-time token creation.
 
-**Auto-update:** The script contains a `SCRIPT_VERSION` constant. When auth.md is updated, bump `SCRIPT_VERSION`. The agent checks: if the local file's version doesn't match, stop the daemon (`python3 ~/.fpr/fpr-auth.py daemon-stop`), re-extract the script, then start the daemon again.
+**Auto-update:** The script contains a `SCRIPT_VERSION` constant. When auth.md is updated, bump `SCRIPT_VERSION`. The agent checks: if the local file's version doesn't match, re-extract the script.
 
 Check current version: `python3 ~/.fpr/fpr-auth.py version`
 
@@ -27,8 +36,6 @@ Check current version: `python3 ~/.fpr/fpr-auth.py version`
 | `python3 ~/.fpr/fpr-auth.py refresh <env>` | Silent refresh, fallback to login |
 | `python3 ~/.fpr/fpr-auth.py login <env>` | Force PKCE browser login |
 | `python3 ~/.fpr/fpr-auth.py token <env>` | Print access_token for scripts |
-| `python3 ~/.fpr/fpr-auth.py daemon <env>` | Start background auto-refresh daemon |
-| `python3 ~/.fpr/fpr-auth.py daemon-stop` | Stop the daemon |
 | `python3 ~/.fpr/fpr-auth.py version` | Print SCRIPT_VERSION (for update check) |
 
 ## Token model
@@ -50,7 +57,7 @@ The agent writes this to `~/.fpr/fpr-auth.py` on first use:
 
 ```python
 #!/usr/bin/env python3
-"""FPR Auth Manager — login, refresh, check tokens, and background daemon.
+"""FPR Auth Manager — login, refresh, and check tokens.
 
 Usage:
   python3 fpr-auth.py <env>          Auto: check → silent refresh → browser login
@@ -58,16 +65,14 @@ Usage:
   python3 fpr-auth.py refresh <env>  Silent refresh, fallback to login if needed
   python3 fpr-auth.py login <env>    Force PKCE browser login
   python3 fpr-auth.py token <env>    Print access_token (for scripts)
-  python3 fpr-auth.py daemon <env>   Start background auto-refresh daemon
-  python3 fpr-auth.py daemon-stop    Stop the background daemon
 
 Environment: stg | prod
 """
 
 import json, os, sys, time, urllib.request, hashlib, base64, http.server
-import webbrowser, urllib.parse, secrets, subprocess, signal
+import webbrowser, urllib.parse, secrets
 
-SCRIPT_VERSION = 2
+SCRIPT_VERSION = 4
 
 AUTH_FILE = os.path.expanduser("~/.fpr/auth.json")
 COGNITO_URL = "https://cognito-idp.ap-southeast-1.amazonaws.com/"
@@ -87,8 +92,6 @@ PKCE_CONFIG = {
 }
 REDIRECT_PORT = 18999
 CALLBACK = f"http://localhost:{REDIRECT_PORT}/callback"
-DAEMON_PID = os.path.expanduser("~/.fpr/daemon.pid")
-DAEMON_LOG = os.path.expanduser("~/.fpr/daemon.log")
 
 def load_auth():
     if not os.path.exists(AUTH_FILE):
@@ -226,47 +229,7 @@ def pkce_login(env_name):
         return False
     return is_valid(env_name)
 
-def daemon_loop(env_name):
-    os.makedirs(os.path.dirname(DAEMON_LOG), exist_ok=True)
-    with open(DAEMON_LOG, "a") as log:
-        log.write(f"[{time.ctime()}] daemon started for {env_name}\n")
-    while True:
-        try:
-            if not is_valid(env_name):
-                silent_refresh(env_name)
-        except Exception as ex:
-            with open(DAEMON_LOG, "a") as log:
-                log.write(f"[{time.ctime()}] error: {ex}\n")
-        time.sleep(300)
-
-def start_daemon(env_name):
-    if os.path.exists(DAEMON_PID):
-        try:
-            os.kill(int(open(DAEMON_PID).read().strip()), 0)
-            print(f"daemon already running (PID {open(DAEMON_PID).read().strip()})")
-            return
-        except (OSError, ValueError):
-            pass
-    p = subprocess.Popen(
-        [sys.executable, __file__, "_daemon_loop", env_name],
-        stdout=open(DAEMON_LOG, "a"), stderr=subprocess.STDOUT,
-        start_new_session=True,
-    )
-    with open(DAEMON_PID, "w") as f:
-        f.write(str(p.pid))
-    print(f"daemon started for {env_name} (PID {p.pid})")
-
-def stop_daemon():
-    if not os.path.exists(DAEMON_PID):
-        print("no daemon running")
-        return
-    try:
-        pid = int(open(DAEMON_PID).read().strip())
-        os.kill(pid, signal.SIGTERM)
-    except Exception:
-        pass
-    os.remove(DAEMON_PID)
-    print("daemon stopped")
+# ── main ─────────────────────────────────────────────
 
 def main():
     args = sys.argv[1:]
@@ -283,15 +246,11 @@ def main():
         cmd = args[0]
         env = args[1] if len(args) > 1 else ""
 
-    if cmd == "daemon-stop":
-        stop_daemon()
-        return
-
     if cmd == "version":
         print(SCRIPT_VERSION)
         return
 
-    if cmd not in ("_daemon_loop", "daemon-stop") and env not in CLIENT_IDS:
+    if env not in CLIENT_IDS:
         print(f"Unknown environment: {env}. Use stg or prod.", file=sys.stderr)
         sys.exit(1)
 
@@ -333,12 +292,6 @@ def main():
         else:
             print("EXPIRED", file=sys.stderr)
             sys.exit(1)
-
-    elif cmd == "daemon":
-        start_daemon(env)
-
-    elif cmd == "_daemon_loop":
-        daemon_loop(env)
 
     elif cmd == "auto":
         if is_valid(env):

@@ -1,15 +1,37 @@
 #!/bin/sh
 # FPR Cortex Skills — Quick Install / Update
-# Usage: curl -sL https://raw.githubusercontent.com/traveloka/fpr-cortex/main/install.sh | sh
+# Usage: curl -sL https://raw.githubusercontent.com/lehan822/fpr-cortex/main/install.sh | sh
 
 set -e
 
 SKILLS_DIR="${HOME}/.agents/skills"
 VERSION_FILE="${HOME}/.agents/skills/.fpr-cortex-version"
-REPO_URL="https://raw.githubusercontent.com/traveloka/fpr-cortex/main"
+REPO_URL="https://raw.githubusercontent.com/lehan822/fpr-cortex/main"
 
 # Fetch latest VERSION
 REMOTE_VERSION=$(curl -sf "${REPO_URL}/VERSION" 2>/dev/null || echo "unknown")
+
+# Auto-link fpr-* skills to a known agent skill directory
+link_skills() {
+  agent_skills_dir="$1"
+  mkdir -p "${agent_skills_dir}"
+  for skill_path in "${SKILLS_DIR}"/fpr-*/; do
+    [ -d "${skill_path}" ] || continue
+    name=$(basename "${skill_path}")
+    dest="${agent_skills_dir}/${name}"
+    rm -f "${dest}"
+    ln -sf "${skill_path}" "${dest}"
+  done
+  echo "   Linked to ${agent_skills_dir}"
+}
+
+do_link() {
+  echo ""
+  echo "🔗 Linking skills to agent directories..."
+  [ -d "${HOME}/.claude" ]   && link_skills "${HOME}/.claude/skills"
+  [ -d "${HOME}/.opencode" ] && link_skills "${HOME}/.opencode/skills"
+  [ -d "${HOME}/.codex" ]    && link_skills "${HOME}/.codex/skills"
+}
 
 # Check if already installed and up-to-date
 if [ -f "${VERSION_FILE}" ]; then
@@ -17,6 +39,7 @@ if [ -f "${VERSION_FILE}" ]; then
   if [ "${LOCAL_VERSION}" = "${REMOTE_VERSION}" ]; then
     echo "✅ FPR Cortex skills already up-to-date (v${LOCAL_VERSION})"
     echo "   Reinstall: curl -sL ${REPO_URL}/install.sh | sh -s -- --force"
+    do_link
     exit 0
   fi
   echo "📦 Updating FPR Cortex skills: v${LOCAL_VERSION} → v${REMOTE_VERSION}"
@@ -46,21 +69,27 @@ install_skill() {
 }
 
 # Shared skills
-install_skill "fpr-shared"      "skills/shared/gateway"     auth.md gateway-protocol.md error-classification.md
-install_skill "fpr-skill-maker" "skills/shared/skill-maker" template.md validation-rules.md
+install_skill "fpr-tool-shared"   "skills/shared/fpr-tool-shared"   auth.md gateway-protocol.md error-classification.md
 
-# Domain skills
-install_skill "fpr-pricing"     "skills/domain/pricing"     autopilot-operations.md budget-operations.md commission-operations.md parameter-standards.md
-install_skill "fpr-supply"      "skills/domain/supply"      parameter-standards.md
-install_skill "fpr-demand"      "skills/domain/demand"      booking-operations.md parameter-standards.md
-install_skill "fpr-sysinteg"    "skills/domain/sysinteg"    parameter-standards.md
-install_skill "fpr-3ps-datainfo" "skills/domain/3ps-datainfo" parameter-standards.md
+# FPR tool skills
+install_skill "fpr-tool-pricing"   "skills/fpr-tools/fpr-tool-pricing"   autopilot-operations.md budget-operations.md commission-operations.md parameter-standards.md
+install_skill "fpr-tool-supply"    "skills/fpr-tools/fpr-tool-supply"    fare-check-workflow.md inventory-staleness.md provider-operations.md parameter-standards.md
+install_skill "fpr-tool-demand"    "skills/fpr-tools/fpr-tool-demand"    booking-operations.md parameter-standards.md
+install_skill "fpr-tool-sysinteg"  "skills/fpr-tools/fpr-tool-sysinteg"  parameter-standards.md
+install_skill "fpr-tool-3ps-data"  "skills/fpr-tools/fpr-tool-3ps-data"  parameter-standards.md
+
+# On-call skills
+install_skill "fpr-oncall-pricing" "skills/oncall/fpr-oncall-pricing"
+install_skill "fpr-oncall-supply"  "skills/oncall/fpr-oncall-supply"
 
 # Save version
 echo "${REMOTE_VERSION}" > "${VERSION_FILE}"
 
 echo ""
-echo "✅ Done! 7 skills installed to ${SKILLS_DIR} (v${REMOTE_VERSION})"
+echo "✅ Done! 8 skills installed to ${SKILLS_DIR} (v${REMOTE_VERSION})"
+
+do_link
+
 echo ""
 echo "Next: open Copilot CLI or Claude Code and ask a question like:"
 echo '  "查一下 THB budget balance"'

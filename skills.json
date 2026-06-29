@@ -1,31 +1,39 @@
 {
   "name": "fpr-cortex",
   "version": "2.6.0",
-  "description": "FPR AI Agent Skills — pricing, supply, demand, config",
+  "description": "FPR AI Agent Skills — pricing, supply, demand, sysinteg, 3ps-data",
   "skills": {
-    "fpr-shared": {
-      "skillPath": "skills/shared/auth/SKILL.md",
-      "description": "Auth, gateway, common standards (required by all domain skills)"
+    "fpr-tool-shared": {
+      "skillPath": "skills/shared/fpr-tool-shared/SKILL.md",
+      "description": "Auth, gateway, common standards (required by all tool skills)"
     },
-    "fpr-skill-maker": {
-      "skillPath": "skills/shared/skill-maker/SKILL.md",
-      "description": "Help create and validate FPR skills"
-    },
-    "fpr-pricing": {
-      "skillPath": "skills/domain/pricing/SKILL.md",
+    "fpr-tool-pricing": {
+      "skillPath": "skills/fpr-tools/fpr-tool-pricing/SKILL.md",
       "description": "Pricing rules, autopilot, budget, commissions"
     },
-    "fpr-supply": {
-      "skillPath": "skills/domain/supply/SKILL.md",
+    "fpr-tool-supply": {
+      "skillPath": "skills/fpr-tools/fpr-tool-supply/SKILL.md",
       "description": "Fare adjusters, provider config, airline routes"
     },
-    "fpr-demand": {
-      "skillPath": "skills/domain/demand/SKILL.md",
+    "fpr-tool-demand": {
+      "skillPath": "skills/fpr-tools/fpr-tool-demand/SKILL.md",
       "description": "Booking lookup, fare cache, search simulation"
     },
-    "fpr-config": {
-      "skillPath": "skills/domain/config/SKILL.md",
-      "description": "Feature flags, audit logs, condition groups"
+    "fpr-tool-sysinteg": {
+      "skillPath": "skills/fpr-tools/fpr-tool-sysinteg/SKILL.md",
+      "description": "Feature flags, audit logs, configuration management"
+    },
+    "fpr-tool-3ps-data": {
+      "skillPath": "skills/fpr-tools/fpr-tool-3ps-data/SKILL.md",
+      "description": "Third-party reference data: airports, routes, flight ID decryption"
+    },
+    "fpr-oncall-pricing": {
+      "skillPath": "skills/oncall/fpr-oncall-pricing/SKILL.md",
+      "description": "Pricing on-call runbooks (placeholder)"
+    },
+    "fpr-oncall-supply": {
+      "skillPath": "skills/oncall/fpr-oncall-supply/SKILL.md",
+      "description": "Supply on-call runbooks (placeholder)"
     }
   }
 }

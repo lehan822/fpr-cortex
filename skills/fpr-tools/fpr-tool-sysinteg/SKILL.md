@@ -1,16 +1,16 @@
 ---
-name: fpr-sysinteg
+name: fpr-tool-sysinteg
 version: 1.0.0
-description: "[domain] System integration tools: feature flags, audit logs, configuration management, currency conversion, reference data (countries, airlines). Use for cross-team configuration queries and change auditing."
-category: domain
+description: "[fprtool] System integration tools: feature flags, audit logs, configuration management, currency conversion, reference data (countries, airlines). Use for cross-team configuration queries and change auditing."
+category: fprtool
 prerequisites:
-  local: [fpr-shared]
+  local: [fpr-tool-shared]
   agentcore: []
 ---
 
 # FPR SysInteg (System Integration)
 
-> **⚠️ Local MCP tools. All tools are prefixed and authed via fpr-shared — read it first (see Prerequisites).**
+> **⚠️ Local MCP tools. All tools are prefixed and authed via fpr-tool-shared — read it first (see Prerequisites).**
 
 ```
 # Common examples
@@ -23,7 +23,7 @@ tool: get_activity_log            data: {entityType: "PRICING_RULE", startDate: 
 
 **CRITICAL — before the matching operation, you MUST Read the file(s) below. None are optional:**
 
-1. **Local MCP only** → read **fpr-shared** first — auth, tool name prefix, request envelope (**all operations**)
+1. **Local MCP only** → read **fpr-tool-shared** first — auth, tool name prefix, request envelope (**all operations**)
 2. **Unsure about parameters** → MUST read [`parameter-standards.md`](references/parameter-standards.md) (appName mapping, entityType enum)
 
 **Executing an operation without reading its required reference will cause parameter errors.**
@@ -46,7 +46,7 @@ tool: get_activity_log            data: {entityType: "PRICING_RULE", startDate: 
 
 | User Intent | → Operation |
 |-------------|-------------|
-| "feature flag", "is X enabled", "toggle" | `get_feature_flags` |
+| "enabled", "feature flag", "is X enabled", "toggle" | `get_feature_flags` |
 | "which apps use flags" | `get_flag_applications` |
 | "flag detail", "flag config" | `get_flag_configuration` |
 | "condition group", "rule conditions" | `load_condition_groups` |
@@ -70,7 +70,7 @@ tool: get_activity_log            data: {entityType: "PRICING_RULE", startDate: 
 
 ## Disambiguation
 
-- "commission", "budget", "markup" → **fpr-pricing** (not sysinteg)
-- "fare adjuster", "provider config" → **fpr-supply** (not sysinteg)
-- "booking detail", "PNR lookup" → **fpr-demand** (not sysinteg)
-- "exchange rate" for pricing → **fpr-pricing**; for FX conversion → `convert_currency`
+- "commission", "budget", "markup" → **fpr-tool-pricing** (not sysinteg)
+- "fare adjuster", "provider config" → **fpr-tool-supply** (not sysinteg)
+- "booking detail", "PNR lookup" → **fpr-tool-demand** (not sysinteg)
+- "exchange rate" for pricing → **fpr-tool-pricing**; for FX conversion → `convert_currency`

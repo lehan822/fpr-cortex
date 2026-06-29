@@ -1,16 +1,16 @@
 ---
-name: fpr-supply
+name: fpr-tool-supply
 version: 2.5.0
-description: "[domain] Supply-side tools: fare search (regular/special/upsell), revalidation, search simulation, provider sourcing, fare checking, inventory management, winner selection. Use for supply-side debugging and provider management."
-category: domain
+description: "[fprtool] Supply-side tools: fare search (regular/special/upsell), revalidation, search simulation, provider sourcing, fare checking, inventory management, winner selection. Use for supply-side debugging and provider management."
+category: fprtool
 prerequisites:
-  local: [fpr-shared]
+  local: [fpr-tool-shared]
   agentcore: []
 ---
 
 # FPR Supply
 
-> **⚠️ Local MCP tools. All tools are prefixed and authed via fpr-shared — read it first (see Prerequisites).**
+> **⚠️ Local MCP tools. All tools are prefixed and authed via fpr-tool-shared — read it first (see Prerequisites).**
 
 ```
 # Common examples
@@ -24,7 +24,7 @@ tool: simulate_search               data: {tripType: "ONE_WAY", journeys: [{orig
 
 **CRITICAL — before the matching operation, you MUST Read the file(s) below. None are optional:**
 
-1. **Local MCP only** → read **fpr-shared** first — auth, tool name prefix, request envelope (**all operations**)
+1. **Local MCP only** → read **fpr-tool-shared** first — auth, tool name prefix, request envelope (**all operations**)
 2. **Running fare check** → MUST read [`fare-check-workflow.md`](references/fare-check-workflow.md) (async 2-step operation)
 3. **Querying provider config** → MUST read [`provider-operations.md`](references/provider-operations.md)
 4. **Inventory staleness issues** → MUST read [`inventory-staleness.md`](references/inventory-staleness.md) (stale filter logic, supplyCacheTimestamp meaning)
@@ -71,7 +71,7 @@ tool: simulate_search               data: {tripType: "ONE_WAY", journeys: [{orig
 | "revalidate fare", "check fare validity" | `revalidate_*_fare` operations |
 | "simulate search", "test search pipeline" | `simulate_search` |
 | "provider sourcing", "where does fare come from" | `get_provider_sourcing` |
-| "fare check", "check fare availability" | `check_fare` → `get_fare_check_result` |
+| "check fare", "fare check", "check fare availability" | `check_fare` → `get_fare_check_result` |
 | "special fare", "negotiated fare" | `get_special_fare_config` |
 | "inventory", "booking class" | `get_inventory_types` or `get_inventory_detail` |
 | "winner", "selected fare" | `search_winner` |
@@ -104,8 +104,8 @@ See [fare-check-workflow.md](references/fare-check-workflow.md) for full details
 
 ## Disambiguation
 
-- "budget", "commission", "markup" → **fpr-pricing** (not supply)
-- "booking detail", "PNR lookup" → **fpr-demand** (not supply)
-- "feature flag" → **fpr-sysinteg** (not supply)
-- "price inconsistency investigation" → start with **fpr-demand** playbook, then come here for stale filter details
-- "airline route history" (reference data) → **fpr-3ps-datainfo**; (provider config) → **fpr-supply**
+- "budget", "commission", "markup" → **fpr-tool-pricing** (not supply)
+- "booking detail", "PNR lookup" → **fpr-tool-demand** (not supply)
+- "feature flag" → **fpr-tool-sysinteg** (not supply)
+- "price inconsistency investigation" → start with **fpr-tool-demand** playbook, then come here for stale filter details
+- "airline route history" (reference data) → **fpr-tool-3ps-data**; (provider config) → **fpr-tool-supply**

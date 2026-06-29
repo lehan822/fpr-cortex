@@ -1,16 +1,16 @@
 ---
-name: fpr-pricing
+name: fpr-tool-pricing
 version: 2.6.0
-description: "[domain] Pricing rules, autopilot rules, budgets, commissions, incentives, baseline markup, bundling, transaction fees. Use for price adjustments, margin settings, and revenue management."
-category: domain
+description: "[fprtool] Pricing rules, autopilot rules, budgets, commissions, incentives, baseline markup, bundling, transaction fees. Use for price adjustments, margin settings, and revenue management."
+category: fprtool
 prerequisites:
-  local: [fpr-shared]
+  local: [fpr-tool-shared]
   agentcore: []
 ---
 
 # FPR Pricing
 
-> **⚠️ Local MCP tools. All tools are prefixed and authed via fpr-shared — read it first (see Prerequisites).**
+> **⚠️ Local MCP tools. All tools are prefixed and authed via fpr-tool-shared — read it first (see Prerequisites).**
 
 ```
 # Common examples
@@ -23,7 +23,7 @@ tool: load_commission_incentive_rules    data: {airlineId: "GA", fulfillmentId: 
 
 **CRITICAL — before the matching operation, you MUST Read the file(s) below. None are optional:**
 
-1. **Local MCP only** → read **fpr-shared** first — auth, tool name prefix, request envelope (**all operations**)
+1. **Local MCP only** → read **fpr-tool-shared** first — auth, tool name prefix, request envelope (**all operations**)
 2. **Autopilot (5-field S3-key) or baseline (route-based)** → MUST read [`autopilot-operations.md`](references/autopilot-operations.md)
 3. **Querying or updating commission / incentive** → MUST read [`commission-operations.md`](references/commission-operations.md)
 4. **Querying budget** → MUST read [`budget-operations.md`](references/budget-operations.md)
@@ -69,7 +69,7 @@ tool: load_commission_incentive_rules    data: {airlineId: "GA", fulfillmentId: 
 | "update autopilot", "修改 autopilot" | `update_autopilot_rules` |
 | "service fee", "transaction fee" | `load_trx_fee_rules` |
 | "issuance fee", "ticketing fee" | `load_issuance_fee_rules` |
-| "incentive progress", "PNR check" | `check_tiered_incentive_progress` |
+| "PNR", "incentive progress", "PNR check" | `check_tiered_incentive_progress` |
 | "tiered incentive", "volume bonus" | `load_tiered_incentive_rules` |
 | "anchor fare", "price prediction" | `load_price_prediction_rules` |
 
@@ -109,6 +109,6 @@ tool: load_commission_incentive_rules    data: {airlineId: "GA", fulfillmentId: 
 
 ## Disambiguation
 
-- "fare adjuster" → **fpr-supply** (not pricing)
-- "feature flag" → **fpr-sysinteg** (not pricing)
-- "search cache", "booking detail" → **fpr-demand** (not pricing)
+- "fare adjuster" → **fpr-tool-supply** (not pricing)
+- "feature flag" → **fpr-tool-sysinteg** (not pricing)
+- "search cache", "booking detail" → **fpr-tool-demand** (not pricing)
