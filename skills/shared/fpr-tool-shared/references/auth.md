@@ -21,7 +21,7 @@ After auth:
 
 ## Bootstrap & Auto-update
 
-If `~/.fpr/fpr-auth.py` doesn't exist, extract the Python script from the `## Script` section below and write it there. Then run `python3 ~/.fpr/fpr-auth.py <env>` for first-time token creation.
+The installer writes `~/.fpr/fpr-auth.py` from the `## Script` section below. If it is missing, re-run the installer, or extract the Python script from this section and write it there. Then run `python3 ~/.fpr/fpr-auth.py <env>` for first-time token creation.
 
 **Auto-update:** The script contains a `SCRIPT_VERSION` constant. When auth.md is updated, bump `SCRIPT_VERSION`. The agent checks: if the local file's version doesn't match, re-extract the script.
 

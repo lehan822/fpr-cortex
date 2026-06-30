@@ -68,8 +68,27 @@ install_skill() {
   rmdir "${dest}/references" 2>/dev/null || true
 }
 
+install_auth_helper() {
+  auth_dir="${HOME}/.fpr"
+  auth_script="${auth_dir}/fpr-auth.py"
+  auth_ref="${SKILLS_DIR}/fpr-tool-shared/references/auth.md"
+
+  echo "  → fpr-auth.py"
+  mkdir -p "${auth_dir}"
+
+  awk '
+    /^## Script$/ { in_script_section = 1 }
+    in_script_section && /^```python$/ { in_code = 1; next }
+    in_code && /^```$/ { exit }
+    in_code { print }
+  ' "${auth_ref}" > "${auth_script}"
+
+  chmod +x "${auth_script}"
+}
+
 # Shared skills
 install_skill "fpr-tool-shared"   "skills/shared/fpr-tool-shared"   auth.md gateway-protocol.md error-classification.md
+install_auth_helper
 
 # FPR tool skills
 install_skill "fpr-tool-pricing"   "skills/fpr-tools/fpr-tool-pricing"   autopilot-operations.md budget-operations.md commission-operations.md parameter-standards.md

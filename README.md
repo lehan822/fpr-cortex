@@ -8,7 +8,7 @@ Public install mirror for FPR Cortex skills.
 curl -sL https://raw.githubusercontent.com/lehan822/fpr-cortex/main/install.sh | sh
 ```
 
-This installs the FPR tool and on-call skills to `~/.agents/skills/`, then links them into supported local agent skill directories when present.
+This installs the FPR tool skills to `~/.agents/skills/`, installs the auth helper to `~/.fpr/fpr-auth.py`, then links skills into supported local agent skill directories when present.
 
 Installed skills:
 
